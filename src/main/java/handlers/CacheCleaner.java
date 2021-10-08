@@ -6,11 +6,10 @@ import settings.UserList;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
+
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.List;
 
 import static handlers.FileLengthCalculator.*;
 
@@ -19,11 +18,11 @@ public class CacheCleaner {
     private static Ignored_objects ignoredObjects;
 
     //очистка кэша для списка пользователей
-    public static void clearCacheByUser(UserList users, Ignored_objects ignoreFiles) {
+    public static void clearCacheByUser(List<String> users, Ignored_objects ignoreFiles) {
         ignoredObjects = ignoreFiles;
-        if (users.getUserList() != null) {
+        if (users != null) {
             LOGGER.info("Происходит удаление кэша 1С согласно списка пользователей");
-            for (String u : users.getUserList()) {
+            for (String u : users) {
                 LOGGER.info(String.format("Размер папки с кэшем для пользователя [%s] до очистки [%s]", u,
                         getOccupiedSpace("c:\\Users" + File.separator + u
                                 + File.separator + "AppData\\Local\\1C\\")));
@@ -69,7 +68,7 @@ public class CacheCleaner {
     //удаление файлов и папок
     private static void deleteItems(String path, String fileName) throws IOException {
         LOGGER.info(String.format("Производится удаление папки [%s] в директории [%s]", fileName, path));
-        Files.walkFileTree(Path.of(path + File.separator + fileName), new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(Paths.get(path + File.separator + fileName), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 Files.delete(file);

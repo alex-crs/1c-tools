@@ -18,7 +18,7 @@ public class UserList {
     private List<String> userList;
 
     public UserList() {
-        this.userList = readUserList();
+        this.userList = createUserList();
     }
 
     public List<String> getUserList() {

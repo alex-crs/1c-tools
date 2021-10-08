@@ -11,12 +11,12 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setMinWidth(600);
-        primaryStage.setMinHeight(500);
-        primaryStage.setTitle("Cache cleaner");
+        primaryStage.setMinHeight(400);
+        primaryStage.setTitle("1С-tools");
         FXMLLoader mainWindow = new FXMLLoader(getClass().getResource("/fxml/MainWindow.fxml"));
         Parent main = mainWindow.load();
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(main, 915, 650));
+        primaryStage.setScene(new Scene(main, 600, 400));
         primaryStage.show();
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

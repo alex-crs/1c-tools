@@ -11,6 +11,10 @@ public class FileLengthCalculator {
         return spaceToString(calcFileLength(path));
     }
 
+    public static String getOccupiedSpaceByUser(String path){
+        return spaceToString(calcFileLength(path));
+    }
+
     //определение размера папки с кэшем
     private static long calcFileLength(String sourcePath) {
         long totalSize = 0;

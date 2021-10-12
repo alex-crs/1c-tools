@@ -12,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.MouseEvent;
 import org.apache.log4j.Logger;
+import settings.BaseConfig;
 import settings.Ignored_objects;
 import settings.UserList;
 
@@ -34,6 +35,7 @@ public class MainWindowController implements Initializable {
     private Ignored_objects ignoredObjects;
     private OS operatingSystem;
     List<String> baseList;
+    StringBuilder currentUser;
 
     @FXML
     ListView<String> userList;
@@ -54,6 +56,7 @@ public class MainWindowController implements Initializable {
         userList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         operatingSystem = new Windows();
         clearCashButton.setFocusTraversable(false);
+        currentUser = new StringBuilder();
 
         Platform.runLater(new Runnable() {
             @Override
@@ -67,16 +70,22 @@ public class MainWindowController implements Initializable {
 
     //заполняет лист доступных пользователю баз 1С
     public void fillBaseList(ListView<String> listView, String userName) {
-        baseList = readBase(userName, operatingSystem);
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                listView.getItems().clear();
-                for (String b : baseList) {
-                    listView.getItems().add(b);
+        if (!currentUser.toString().equals(userName)) {
+            currentUser.delete(0, currentUser.length());
+            currentUser.append(userName);
+            BaseConfig.clearBaseList();
+            BaseConfig.readBase(userName, operatingSystem);
+            baseList = BaseConfig.getBaseList();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    listView.getItems().clear();
+                    for (String b : baseList) {
+                        listView.getItems().add(b);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     //очищает кэш пользователя
@@ -95,7 +104,7 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    private void calcCashSpace(){
+    private void calcCashSpace() {
         clearCashButton.setText("Очистить кэш: " + FileLengthCalculator
                 .getOccupiedSpaceByUser(
                         operatingSystem

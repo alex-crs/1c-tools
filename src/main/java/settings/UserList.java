@@ -27,16 +27,20 @@ public class UserList {
 
     //загрузка списка пользователей из системы
     public List<String> createUserList() {
-        LOGGER.info("Получение списка системных пользователей");
         List<String> list = new ArrayList<>();
-        String query = "SELECT * FROM Win32_UserAccount";
-        ActiveXComponent axWMI = new ActiveXComponent("winmgmts:\\");
-        Variant vCollection = axWMI.invoke("ExecQuery", new Variant(query));
-        EnumVariant enumVariant = new EnumVariant(vCollection.toDispatch());
-        Dispatch item = null;
-        while (enumVariant.hasMoreElements()) {
-            item = enumVariant.nextElement().toDispatch();
-            list.add(Dispatch.call(item, "Name").toString());
+        LOGGER.info("Получение списка системных пользователей");
+        try {
+            String query = "SELECT * FROM Win32_UserAccount";
+            ActiveXComponent axWMI = new ActiveXComponent("winmgmts:\\");
+            Variant vCollection = axWMI.invoke("ExecQuery", new Variant(query));
+            EnumVariant enumVariant = new EnumVariant(vCollection.toDispatch());
+            Dispatch item = null;
+            while (enumVariant.hasMoreElements()) {
+                item = enumVariant.nextElement().toDispatch();
+                list.add(Dispatch.call(item, "Name").toString());
+            }
+        } catch (Exception e) {
+            LOGGER.error(e);
         }
         return list;
     }
@@ -47,24 +51,28 @@ public class UserList {
         File file = new File("users.txt");
         LOGGER.info(String.format("Чтение списка пользователей из файла [%s]", file.getName()));
         int stringCount = 0;
-        if (file.exists() && file.length() > 0) {
-            try (FileInputStream fis = new FileInputStream(file);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
-                while (reader.ready()) {
-                    list.add(reader.readLine());
-                    stringCount++;
+        try {
+            if (file.exists() && file.length() > 0) {
+                try (FileInputStream fis = new FileInputStream(file);
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
+                    while (reader.ready()) {
+                        list.add(reader.readLine());
+                        stringCount++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } else if (file.length() == 0) {
+                LOGGER.info(String.format("Файл [%s] не содержит записей.", file.getName()));
+                list = null;
+            } else {
+                LOGGER.info(String.format("Файл [%s] не обнаружен.", file.getName()));
+                list = null;
             }
-        } else if (file.length() == 0) {
-            LOGGER.info(String.format("Файл [%s] не содержит записей.", file.getName()));
-            list = null;
-        } else {
-            LOGGER.info(String.format("Файл [%s] не обнаружен.", file.getName()));
-            list = null;
+            LOGGER.info(String.format("Прочитано [%s] строк.", stringCount));
+        } catch (Exception e) {
+            LOGGER.error(e);
         }
-        LOGGER.info(String.format("Прочитано [%s] строк.", stringCount));
         return list;
     }
 }

@@ -1,8 +1,7 @@
 package settings;
 
-import controllers.MainWindowController;
-import entitys.BaseElement;
-import entitys.OS;
+import entities.BaseElement;
+import entities.OS;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -41,10 +40,11 @@ public class BaseConfig {
                     }
                     if (string.toString().startsWith("[") || string.toString().endsWith("]")) {
                         baseElement = new BaseElement(string.deleteCharAt(0).deleteCharAt(string.length() - 1).toString());
-                    }
+                }
                     string.delete(0, string.length());
                     stringCount++;
                 }
+
                 LOGGER.info(String.format("Коллекция конфигураций пользователя [%s] загружена. Прочитано [%s] строк", userName, stringCount));
             } catch (Exception e) {
                 LOGGER.error(e);

@@ -25,7 +25,7 @@
                            </cursor></Button>
                      </items>
                   </ToolBar>
-                  <ListView fx:id="userList" layoutX="17.0" layoutY="87.0" onMouseClicked="#clickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                  <ListView fx:id="userListPanel" layoutX="17.0" layoutY="87.0" onMouseClicked="#clickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                   <Label layoutX="5.0" layoutY="5.0" text="Список пользователей:" />
                </children>
             </AnchorPane>

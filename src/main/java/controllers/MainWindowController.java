@@ -1,7 +1,7 @@
 package controllers;
 
-import entitys.OS;
-import entitys.Windows;
+import entities.OS;
+import entities.Windows;
 import handlers.FileLengthCalculator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,29 +16,29 @@ import settings.BaseConfig;
 import settings.Ignored_objects;
 import settings.UserList;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import static handlers.CacheCleaner.clearCacheByUser;
-import static settings.BaseConfig.readBase;
 
 public class MainWindowController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(MainWindowController.class);
-    private UserList usersFromSystem;
+    private UserList userList;
     private Ignored_objects ignoredObjects;
     private OS operatingSystem;
     List<String> baseList;
     StringBuilder currentUser;
+    private String userListSource;
+    public static String SYSTEM_LIST = "system";
+    public static String LOCAL_LIST = "local";
+    private static final List<File> externalWorkFiles = Arrays.asList(new File("users.txt"), new File("ignore.txt"), new File("base.db"));
 
     @FXML
-    ListView<String> userList;
+    ListView<String> userListPanel;
 
     @FXML
     ListView<String> currentUserBaseList;
@@ -51,18 +51,23 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        usersFromSystem = new UserList();
+        checkExternalWorkFiles();
+        userListSource = LOCAL_LIST;
+        userList = new UserList(userListSource);
         ignoredObjects = new Ignored_objects();
-        userList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        userListPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         operatingSystem = new Windows();
         clearCashButton.setFocusTraversable(false);
         currentUser = new StringBuilder();
+        displayUserList(); //показываем список пользователей
+    }
 
+    private void displayUserList() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                for (String u : usersFromSystem.getUserList()) {
-                    userList.getItems().add(u);
+                for (String u : userList.getUserList()) {
+                    userListPanel.getItems().add(u);
                 }
             }
         });
@@ -90,8 +95,8 @@ public class MainWindowController implements Initializable {
 
     //очищает кэш пользователя
     public void clearCache() {
-        if (userList.getItems().size() > 0) {
-            clearCacheByUser(userList.getSelectionModel().getSelectedItems(), ignoredObjects);
+        if (userListPanel.getItems().size() > 0) {
+            clearCacheByUser(userListPanel.getSelectionModel().getSelectedItems(), ignoredObjects);
             calcCashSpace();
         }
     }
@@ -100,7 +105,7 @@ public class MainWindowController implements Initializable {
     public void clickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
             calcCashSpace();
-            fillBaseList(currentUserBaseList, userList.getSelectionModel().getSelectedItem());
+            fillBaseList(currentUserBaseList, userListPanel.getSelectionModel().getSelectedItem());
         }
     }
 
@@ -108,9 +113,22 @@ public class MainWindowController implements Initializable {
         clearCashButton.setText("Очистить кэш: " + FileLengthCalculator
                 .getOccupiedSpaceByUser(
                         operatingSystem
-                                .cachePathConstructor(userList
+                                .cachePathConstructor(userListPanel
                                         .getSelectionModel()
                                         .getSelectedItem())));
+    }
+
+    //Создаем недостающие файлы в случае отсутствия создаем
+    private void checkExternalWorkFiles() {
+        externalWorkFiles.stream().forEach(file -> {
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 

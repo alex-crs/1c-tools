@@ -1,0 +1,16 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:sqlite:base.db</property>
+        <property name="connection.driver_class">org.sqlite.JDBC</property>
+        <property name="hibernate.hbm2ddl.auto"/>
+        <property name="hibernate.dialect">org.hibernate.dialect.SQLiteDialect</property>
+        <property name="show_sql">true</property>
+        <property name="hbm2ddl.auto">none</property>
+        <property name="current_session_context_class">thread</property>
+        <mapping class="entities.BaseElement"/>
+    </session-factory>
+</hibernate-configuration>

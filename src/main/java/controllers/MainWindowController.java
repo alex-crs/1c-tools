@@ -35,7 +35,10 @@ public class MainWindowController implements Initializable {
     private String userListSource;
     public static String SYSTEM_LIST = "system";
     public static String LOCAL_LIST = "local";
-    private static final List<File> externalWorkFiles = Arrays.asList(new File("users.txt"), new File("ignore.txt"), new File("base.db"));
+    private static final List<File> externalWorkFiles = Arrays.asList(
+            new File("users.txt"),
+            new File("ignore.txt"),
+            new File("base.db"));
 
     @FXML
     ListView<String> userListPanel;
@@ -129,6 +132,11 @@ public class MainWindowController implements Initializable {
                 }
             }
         });
+    }
+
+    public void showUsersListBuilder(){
+        UserWindowStage userWindowStage = new UserWindowStage();
+        userWindowStage.show();
     }
 
 

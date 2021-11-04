@@ -56,7 +56,8 @@
         <menus>
           <Menu mnemonicParsing="false" text="Меню">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" onAction="#showUsersListBuilder" text="Пользователи" />
+                  <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="О программе">

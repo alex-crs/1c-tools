@@ -16,7 +16,7 @@ public class MainWindow extends Application {
         FXMLLoader mainWindow = new FXMLLoader(getClass().getResource("/fxml/MainWindow.fxml"));
         Parent main = mainWindow.load();
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(main, 600, 400));
+        primaryStage.setScene(new Scene(main, 800, 600));
         primaryStage.show();
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

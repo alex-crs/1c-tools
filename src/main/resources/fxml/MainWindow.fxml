@@ -8,55 +8,18 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainWindowController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainWindowController">
    <children>
-      <SplitPane dividerPositions="0.3603678929765886" layoutX="60.0" layoutY="50.0" maxHeight="400.0" maxWidth="600.0" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
-        <items>
-          <AnchorPane maxWidth="210.0" minHeight="0.0" minWidth="210.0" prefHeight="160.0" prefWidth="210.0">
-               <children>
-                  <ToolBar layoutX="-27.0" layoutY="201.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                     <items>
-                        <Button fx:id="clearCashButton" mnemonicParsing="false" onAction="#clearCache" prefHeight="25.0" prefWidth="198.0" text="Очистить кэш">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
-                     </items>
-                  </ToolBar>
-                  <ListView fx:id="userListPanel" layoutX="17.0" layoutY="87.0" onMouseClicked="#clickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
-                  <Label layoutX="5.0" layoutY="5.0" text="Список пользователей:" />
-               </children>
-            </AnchorPane>
-          <AnchorPane maxWidth="380.0" minHeight="0.0" minWidth="380.0" prefHeight="160.0" prefWidth="380.0">
-               <children>
-                  <ToolBar layoutY="333.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                    <items>
-                      <Button mnemonicParsing="false" text="Добавить в список">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
-                        <Button mnemonicParsing="false" text="Удалить из списка">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
-                        <Button mnemonicParsing="false" text="Редактировать">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor></Button>
-                    </items>
-                  </ToolBar>
-                  <ListView fx:id="currentUserBaseList" layoutY="28.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
-                  <Label layoutX="6.0" layoutY="6.0" text="Список конфигураций 1С доступных пользователю:" />
-               </children></AnchorPane>
-        </items>
-      </SplitPane>
       <MenuBar layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="Меню">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#showUsersListBuilder" text="Пользователи" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveLocalUserList" text="Сохранить список пользователей" />
                   <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
@@ -67,5 +30,96 @@
           </Menu>
         </menus>
       </MenuBar>
+      <TabPane layoutX="37.0" layoutY="80.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+        <tabs>
+          <Tab text="Управление базами 1С">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="284.0" prefWidth="518.0">
+                     <children>
+                        <SplitPane dividerPositions="0.3603678929765886" maxHeight="400.0" maxWidth="600.0" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                            <AnchorPane maxWidth="263.0" minHeight="0.0" minWidth="210.0" prefHeight="544.0" prefWidth="263.0">
+                                 <children>
+                                    <ToolBar layoutX="-27.0" layoutY="201.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                       <items>
+                                          <Button fx:id="clearCashButton" mnemonicParsing="false" onAction="#clearCache" prefHeight="25.0" prefWidth="251.0" text="Очистить кэш">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                       </items>
+                                    </ToolBar>
+                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onMouseClicked="#clickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <Label layoutX="5.0" layoutY="5.0" text="Список пользователей:" />
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane maxWidth="557.0" minHeight="0.0" minWidth="380.0" prefHeight="544.0" prefWidth="650.0">
+                                 <children>
+                                    <ToolBar layoutY="333.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                      <items>
+                                        <Button mnemonicParsing="false" text="Добавить конфигурацию из базы">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                          <Button mnemonicParsing="false" text="Удалить из списка">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                          <Button mnemonicParsing="false" text="Редактировать">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                          </Button>
+                                      </items>
+                                    </ToolBar>
+                                    <ListView fx:id="configList_MainTab" layoutY="28.0" prefHeight="144.0" prefWidth="380.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <Label layoutX="6.0" layoutY="6.0" text="Список конфигураций 1С доступных пользователю:" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Редактирование пользователей">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <SplitPane dividerPositions="0.5" layoutX="239.0" layoutY="159.0" prefHeight="546.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <items>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <items>
+                                        <Button mnemonicParsing="false" text="Очистить список" />
+                                          <Button mnemonicParsing="false" onAction="#deleteFromLocalUserList" text="Удалить" />
+                                      </items>
+                                    </ToolBar>
+                                    <ListView fx:id="userList_Local_ConfigTab" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
+                                    <Label layoutX="8.0" layoutY="44.0" text="Пользователи из программы (users.txt):" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="544.0" prefWidth="405.0">
+                                 <children>
+                                    <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <items>
+                                        <Button mnemonicParsing="false" onAction="#addToLocalList" text="&lt;&lt; Добавить в список" />
+                                          <Button mnemonicParsing="false" onAction="#loadUsersFromSystem" text="Загрузить список" />
+                                      </items>
+                                    </ToolBar>
+                                    <ListView fx:id="usersList_System_ConfigTab" layoutX="75.0" layoutY="186.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
+                                    <Label layoutX="10.0" layoutY="44.0" text="Пользователи из системы:" />
+                                 </children>
+                              </AnchorPane>
+                           </items>
+                        </SplitPane>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
    </children>
 </AnchorPane>

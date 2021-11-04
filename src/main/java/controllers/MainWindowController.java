@@ -27,12 +27,12 @@ import static handlers.CacheCleaner.clearCacheByUser;
 
 public class MainWindowController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(MainWindowController.class);
-    private UserList userList;
+    private UserList localUserList;
+    private UserList systemUserList;
     private Ignored_objects ignoredObjects;
     private OS operatingSystem;
     List<String> baseList;
     StringBuilder currentUser;
-    private String userListSource;
     public static String SYSTEM_LIST = "system";
     public static String LOCAL_LIST = "local";
     private static final List<File> externalWorkFiles = Arrays.asList(
@@ -41,10 +41,16 @@ public class MainWindowController implements Initializable {
             new File("base.db"));
 
     @FXML
-    ListView<String> userListPanel;
+    ListView<String> userList_MainTab;
 
     @FXML
-    ListView<String> currentUserBaseList;
+    ListView<String> userList_Local_ConfigTab;
+
+    @FXML
+    ListView<String> usersList_System_ConfigTab;
+
+    @FXML
+    ListView<String> configList_MainTab;
 
     @FXML
     Label length;
@@ -55,25 +61,70 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         checkExternalWorkFiles();
-        userListSource = LOCAL_LIST;
-        userList = new UserList(userListSource);
+        localUserList = new UserList(LOCAL_LIST);
         ignoredObjects = new Ignored_objects();
-        userListPanel.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        userList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        userList_Local_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        usersList_System_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         operatingSystem = new Windows();
         clearCashButton.setFocusTraversable(false);
         currentUser = new StringBuilder();
         displayUserList(); //показываем список пользователей
     }
 
-    private void displayUserList() {
+    public void loadUsersFromSystem(){
+        systemUserList = new UserList(SYSTEM_LIST);
+        displaySystemUserList();
+    }
+
+    //на вкладке настроек оторбражает список системных пользователей
+    //!!!!!не забыть добавить отдельный поток для запуска операции и возможность прерывания потока
+    private void displaySystemUserList(){
+        usersList_System_ConfigTab.getItems().clear();
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                for (String u : userList.getUserList()) {
-                    userListPanel.getItems().add(u);
+                for (String u : systemUserList.getUserList()) {
+                    usersList_System_ConfigTab.getItems().add(u);
                 }
             }
         });
+    }
+
+    //показывает локальный список пользователей, если пользователей нет,
+    //то панели недоступны для выбора и редактирования
+    private void displayUserList() {
+        userList_Local_ConfigTab.getItems().clear();
+        userList_MainTab.getItems().clear();
+        userList_MainTab.setDisable(false);
+        userList_Local_ConfigTab.setDisable(false);
+        Platform.runLater(() -> {
+            for (String u : localUserList.getUserList()) {
+                    userList_MainTab.getItems().add(u);
+                    userList_Local_ConfigTab.getItems().add(u);
+                if ("Пользователи не найдены".equals(u)) {
+                    userList_MainTab.setDisable(true);
+                    userList_Local_ConfigTab.setDisable(true);
+                }
+            }
+        });
+    }
+
+    //удаляет пользователя из локальной базы пользователей
+    public void deleteFromLocalUserList(){
+        localUserList.deleteFromLocalList(userList_Local_ConfigTab.getSelectionModel().getSelectedItems());
+        displayUserList();
+    }
+
+    //сохраняет текущий список пользователей
+    public void saveLocalUserList(){
+        localUserList.saveUserList();
+    }
+
+    //добавляет пользователя в базу из системы
+    public void addToLocalList(){
+        localUserList.addUserToLocalList(usersList_System_ConfigTab.getSelectionModel().getSelectedItems());
+        displayUserList();
     }
 
     //заполняет лист доступных пользователю баз 1С
@@ -98,8 +149,8 @@ public class MainWindowController implements Initializable {
 
     //очищает кэш пользователя
     public void clearCache() {
-        if (userListPanel.getItems().size() > 0) {
-            clearCacheByUser(userListPanel.getSelectionModel().getSelectedItems(), ignoredObjects);
+        if (userList_MainTab.getItems().size() > 0) {
+            clearCacheByUser(userList_MainTab.getSelectionModel().getSelectedItems(), ignoredObjects);
             calcCashSpace();
         }
     }
@@ -108,7 +159,7 @@ public class MainWindowController implements Initializable {
     public void clickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1) {
             calcCashSpace();
-            fillBaseList(currentUserBaseList, userListPanel.getSelectionModel().getSelectedItem());
+            fillBaseList(configList_MainTab, userList_MainTab.getSelectionModel().getSelectedItem());
         }
     }
 
@@ -116,7 +167,7 @@ public class MainWindowController implements Initializable {
         clearCashButton.setText("Очистить кэш: " + FileLengthCalculator
                 .getOccupiedSpaceByUser(
                         operatingSystem
-                                .cachePathConstructor(userListPanel
+                                .cachePathConstructor(userList_MainTab
                                         .getSelectionModel()
                                         .getSelectedItem())));
     }
@@ -133,11 +184,5 @@ public class MainWindowController implements Initializable {
             }
         });
     }
-
-    public void showUsersListBuilder(){
-        UserWindowStage userWindowStage = new UserWindowStage();
-        userWindowStage.show();
-    }
-
 
 }

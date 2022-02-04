@@ -96,6 +96,7 @@ public class GroupEditController implements Initializable {
             currentWindow_group_box.setVisible(false);
             name.setVisible(true);
             name.setText(currentWindow_group_box.getSelectionModel().getSelectedItem());
+            message.setText("Двойной клик по полю ввода вернет к выбору группы.");
         });
     }
 
@@ -104,6 +105,7 @@ public class GroupEditController implements Initializable {
         if (mouseEvent.getClickCount() == 2 && action.equals(Const.RENAME_GROUP)) {
             currentWindow_group_box.setVisible(true);
             name.setVisible(false);
+            message.setText("Выберете группу для переименования:");
         }
     }
 

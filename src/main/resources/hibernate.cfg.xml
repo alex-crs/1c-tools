@@ -11,6 +11,8 @@
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">none</property>
         <property name="current_session_context_class">thread</property>
-        <mapping class="entities.BaseElement"/>
+        <mapping class="entities.configStructure.Base"/>
+        <mapping class="entities.Groups"/>
+        <mapping class="entities.User"/>
     </session-factory>
 </hibernate-configuration>

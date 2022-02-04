@@ -4,39 +4,98 @@ import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.EnumVariant;
 import com.jacob.com.Variant;
+import entities.User;
+import javafx.scene.control.ComboBox;
 import org.apache.log4j.Logger;
+import service.DataBaseService;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static controllers.MainWindowController.SYSTEM_LIST;
+import static entities.Const.*;
 
 public class UserList {
     private final Logger LOGGER = Logger.getLogger(UserList.class);
-    private List<String> userList;
+    private List<User> userList;
     private String panelMode;
+    DataBaseService data_base;
+    ComboBox<String> group_choice_box;
+    String currentGroup;
     File file = new File("users.txt");
 
-    public UserList(String userListSource) {
+    public String getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public UserList(DataBaseService bdService, String userListSource, ComboBox<String> group_choice_box) {
+        this.data_base = bdService;
+        this.group_choice_box = group_choice_box;
+        userListInit(userListSource);
+        loadGroupMenu();
+    }
+
+    //инициализируем элементы управления и список групп из базы данных
+    public void loadGroupMenu() {
+        group_choice_box.getItems().clear();
+        group_choice_box.getItems().add(CREATE_GROUP.getTitle());
+        group_choice_box.getItems().add(RENAME_GROUP.getTitle());
+        group_choice_box.getItems().add(DELETE_GROUP.getTitle());
+        group_choice_box.getItems().add(GROUPS_DELIMITER.getTitle());
+        group_choice_box.getItems().addAll(data_base.getGroups());
+//        group_choice_box.setValue(DEFAULT_GROUP.getTitle());
+    }
+
+    public void updateUserList(String groupName) {
+        loadGroupMenu();
+        loadUserListByGroup(groupName);
+    }
+
+    public void userListInit(String userListSource) {
         switch (userListSource) {
             case "system":
-                this.userList = createUserListFromSystemSource();
+                this.userList = getUserListFromSystem();
                 this.panelMode = "system";
                 break;
             case "local":
-                this.userList = createUserListFromFile();
+//                this.userList = getUserListFromFile();
                 this.panelMode = "local";
+                break;
+            case "BD":
+                loadUserListByGroup(DEFAULT_GROUP.getTitle());
+                this.panelMode = "bd";
+                this.currentGroup = DEFAULT_GROUP.getTitle();
                 break;
         }
     }
 
-    //создает список пользователей из файла
-    private List<String> createUserListFromFile() {
+    //позволяет загрузить лист пользователей по имени группы
+    //- если группа удалена, то произойдет попытка загрузки последней используемой группы
+    //- если текущая группа удалена, то показывается группа по умолчанию
+    public void loadUserListByGroup(String userList) {
+        if (data_base.doesTheGroupExist(userList) > 0) {
+            this.userList = data_base.getUsersListByGroup(userList).getUsers();
+            group_choice_box.setValue(userList);
+            this.currentGroup = userList;
+        } else if (data_base.doesTheGroupExist(currentGroup) > 0) {
+            this.userList = data_base.getUsersListByGroup(currentGroup).getUsers();
+            group_choice_box.setValue(currentGroup);
+        } else {
+            group_choice_box.setValue(DEFAULT_GROUP.getTitle());
+            this.currentGroup = DEFAULT_GROUP.getTitle();
+            group_choice_box.setValue(DEFAULT_GROUP.getTitle());
+        }
+    }
+
+    public void returnToCurrentGroup(){
+        this.userList = data_base.getUsersListByGroup(currentGroup).getUsers();
+        group_choice_box.setValue(currentGroup);
+    }
+
+    //создает список пользователей из файла (метод не переведен на класс User
+    private List<String> getUserListFromFile() {
         List<String> list = new ArrayList<>();
         LOGGER.info(String.format("Чтение списка пользователей из файла [%s]", file.getName()));
         AtomicInteger stringCount = new AtomicInteger();
@@ -59,47 +118,48 @@ public class UserList {
         return list;
     }
 
-    //возвращает список пользователей. Если список не был сформирован возвращает единственное значение
-    //"Список не найден"
-    public List<String> getUserList() {
-        if (userList == null) {
-            userList = new ArrayList<>(Collections.singletonList("Пользователи не найдены"));
-        }
+    public List<User> getUserList(){
         return userList;
     }
 
-    public void saveUserList() {
-        userList = userList.stream().sorted(Comparator.comparing(String::format)).collect(Collectors.toList());
-        if (!panelMode.equals("system")) {
-            try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
-                for (String u : userList) {
-                    writer.append(u + "\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    //возвращает список пользователей. Если список не был сформирован возвращает единственное значение
+    //"Список не найден"
+//    public List<String> getUserList() {
+//        if (userList == null) {
+//            userList = new ArrayList<>(Collections.singletonList("Пользователи не найдены"));
+//        }
+//        return userList;
+//    }
 
-    public void addUserToLocalList(List<String> users) {
-        userList = userList.stream().filter(s -> !s.equals("Пользователи не найдены")).collect(Collectors.toList());
+//    public void saveUserList() {
+//        userList = userList.stream().sorted(Comparator.comparing(String::format)).collect(Collectors.toList());
+//        if (!panelMode.equals("system")) {
+//            try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
+//                for (String u : userList) {
+//                    writer.append(u + "\n");
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
+    public void addUserToDataBase(List<User> users, String group) {
         users.forEach(s -> {
             if (!userList.contains(s)) {
                 userList.add(s);
+                data_base.addUser(s, group);
             }
         });
     }
 
-    public void deleteFromLocalList(List<String> users) {
+    public void deleteFromLocalList(List<User> users) {
         users.forEach(s -> userList.remove(s));
-        if (userList.size() == 0) {
-            userList.add("Пользователи не найдены");
-        }
     }
 
     //загрузка списка пользователей из системы
-    public List<String> createUserListFromSystemSource() {
-        List<String> list = new ArrayList<>();
+    public List<User> getUserListFromSystem() {
+        List<User> list = new ArrayList<>();
         LOGGER.info("Получение списка системных пользователей");
         try {
             String query = "SELECT * FROM Win32_UserAccount";
@@ -111,11 +171,14 @@ public class UserList {
             Dispatch item = null;
             while (enumVariant.hasMoreElements()) {
                 item = enumVariant.nextElement().toDispatch();
-                list.add(Dispatch.call(item, "Name").toString());
+                User user = new User();
+                user.setName(Dispatch.call(item, "Name").toString());
+                list.add(user);
             }
         } catch (Exception e) {
             LOGGER.error(e);
         }
         return list;
     }
+
 }

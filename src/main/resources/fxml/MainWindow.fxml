@@ -2,6 +2,7 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -11,6 +12,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainWindowController">
@@ -19,7 +21,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="Меню">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#saveLocalUserList" text="Сохранить список пользователей" />
+                  <MenuItem mnemonicParsing="false" text="Сохранить список пользователей" />
                   <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
@@ -30,7 +32,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <TabPane layoutX="37.0" layoutY="80.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      <TabPane layoutX="37.0" layoutY="80.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
         <tabs>
           <Tab text="Управление базами 1С">
             <content>
@@ -42,7 +44,7 @@
                                  <children>
                                     <ToolBar layoutX="-27.0" layoutY="201.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <items>
-                                          <Button fx:id="clearCashButton" mnemonicParsing="false" onAction="#clearCache" prefHeight="25.0" prefWidth="251.0" text="Очистить кэш">
+                                          <Button fx:id="clearCacheButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clearCache" prefHeight="25.0" prefWidth="250.0" text="Очистить кэш">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
@@ -57,25 +59,26 @@
                                  <children>
                                     <ToolBar layoutY="333.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                       <items>
-                                        <Button mnemonicParsing="false" text="Добавить конфигурацию из базы">
+                                        <Button fx:id="addConfigButton" mnemonicParsing="false" onAction="#addToTree" text="➕">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
-                                          <Button mnemonicParsing="false" text="Удалить из списка">
+                                          <Button fx:id="deleteConfigButton" mnemonicParsing="false" onAction="#deleteElementFromTree" text="➖">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
-                                          <Button mnemonicParsing="false" text="Редактировать">
+                                          <Button fx:id="editConfigButton" mnemonicParsing="false" onAction="#editElement" text="Редактировать">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
+                                          <Button mnemonicParsing="false" onAction="#addToTree" text="Button" />
                                       </items>
                                     </ToolBar>
-                                    <ListView fx:id="configList_MainTab" layoutY="28.0" prefHeight="144.0" prefWidth="380.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                                     <Label layoutX="6.0" layoutY="6.0" text="Список конфигураций 1С доступных пользователю:" />
+                                    <TreeView fx:id="configList_MainTab" layoutX="14.0" layoutY="40.0" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                                  </children>
                               </AnchorPane>
                           </items>
@@ -95,11 +98,12 @@
                                     <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
                                         <Button mnemonicParsing="false" text="Очистить список" />
+                                          <Button fx:id="addUser_ConfigTab" mnemonicParsing="false" onAction="#addUserManually" text="Добавить вручную" />
                                           <Button mnemonicParsing="false" onAction="#deleteFromLocalUserList" text="Удалить" />
                                       </items>
                                     </ToolBar>
                                     <ListView fx:id="userList_Local_ConfigTab" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
-                                    <Label layoutX="8.0" layoutY="44.0" text="Пользователи из программы (users.txt):" />
+                                    <Label layoutX="8.0" layoutY="44.0" text="Пользователи в базе данных:" />
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="544.0" prefWidth="405.0">
@@ -119,7 +123,13 @@
                      </children></AnchorPane>
             </content>
           </Tab>
+            <Tab text="Хранилище конфигураций">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
+      <ComboBox fx:id="group_choice_box" layoutY="28.0" prefWidth="150.0" promptText="Выбрать организацию" AnchorPane.bottomAnchor="546.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
    </children>
 </AnchorPane>

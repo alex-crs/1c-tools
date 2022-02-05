@@ -60,7 +60,7 @@ public class ConfigEditController implements Initializable {
     Label pathLabel;
 
     @FXML
-    Button addButton;
+    Button accept;
 
     private TreeItem<VirtualTree> choiceElement;
     private final Const action;
@@ -102,7 +102,7 @@ public class ConfigEditController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //отключаем фокусировку на кнопку
-        addButton.setFocusTraversable(false);
+        accept.setFocusTraversable(false);
         //инициализируем элементы меню
         initChoiceBoxValues();
         switch (action) {
@@ -134,7 +134,7 @@ public class ConfigEditController implements Initializable {
     //инициализируем редактируемый объект
     private void initEditingObject() {
         element = choiceElement.getValue();
-        addButton.setText("Изменить");
+        accept.setText("Изменить");
         virtualTreeType.setDisable(true);
         mappingObjectToFormElements();
     }
@@ -160,18 +160,21 @@ public class ConfigEditController implements Initializable {
                 hideSQLServerConfigElements();
                 transformToPath();
                 enablePath();
+                connectionType = "File=";
                 break;
             case "ws":
                 pathField.setText(path[1].replaceAll("[;\"]", ""));
                 hideSQLServerConfigElements();
                 transformToHttpPath();
                 enablePath();
+                connectionType = "ws=";
                 break;
             case "Srvr":
                 sqlAddress.setText(path[1].replaceAll("[Ref;\"]", ""));
                 sqlName.setText(path[2].replaceAll("[;\"]", ""));
                 showSQLServerConfig();
                 disablePath();
+                connectionType = "Srvr=";
                 break;
         }
         baseType.setValue(baseTypeValues.get(path[0] + "="));
@@ -240,13 +243,13 @@ public class ConfigEditController implements Initializable {
         });
 
         connectionSpeed.setOnAction(event -> {
-            if (virtualTreeType.getSelectionModel().getSelectedItem().equals("Выбирать при запуске")) {
+            if (connectionSpeed.getSelectionModel().getSelectedItem().equals("Выбирать при запуске")) {
                 ((Base) element).setClientConnectionSpeed("");
             }
-            if (virtualTreeType.getSelectionModel().getSelectedItem().equals("Обычная")) {
+            if (connectionSpeed.getSelectionModel().getSelectedItem().equals("Обычная")) {
                 ((Base) element).setClientConnectionSpeed("Normal");
             }
-            if (virtualTreeType.getSelectionModel().getSelectedItem().equals("Низкая")) {
+            if (connectionSpeed.getSelectionModel().getSelectedItem().equals("Низкая")) {
                 ((Base) element).setClientConnectionSpeed("Low");
             }
         });
@@ -327,13 +330,27 @@ public class ConfigEditController implements Initializable {
         }
     }
 
+    private int nonNullConnectionFieldsInspector() {
+        if (connectionType.equals("File=") && pathField.getText().length() > 0) {
+            return 1;
+        }
+
+        if (connectionType.equals("ws=")  && pathField.getText().length() > 0){
+            return 1;
+        }
+
+        if (connectionType.equals("Srvr=") && sqlAddress.getText().length() > 0 && sqlName.getText().length() > 0) {
+            return 1;
+        }
+        return -1;
+    }
+
     //отключает элементы настройки SQL сервера
     private void hideSQLServerConfigElements() {
         serverLabel1.setVisible(false);
         serverLabel2.setVisible(false);
         sqlAddress.setVisible(false);
         sqlName.setVisible(false);
-
     }
 
     //включает элементы настройки SQL сервера
@@ -381,7 +398,7 @@ public class ConfigEditController implements Initializable {
         authChoice.setDisable(true);
         startType.setDisable(true);
         bitDepth.setDisable(true);
-        addButton.setDisable(true);
+        accept.setDisable(true);
     }
 
     private void enableAllConfigElements() {
@@ -398,7 +415,7 @@ public class ConfigEditController implements Initializable {
         authChoice.setDisable(false);
         startType.setDisable(false);
         bitDepth.setDisable(false);
-        addButton.setDisable(false);
+        accept.setDisable(false);
     }
 
     public void openFileChoiceDialog() {
@@ -411,42 +428,63 @@ public class ConfigEditController implements Initializable {
         }
     }
 
-    public void addBaseToTree() {
+    public void accept() {
+        if (element.isFolder() || nonNullConnectionFieldsInspector() > 0) {
+            action();
+        } else {
+            mainController.alert("Не заполнены ключевые поля!");
+        }
+    }
+
+    private void action() {
         switch (action) {
             case CREATE_TREE_ELEMENT:
-                if (choiceElement == null) {
-                    choiceElement = new TreeItem<>();
-                    choiceElement.setValue(new VirtualTree(""));
-                    choiceElement.getValue().setPath("");
-                }
-
-                //формируем путь подключения к базе (только в том случае если элемент не папка
-                if (!element.isFolder()) {
-                    if (connectionType.equals("Srvr=")) {
-                        ((Base) element).setConnect(connectionType + "\"" +
-                                sqlAddress.getText() + "\";Ref=\"" + sqlName.getText() + "\"");
-                    } else {
-                        ((Base) element).setConnect(connectionType + pathField.getText()); //добавить проверку на пустой адрес или имя сервера
-                    }
-                }
-
+                choiceElementNonNullInspector();
+                connectionPathConstructor();
                 //формируем путь хранения конфигурации в древе
                 element.setPath(choiceElement.getValue().getPath());
-
-                //записываем адрес базы (если есть
-                int answer = MainWindowController.editConfigControllerManager(action, choiceElement, element);
-                if (answer > 0) {
-                    mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
-                    stage.close();
-                } else {
-                    mainController.alert("База или папка с таким именем уже существует.");
-                }
+                addToConfigTree();
                 break;
             case EDIT_TREE_CONFIG:
             case EDIT_TREE_FOLDER:
+                connectionPathConstructor();
                 mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
                 stage.close();
                 break;
         }
     }
+
+    //если элемент не выбран, создается элемент с пустым путем (иначе метод добавления выдаст ошибку)
+    private void choiceElementNonNullInspector() {
+        if (choiceElement == null) {
+            choiceElement = new TreeItem<>();
+            choiceElement.setValue(new VirtualTree(""));
+            choiceElement.getValue().setPath("");
+        }
+    }
+
+    //конструирует пути подключения к базе и присваивает созданному объекту
+    private void connectionPathConstructor() {
+        if (!element.isFolder()) {
+            if (connectionType.equals("Srvr=")) {
+                ((Base) element).setConnect(connectionType + "\"" +
+                        sqlAddress.getText() + "\";Ref=\"" + sqlName.getText() + "\"");
+            } else {
+                ((Base) element).setConnect(connectionType + pathField.getText());
+            }
+        }
+    }
+
+    //передает команду центральному методу добавления элементов в базу
+    private void addToConfigTree() {
+        int answer = MainWindowController.editConfigControllerManager(action, choiceElement, element);
+        if (answer > 0) {
+            mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
+            stage.close();
+        } else {
+            mainController.alert("База или папка с таким именем уже существует.");
+        }
+    }
 }
+
+

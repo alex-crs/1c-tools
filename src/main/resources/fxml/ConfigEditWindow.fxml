@@ -32,6 +32,6 @@
       <Label fx:id="serverLabel11" layoutX="290.0" layoutY="167.0" text="Основной режим запуска:" />
       <ChoiceBox fx:id="bitDepth" layoutX="288.0" layoutY="233.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label fx:id="serverLabel21" layoutX="288.0" layoutY="215.0" text="Разрядность:" />
-      <Button fx:id="addButton" layoutX="465.0" layoutY="29.0" mnemonicParsing="false" onAction="#addBaseToTree" text="Добавить" AnchorPane.rightAnchor="15.0" />
+      <Button fx:id="accept" layoutX="465.0" layoutY="29.0" mnemonicParsing="false" onAction="#accept" text="Добавить" AnchorPane.rightAnchor="15.0" />
    </children>
 </AnchorPane>

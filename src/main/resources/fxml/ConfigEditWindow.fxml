@@ -11,7 +11,7 @@
    <children>
       <Button fx:id="choiceButton" layoutX="162.0" layoutY="137.0" mnemonicParsing="false" onAction="#openFileChoiceDialog" text="Выбрать папку" />
       <TextField fx:id="pathField" layoutX="13.0" layoutY="137.0" prefWidth="149.0" AnchorPane.leftAnchor="15.0" />
-      <TextField fx:id="configName" layoutX="13.0" layoutY="29.0" onKeyReleased="#nameNonNullInspector" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
+      <TextField fx:id="configName" layoutX="13.0" layoutY="29.0" onAction="#accept" onKeyReleased="#nameNonNullInspector" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
       <Label layoutX="13.0" layoutY="10.0" text="Имя базы" />
       <TextField fx:id="sqlAddress" layoutX="13.0" layoutY="187.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
       <TextField fx:id="sqlName" layoutX="13.0" layoutY="233.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />

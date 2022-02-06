@@ -9,10 +9,11 @@ import entities.configStructure.VirtualTree;
 import entities.configStructure.Folder;
 import handlers.FileLengthCalculator;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import org.apache.log4j.Logger;
 import service.DataBaseService;
 import settings.BaseConfig;
@@ -21,6 +22,7 @@ import settings.UserList;
 import stages.ConfigEditStage;
 import stages.AlertWindowStage;
 import stages.GroupEditStage;
+import stages.TreeViewDialogStage;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +86,7 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configList_MainTab.setShowRoot(false);
+        configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
 
         //проверяем наличие необходимых файлов, если таковых нет - создаем
@@ -120,7 +123,7 @@ public class MainWindowController implements Initializable {
         displaySystemUserList();
     }
 
-    //на вкладке настроек оторбражает список системных пользователей
+    //на вкладке настроек отображает список системных пользователей
     //!!!!!не забыть добавить отдельный поток для запуска операции и возможность прерывания потока
     public void displaySystemUserList() {
         Platform.runLater(() -> {
@@ -168,9 +171,6 @@ public class MainWindowController implements Initializable {
         switch (action) {
             case CREATE_TREE_ELEMENT:
                 return BaseConfig.addElement(choiceElement, element);
-            case EDIT_TREE_CONFIG:
-                BaseConfig.changeElement(choiceElement.getValue(), element);
-                break;
         }
         return 0;
     }
@@ -187,6 +187,12 @@ public class MainWindowController implements Initializable {
         GroupEditStage groupEditStage = new GroupEditStage(action, this);
         groupEditStage.setResizable(false);
         groupEditStage.show();
+    }
+
+    public void moveConfig() {
+        TreeViewDialogStage treeViewDialogStage = new TreeViewDialogStage(this);
+        treeViewDialogStage.setResizable(false);
+        treeViewDialogStage.show();
     }
 
 

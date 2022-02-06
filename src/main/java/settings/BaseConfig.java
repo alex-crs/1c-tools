@@ -59,6 +59,9 @@ public class BaseConfig {
     public static TreeItem<VirtualTree> returnConfigStructure() {
         return configTree.treeBuilder();
     }
+    public static TreeItem<VirtualTree> returnFolderStructure() {
+        return configTree.folderTreeBuilder();
+    }
 
     //очищает древо конфигураций
     public static void clearTree() {
@@ -83,15 +86,13 @@ public class BaseConfig {
         configTree.removeElement(element);
     }
 
+    public static void moveElement(VirtualTree element, TreeItem<VirtualTree> sourcePath){
+        configTree.removeElement(element);
+        addElement(sourcePath,element);
+    }
+
     //изменяет isExpand статус элемента (раскрыт или закрыт элемент
     public static void changeCurrentExpandStatement(VirtualTree element, boolean status) {
         configTree.changeCurrentExpandStatement(element, status);
-    }
-
-    public static void changeElement(VirtualTree oldElement, VirtualTree newElement){
-        LOGGER.info("Изменение элемента");
-        configTree.changeElement(oldElement, newElement);
-        LOGGER.info("Элеент изменен");
-
     }
 }

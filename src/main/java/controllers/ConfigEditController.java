@@ -92,7 +92,8 @@ public class ConfigEditController implements Initializable {
 
     String connectionType;
 
-    public ConfigEditController(TreeItem<VirtualTree> choiceElement, Const action, MainWindowController mainController, Stage stage) {
+    public ConfigEditController(TreeItem<VirtualTree> choiceElement, Const action,
+                                MainWindowController mainController, Stage stage) {
         this.choiceElement = choiceElement;
         this.action = action;
         this.mainController = mainController;
@@ -152,6 +153,7 @@ public class ConfigEditController implements Initializable {
         }
     }
 
+    //из объекта определяет тип соединения (формирует форму вывода и заполняет необходимые поля)
     private void connectionChoiceHandler() {
         String[] path = (((Base) element).getConnect().split("="));
         switch (path[0]) {
@@ -418,6 +420,7 @@ public class ConfigEditController implements Initializable {
         accept.setDisable(false);
     }
 
+    //открывает диалог выбора файла конфигурации
     public void openFileChoiceDialog() {
         FileChooser dialog = new FileChooser();
         Stage stage = ((ConfigEditStage) choiceButton.getScene().getWindow());

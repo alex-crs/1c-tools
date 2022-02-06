@@ -159,21 +159,7 @@ public class VirtualTree {
         }
     }
 
-    public void changeElement(VirtualTree oldElement, VirtualTree newElement) {
-        for (VirtualTree e : elements) {
-            if (e.equals(oldElement)) {
-                elements.remove(e);
-                elements.add(newElement);
-                sortCurrentElements();
-                break;
-            }
-            if (e.folder) {
-                e.changeElement(oldElement, newElement);
-            }
-        }
-    }
-
-    //строит список конфигураций с учетом иерархий
+    //строит список конфигураций с учетом иерархий (с папками и конфигурациями)
     public TreeItem<VirtualTree> treeBuilder() {
         TreeItem<VirtualTree> parent = treeItemGenerator(this);
         parent.expandedProperty().addListener(new ChangeListener<Boolean>() {
@@ -187,6 +173,20 @@ public class VirtualTree {
             if (virtualTree.elements.size() != 0) {
                 parent.getChildren().add(virtualTree.treeBuilder());
             } else {
+                parent.getChildren().add(treeItemGenerator(virtualTree));
+            }
+            parent.setExpanded(isExpand);
+        });
+        return parent;
+    }
+
+    //строит древо папок без конфигураций
+    public TreeItem<VirtualTree> folderTreeBuilder() {
+        TreeItem<VirtualTree> parent = treeItemGenerator(this);
+        elements.forEach(virtualTree -> {
+            if (virtualTree.elements.size() != 0 && virtualTree.isFolder()) {
+                parent.getChildren().add(virtualTree.folderTreeBuilder());
+            } else if (virtualTree.isFolder()){
                 parent.getChildren().add(treeItemGenerator(virtualTree));
             }
             parent.setExpanded(isExpand);

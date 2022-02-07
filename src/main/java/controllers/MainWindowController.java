@@ -23,11 +23,13 @@ import stages.ConfigEditStage;
 import stages.AlertWindowStage;
 import stages.GroupEditStage;
 import stages.TreeViewDialogStage;
+import sun.reflect.generics.tree.Tree;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static entities.Const.*;
 import static handlers.CacheCleaner.clearCacheByUser;
@@ -163,6 +165,19 @@ public class MainWindowController implements Initializable {
             } catch (IllegalArgumentException e) {
                 user_list.loadUserListByGroup(query);
                 displayUserList();
+            }
+        });
+
+        //запускаем слушатель горячих клавиш
+        configList_MainTab.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+
+                //очищает выделение
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    event.consume();
+                    configList_MainTab.getSelectionModel().clearSelection();
+                }
             }
         });
     }

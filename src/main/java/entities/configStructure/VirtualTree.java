@@ -38,6 +38,7 @@ public class VirtualTree {
     }
 
     public void setPath(String path) {
+        this.path.delete(0,path.length());
         this.path.append(path);
     }
 
@@ -48,6 +49,7 @@ public class VirtualTree {
     public String getPath() {
         return path.toString();
     }
+
 
     //рекурсивно ищет элемент по всему древу
     public VirtualTree findFromTree(VirtualTree element) {
@@ -111,52 +113,53 @@ public class VirtualTree {
         return answer;
     }
 
-    //выбирает папка или конфигурация и выполняет соответствующую функцию добавления элемента
-    public int addTreeElement(String path, VirtualTree element) {
+    //проверяет элемент добавляемый элемент на наличие дубликатов, подготавливает и добавляет элемент
+    public int inspectAndAddTreeElement(String path, VirtualTree element) {
         if (findFromTree(element) == null) {
-            if (element.folder) {
-                addFolder(pathBuilder(path + "/" + element.getElementName()));
-            } else {
-                addBaseConfig(pathBuilder(path), element);
-            }
+            pathNormalizer(element, path);
+            addVirtualElement(pathBuilder(path), element);
             return 1;
         } else {
             return -1;
         }
     }
 
-    //добавляет папку в древо
-    private void addFolder(String[] path) {
-        Optional<VirtualTree> currentObject = elements.stream().filter(virtualTree ->
-                virtualTree.getElementName().equals(Objects.requireNonNull(path[0]))).findFirst();
-        if (currentObject.isPresent()) {
-            currentObject.get().addFolder(pathCut(path));
-        } else if (path.length > 0 && path[0].length() > 0) {
-            VirtualTree treeObject = new Folder(path[0]);
-
-            treeObject.setPath(getPath() + (elementName != null ? "/" + elementName : ""));
-            treeObject.addFolder(pathCut(path));
-            elements.add(treeObject);
-        }
-        sortCurrentElements();
-    }
-
-    //добавляет конфигурацию в древо
-    private void addBaseConfig(String[] path, VirtualTree element) {
+    //добавляет виртуальный элемент независимо от того папка он или конфигурация
+    private void addVirtualElement(String[] path, VirtualTree element) {
         Optional<VirtualTree> currentObject = elements.stream()
                 .filter(virtualTree -> virtualTree.getElementName().equals(Objects.requireNonNull(path[0])))
                 .findFirst();
-
         if (currentObject.isPresent()) {
-            currentObject.get().addBaseConfig(pathCut(path), element);
+            currentObject.get().addVirtualElement(pathCut(path), element);
         } else if (path.length > 0 && path[0].length() > 0) {
             VirtualTree treeObject = new Folder(path[0]);
             treeObject.setPath(getPath() + (elementName != null ? "/" + elementName : ""));
-            treeObject.addBaseConfig(pathCut(path), element);
+            treeObject.addVirtualElement(pathCut(path), element);
             elements.add(treeObject);
-        } else {
+        } else if (findElement(element) > 0) {
             elements.add(element);
         }
+    }
+
+    //восстанавливает пути до объекта и вложенных в него объектов относительно обновленного древа
+    private void pathNormalizer(VirtualTree element, String path) {
+        if (element.isFolder()) {
+            element.getElements().forEach(virtualTree -> {
+                if (virtualTree.isFolder()) {
+                    pathNormalizer(virtualTree, path + "/" + element.getElementName());
+                } else {
+                    virtualTree.setPath(path + "/" + element.getElementName());
+                }
+            });
+        }
+        element.setPath(path.length() > 0 ? path : "");
+    }
+
+    private int findElement(VirtualTree element) {
+        Optional<VirtualTree> findElement = elements.stream()
+                .filter(virtualTree -> virtualTree.getElementName().equals(Objects.requireNonNull(element.elementName)))
+                .findFirst();
+        return findElement.isPresent() ? -1 : 1;
     }
 
     //строит список конфигураций с учетом иерархий (с папками и конфигурациями)
@@ -186,7 +189,7 @@ public class VirtualTree {
         elements.forEach(virtualTree -> {
             if (virtualTree.elements.size() != 0 && virtualTree.isFolder()) {
                 parent.getChildren().add(virtualTree.folderTreeBuilder());
-            } else if (virtualTree.isFolder()){
+            } else if (virtualTree.isFolder()) {
                 parent.getChildren().add(treeItemGenerator(virtualTree));
             }
             parent.setExpanded(isExpand);

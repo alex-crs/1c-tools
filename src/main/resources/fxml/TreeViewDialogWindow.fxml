@@ -4,10 +4,10 @@
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="250.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TreeView fx:id="treeViewDialog" layoutX="14.0" layoutY="14.0" prefHeight="187.0" prefWidth="383.0" />
-      <Button fx:id="accept" layoutX="45.0" layoutY="220.0" mnemonicParsing="false" onAction="#accept" text="Применить" />
-      <Button fx:id="cancel" layoutX="228.0" layoutY="220.0" mnemonicParsing="false" onAction="#cancel" text="Отмена" />
+      <TreeView fx:id="treeViewDialog" prefHeight="187.0" prefWidth="383.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <Button fx:id="accept" layoutX="235.0" layoutY="194.0" mnemonicParsing="false" onAction="#accept" text="Применить" AnchorPane.bottomAnchor="5.0" />
+      <Button fx:id="cancel" layoutX="322.0" layoutY="195.0" mnemonicParsing="false" onAction="#cancel" text="Отмена" AnchorPane.bottomAnchor="5.0" />
    </children>
 </AnchorPane>

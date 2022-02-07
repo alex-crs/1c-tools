@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class BaseConfig {
     private static final Logger LOGGER = Logger.getLogger(BaseConfig.class);
@@ -32,7 +33,7 @@ public class BaseConfig {
                     }
                     if (string.toString().startsWith("[")) {
                         if (baseElement != null) {
-                            configTree.addTreeElement(baseElement.getPath(), baseElement);
+                            configTree.inspectAndAddTreeElement(baseElement.getPath(), baseElement.returnTrueCurrentObject());
                         }
                         baseElement = new Base();
                         baseElement.setElementName(string.toString()
@@ -46,7 +47,7 @@ public class BaseConfig {
                     stringCount++;
                 }
                 assert baseElement != null;
-                configTree.addTreeElement(baseElement.getPath(), baseElement);
+                configTree.inspectAndAddTreeElement(baseElement.getPath(), baseElement);
                 LOGGER.info(String.format("Коллекция конфигураций пользователя [%s] загружена. Прочитано [%s] строк", userName, stringCount));
                 configTree.sortAllElements();
             } catch (Exception e) {
@@ -59,6 +60,8 @@ public class BaseConfig {
     public static TreeItem<VirtualTree> returnConfigStructure() {
         return configTree.treeBuilder();
     }
+
+    //возвращает древо папок без конфигураций
     public static TreeItem<VirtualTree> returnFolderStructure() {
         return configTree.folderTreeBuilder();
     }
@@ -68,17 +71,38 @@ public class BaseConfig {
         configTree.getElements().clear();
     }
 
-    //добавляет элемент в древо конфигураций
+    //добавляет элемент в древо конфигураций0
     public static int addElement(TreeItem<VirtualTree> sourcePath, VirtualTree addingElement) {
         int answer = -1;
+        String path;
         if (sourcePath.getValue().isFolder()) {
-            answer = configTree.addTreeElement(sourcePath.getValue().getPath() + "/"
-                    + sourcePath.getValue().getElementName(), addingElement);
+            path = buildPathRelativeToObject(sourcePath)
+                    + "/" + sourcePath.getValue().getElementName();
+            answer = configTree.inspectAndAddTreeElement(path, addingElement);
         } else {
-            answer = configTree.addTreeElement(sourcePath.getParent().getValue().getPath()
-                    + "/" + sourcePath.getParent().getValue().getElementName(), addingElement);
+            path = buildPathRelativeToObject(sourcePath.getParent())
+                    + "/" + sourcePath.getParent().getValue().getElementName();
+            answer = configTree.inspectAndAddTreeElement(path, addingElement);
         }
         return answer;
+    }
+
+    //отстраивает путь до объекта относительно корня TreeItem
+    private static StringBuilder buildPathRelativeToObject(TreeItem<VirtualTree> element) {
+        StringBuilder path = new StringBuilder();
+        ArrayList<String> list = new ArrayList<>();
+        TreeItem<VirtualTree> currentElement = element;
+        while (true) {
+            TreeItem<VirtualTree> thisElement = currentElement.getParent();
+            if (thisElement != null) {
+                list.add(0, thisElement.getValue().getElementName());
+                currentElement = thisElement;
+            } else {
+                break;
+            }
+        }
+        list.forEach(s -> path.append(s.length() > 0 ? "/" + s : ""));
+        return path;
     }
 
     //удаляет элемент из древа конфигураций
@@ -86,9 +110,9 @@ public class BaseConfig {
         configTree.removeElement(element);
     }
 
-    public static void moveElement(VirtualTree element, TreeItem<VirtualTree> sourcePath){
+    public static void moveElement(VirtualTree element, TreeItem<VirtualTree> sourcePath) {
         configTree.removeElement(element);
-        addElement(sourcePath,element);
+        addElement(sourcePath, element);
     }
 
     //изменяет isExpand статус элемента (раскрыт или закрыт элемент

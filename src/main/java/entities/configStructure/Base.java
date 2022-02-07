@@ -166,6 +166,16 @@ public class Base extends VirtualTree {
         }
     }
 
+    public VirtualTree returnTrueCurrentObject(){
+        if (isFolder()){
+            Folder folder = new Folder(elementName);
+            folder.setPath(path);
+            return folder;
+        } else {
+            return this;
+        }
+    }
+
     @Override
     public String toString() {
         return elementName;

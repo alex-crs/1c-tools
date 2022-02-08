@@ -9,6 +9,7 @@ import lombok.Data;
 import settings.BaseConfig;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 @Data
 public class VirtualTree {
@@ -17,6 +18,10 @@ public class VirtualTree {
     private boolean folder;
     private StringBuilder path;
     private boolean isExpand;
+    private String baseId = "";
+    private String orderInTree = "";
+    private String orderInList = "";
+    private int external = 0;
 
 
     public VirtualTree() {
@@ -38,7 +43,7 @@ public class VirtualTree {
     }
 
     public void setPath(String path) {
-        this.path.delete(0,path.length());
+        this.path.delete(0, this.path.length());
         this.path.append(path);
     }
 
@@ -133,7 +138,8 @@ public class VirtualTree {
             currentObject.get().addVirtualElement(pathCut(path), element);
         } else if (path.length > 0 && path[0].length() > 0) {
             VirtualTree treeObject = new Folder(path[0]);
-            treeObject.setPath(getPath() + (elementName != null ? "/" + elementName : ""));
+            treeObject.setPath((getPath() + (elementName != null ? "/" + elementName : "")
+                    .replaceAll("//","/")));
             treeObject.addVirtualElement(pathCut(path), element);
             elements.add(treeObject);
         } else if (findElement(element) > 0) {
@@ -160,6 +166,89 @@ public class VirtualTree {
                 .filter(virtualTree -> virtualTree.getElementName().equals(Objects.requireNonNull(element.elementName)))
                 .findFirst();
         return findElement.isPresent() ? -1 : 1;
+    }
+
+    public synchronized ArrayList<String> virtualTreeAsListCollector() {
+        ArrayList<String> configList = new ArrayList<>();
+        elements.forEach(new Consumer<VirtualTree>() {
+            @Override
+            public void accept(VirtualTree virtualTree) {
+                if (virtualTree.isFolder()) {
+                    configList.addAll(transformFolderToArray((Folder) virtualTree));
+                    configList.addAll(virtualTree.virtualTreeAsListCollector());
+                } else {
+                    configList.addAll(transformConfigToArray((Base) virtualTree));
+                }
+            }
+        });
+        return configList;
+    }
+
+    //формирует массив с параметрами конфигурации
+    private synchronized ArrayList<String> transformConfigToArray(Base element) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("[" + element.getElementName() + "]");
+        list.add("Connect=" + element.getConnect());
+        if (element.getBaseId().length() > 0) {
+            list.add("ID=" + element.getBaseId());
+        }
+//        if (element.getOrderInTree().length() > 0) {
+//            list.add("OrderInTree=" + element.getOrderInTree());
+//        }
+//        if (element.getOrderInList().length() > 0) {
+//            list.add("OrderInList=" + element.getOrderInList());
+//        }
+        list.add("Folder=" + element.getPath());
+        list.add("External=" + element.getExternal());
+        if (element.getClientConnectionSpeed().length() > 0) {
+            list.add("ClientConnectionSpeed=" + element.getClientConnectionSpeed());
+        }
+        list.add("WSA=" + element.getWsa());
+        list.add("UseProxy=" + element.getUseProxy());
+        if (element.getPSrv().length() > 0) {
+            list.add("PSrv=" + element.getPSrv());
+        }
+        if (element.getPPort() > 0) {
+            list.add("PPort=" + element.getPPort());
+        }
+        if (element.getPUser().length() > 0) {
+            list.add("PUser=" + element.getPUser());
+        }
+        if (element.getPPasswd().length() > 0) {
+            list.add("PPasswd=" + element.getPPasswd());
+        }
+        if (element.getAppArch().length() > 0) {
+            list.add("AppArch=" + element.getAppArch());
+        }
+        if (element.getApp().length() > 0) {
+            list.add("App=" + element.getApp());
+        }
+        list.add("WA=" + element.getWa());
+        if (element.getVersion().length() > 0) {
+            list.add("Version=" + element.getVersion());
+        }
+        if (element.getDefaultApp().length() > 0) {
+            list.add("DefaultApp=" + element.getDefaultApp());
+        }
+        return list;
+    }
+
+    //формирует массив с параметрами папки
+    private synchronized ArrayList<String> transformFolderToArray(Folder folder) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("[" + folder.getElementName() + "]");
+        if (folder.getBaseId().length() > 0) {
+            list.add("ID=" + folder.getBaseId());
+        }
+        if (folder.getOrderInList().length() > 0) {
+            list.add("OrderInList=" + folder.getOrderInList());
+        }
+        list.add("Folder=" + folder.getPath());
+        if (folder.getOrderInTree().length() > 0) {
+            list.add("OrderInTree=" + folder.getOrderInTree());
+        }
+        list.add("External=" + folder.getExternal());
+        return list;
     }
 
     //строит список конфигураций с учетом иерархий (с папками и конфигурациями)

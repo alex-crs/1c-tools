@@ -262,6 +262,7 @@ public class MainWindowController implements Initializable {
 
     //очищает кэш пользователя
     public void clearCache() {
+        BaseConfig.writeConfigToFile(userList_MainTab.getSelectionModel().getSelectedItem().getName(), operatingSystem);
         if (userList_MainTab.getItems().size() > 0) {
             clearCacheByUser(userList_MainTab.getSelectionModel().getSelectedItems(), ignoredObjects);
             calcCashSpace();

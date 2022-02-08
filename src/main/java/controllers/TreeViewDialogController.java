@@ -31,7 +31,7 @@ public class TreeViewDialogController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         treeViewDialog.setRoot(BaseConfig.returnFolderStructure());
         treeViewDialog.getSelectionModel().select(0);
-        treeViewDialog.setShowRoot(false);
+        treeViewDialog.getRoot().getValue().setElementName("<...>");
         accept.setFocusTraversable(false);
         cancel.setFocusTraversable(false);
     }
@@ -42,6 +42,7 @@ public class TreeViewDialogController implements Initializable {
     }
 
     public void accept() {
+        treeViewDialog.getRoot().getValue().setElementName("");
         TreeItem<VirtualTree> choiceFolder = treeViewDialog.getSelectionModel().getSelectedItem();
             mainWindowController.configList_MainTab.getSelectionModel().getSelectedItems().forEach(new Consumer<TreeItem<VirtualTree>>() {
                 @Override

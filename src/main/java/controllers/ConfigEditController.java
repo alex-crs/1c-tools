@@ -60,6 +60,9 @@ public class ConfigEditController implements Initializable {
     Label pathLabel;
 
     @FXML
+    TextField defaultVersion;
+
+    @FXML
     Button accept;
 
     private TreeItem<VirtualTree> choiceElement;
@@ -150,6 +153,7 @@ public class ConfigEditController implements Initializable {
             authChoice.setValue(authChoiceValues.get(((Base) element).getWa()));
             startType.setValue(startTypeValues.get(((Base) element).getApp()));
             bitDepth.setValue(bitDepthValues.get(((Base) element).getAppArch()));
+            defaultVersion.setText(((Base) element).getVersion());
         }
     }
 
@@ -328,23 +332,43 @@ public class ConfigEditController implements Initializable {
             disableAllConfigElements();
         } else {
             enableAllConfigElements();
-            element.setElementName(configName.getText());
         }
     }
 
-    private int nonNullConnectionFieldsInspector() {
-        if (connectionType.equals("File=") && pathField.getText().length() > 0) {
-            return 1;
+    //счетчик выполнения условия (на данный момент должно быть не менее 2х)
+    private int fieldFillInspector() {
+        int count = 2;
+        if (connectionType.equals("File=") && pathField.getText().length() == 0) {
+            mainController.alert("Не заполнен путь расположения файловой базы!");
+            count--;
         }
 
-        if (connectionType.equals("ws=")  && pathField.getText().length() > 0){
-            return 1;
+        if (connectionType.equals("ws=") && pathField.getText().length() == 0) {
+            mainController.alert("Не заполнен адрес WEB-сервера!");
+            count--;
         }
 
-        if (connectionType.equals("Srvr=") && sqlAddress.getText().length() > 0 && sqlName.getText().length() > 0) {
-            return 1;
+        if (connectionType.equals("Srvr=") && sqlAddress.getText().length() == 0 && sqlName.getText().length() == 0) {
+            mainController.alert("Не заполнены параметры 1С сервера!");
+            count--;
         }
-        return -1;
+        if (versionFormatInspector() < 0) {
+            mainController.alert("Недопустимые символы в версии программы!");
+            count--;
+        }
+        return count;
+    }
+
+    //проверяет введено ли число в поле "Версия"
+    private long versionFormatInspector() {
+        String string = defaultVersion.getText().replaceAll("\\.", "");
+        long result = -1;
+        try {
+            result = Long.parseLong(string.length() == 0 ? "1" : string);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        return result;
     }
 
     //отключает элементы настройки SQL сервера
@@ -432,10 +456,8 @@ public class ConfigEditController implements Initializable {
     }
 
     public void accept() {
-        if (element.isFolder() || nonNullConnectionFieldsInspector() > 0) {
+        if (element.isFolder() || fieldFillInspector() == 2) {
             action();
-        } else {
-            mainController.alert("Не заполнены ключевые поля!");
         }
     }
 
@@ -446,12 +468,15 @@ public class ConfigEditController implements Initializable {
                 connectionPathConstructor();
                 //формируем путь хранения конфигурации в древе
                 element.setPath(choiceElement.getValue().getPath());
+                element.setElementName(configName.getText());
                 addToConfigTree();
                 break;
             case EDIT_TREE_CONFIG:
             case EDIT_TREE_FOLDER:
                 connectionPathConstructor();
                 mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
+                element.setElementName(configName.getText());
+                ((Base) element).setVersion(defaultVersion.getText());
                 stage.close();
                 break;
         }

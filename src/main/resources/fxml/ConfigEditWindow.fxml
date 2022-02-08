@@ -17,7 +17,7 @@
       <TextField fx:id="sqlName" layoutX="13.0" layoutY="233.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
       <Label fx:id="serverLabel1" layoutX="13.0" layoutY="167.0" text="Кластер серверов:" />
       <Label fx:id="serverLabel2" layoutX="13.0" layoutY="215.0" text="Имя информационной базы:" />
-      <Label layoutX="15.0" layoutY="270.0" prefHeight="17.0" prefWidth="525.0" text="Настройка прокси не поддерживается. Доступен импорт конфигурации с указанием прокси." />
+      <Label layoutX="15.0" layoutY="315.0" prefHeight="17.0" prefWidth="525.0" text="Настройка прокси не поддерживается. Доступен импорт конфигурации с указанием прокси." />
       <Separator layoutX="272.0" layoutY="16.0" orientation="VERTICAL" prefHeight="254.0" prefWidth="5.0" />
       <Label fx:id="pathLabel" layoutX="13.0" layoutY="118.0" text="Путь к информационной базе:" />
       <ChoiceBox fx:id="baseType" layoutX="13.0" layoutY="86.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
@@ -31,7 +31,9 @@
       <ChoiceBox fx:id="startType" layoutX="288.0" layoutY="187.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label fx:id="serverLabel11" layoutX="290.0" layoutY="167.0" text="Основной режим запуска:" />
       <ChoiceBox fx:id="bitDepth" layoutX="288.0" layoutY="233.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
-      <Label fx:id="serverLabel21" layoutX="288.0" layoutY="215.0" text="Разрядность:" />
+      <Label fx:id="serverLabel21" layoutX="290.0" layoutY="215.0" text="Разрядность:" />
       <Button fx:id="accept" layoutX="465.0" layoutY="29.0" mnemonicParsing="false" onAction="#accept" text="Добавить" AnchorPane.rightAnchor="15.0" />
+      <TextField fx:id="defaultVersion" layoutX="289.0" layoutY="281.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
+      <Label layoutX="290.0" layoutY="263.0" text="Версия программы:" />
    </children>
 </AnchorPane>

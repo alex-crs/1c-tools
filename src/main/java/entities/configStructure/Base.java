@@ -170,6 +170,9 @@ public class Base extends VirtualTree {
         if (isFolder()){
             Folder folder = new Folder(elementName);
             folder.setPath(path);
+            folder.setBaseId(baseId);
+            folder.setOrderInTree(orderInTree);
+            folder.setExternal(external);
             return folder;
         } else {
             return this;

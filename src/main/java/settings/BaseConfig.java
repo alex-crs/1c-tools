@@ -56,6 +56,25 @@ public class BaseConfig {
         }
     }
 
+    //записывает в текущее древо конфигураций в файл
+    public static void writeConfigToFile(String userName, OS operatingSystem) {
+//        File file = new File(operatingSystem.basePathConstructor(userName));
+        File file = new File("ibases.v8i");
+        ArrayList<String> list = configTree.virtualTreeAsListCollector();
+        try (FileOutputStream fis = new FileOutputStream(file);
+        BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis,StandardCharsets.UTF_8)))){
+            writer.write(65279);
+            for (String l : list) {
+                writer.write(l);
+                writer.newLine();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     //возвращает древо конфигураций
     public static TreeItem<VirtualTree> returnConfigStructure() {
         return configTree.treeBuilder();
@@ -71,7 +90,7 @@ public class BaseConfig {
         configTree.getElements().clear();
     }
 
-    //добавляет элемент в древо конфигураций0
+    //добавляет элемент в древо конфигураций
     public static int addElement(TreeItem<VirtualTree> sourcePath, VirtualTree addingElement) {
         int answer = -1;
         String path;

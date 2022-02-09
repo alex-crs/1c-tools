@@ -107,6 +107,13 @@ public class ConfigEditController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         //отключаем фокусировку на кнопку
         accept.setFocusTraversable(false);
+        choiceButton.setFocusTraversable(false);
+        baseType.setFocusTraversable(false);
+        virtualTreeType.setFocusTraversable(false);
+        connectionSpeed.setFocusTraversable(false);
+        authChoice.setFocusTraversable(false);
+        startType.setFocusTraversable(false);
+        bitDepth.setFocusTraversable(false);
         //инициализируем элементы меню
         initChoiceBoxValues();
         switch (action) {
@@ -477,6 +484,7 @@ public class ConfigEditController implements Initializable {
                 mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
                 element.setElementName(configName.getText());
                 ((Base) element).setVersion(defaultVersion.getText());
+                mainController.enableSaveButton();
                 stage.close();
                 break;
         }
@@ -508,6 +516,7 @@ public class ConfigEditController implements Initializable {
         int answer = MainWindowController.editConfigControllerManager(action, choiceElement, element);
         if (answer > 0) {
             mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
+            mainController.enableSaveButton();
             stage.close();
         } else {
             mainController.alert("База или папка с таким именем уже существует.");

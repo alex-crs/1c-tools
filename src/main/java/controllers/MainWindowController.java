@@ -23,13 +23,11 @@ import stages.ConfigEditStage;
 import stages.AlertWindowStage;
 import stages.GroupEditStage;
 import stages.TreeViewDialogStage;
-import sun.reflect.generics.tree.Tree;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static entities.Const.*;
 import static handlers.CacheCleaner.clearCacheByUser;
@@ -41,10 +39,11 @@ public class MainWindowController implements Initializable {
     private Ignored_objects ignoredObjects;
     private OS operatingSystem;
     public DataBaseService data_base;
-    StringBuilder currentUser;
+    private StringBuilder currentUser;
     public static String SYSTEM_LIST = "system";
     public static String LOCAL_LIST = "local";
     public static String BD_LIST = "BD";
+    private boolean unSavedChanges = false;
     private static final List<File> externalWorkFiles = Arrays.asList(
             new File("users.txt"),
             new File("ignore.txt"),
@@ -63,7 +62,10 @@ public class MainWindowController implements Initializable {
     ComboBox<String> group_choice_box;
 
     @FXML
-    Button addConfigButton;
+    SplitMenuButton addConfigButton;
+
+    @FXML
+    Button saveChangesButton;
 
     @FXML
     Button deleteConfigButton;
@@ -85,11 +87,19 @@ public class MainWindowController implements Initializable {
     @FXML
     Button addUser_ConfigTab;
 
+    public boolean isUnSavedChanges() {
+        return unSavedChanges;
+    }
+
+    public void setUnSavedChanges(boolean unSavedChanges) {
+        this.unSavedChanges = unSavedChanges;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        configList_MainTab.setShowRoot(false);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
+        disableSaveButton();
 
         //проверяем наличие необходимых файлов, если таковых нет - создаем
         checkExternalWorkFiles();
@@ -114,6 +124,7 @@ public class MainWindowController implements Initializable {
         addConfigButton.setFocusTraversable(false);
         editConfigButton.setFocusTraversable(false);
         deleteConfigButton.setFocusTraversable(false);
+        saveChangesButton.setFocusTraversable(false);
 
         currentUser = new StringBuilder();
         displayUserList(); //показываем список пользователей
@@ -172,7 +183,6 @@ public class MainWindowController implements Initializable {
         configList_MainTab.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-
                 //очищает выделение
                 if (event.getCode() == KeyCode.ESCAPE) {
                     event.consume();
@@ -262,7 +272,6 @@ public class MainWindowController implements Initializable {
 
     //очищает кэш пользователя
     public void clearCache() {
-        BaseConfig.writeConfigToFile(userList_MainTab.getSelectionModel().getSelectedItem().getName(), operatingSystem);
         if (userList_MainTab.getItems().size() > 0) {
             clearCacheByUser(userList_MainTab.getSelectionModel().getSelectedItems(), ignoredObjects);
             calcCashSpace();
@@ -270,11 +279,35 @@ public class MainWindowController implements Initializable {
     }
 
     //отслеживает список выделенных пользователей
-    public void clickEvent(MouseEvent mouseEvent) {
+    public void userListClickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 1 && userList_MainTab.getSelectionModel().getSelectedItems().size() > 0) {
             calcCashSpace();
             fillBaseList(userList_MainTab.getSelectionModel().getSelectedItem());
         }
+    }
+
+    public void setConfigList_MainTabClickEvent(MouseEvent mouseEvent){
+        if (mouseEvent.getClickCount() == 2) {
+            editElement();
+        }
+    }
+
+    //сохранить конфигурацию в файл
+    public void saveChanges() {
+        BaseConfig.writeConfigToFile(currentUser.toString(), operatingSystem);
+        disableSaveButton();
+    }
+
+    //отключить кнопку сохранения конфигураций
+    public void disableSaveButton() {
+        setUnSavedChanges(false);
+        saveChangesButton.setDisable(true);
+    }
+
+    //включить кнопку сохранения конфигураций
+    public void enableSaveButton() {
+        setUnSavedChanges(true);
+        saveChangesButton.setDisable(false);
     }
 
     private void calcCashSpace() {
@@ -327,11 +360,14 @@ public class MainWindowController implements Initializable {
     }
 
     public void deleteElementFromTree() {
-        TreeItem<VirtualTree> choiceElement = configList_MainTab.getSelectionModel().getSelectedItem();
-        if (choiceElement != null) {
-            BaseConfig.deleteElement(choiceElement.getValue());
-            updateList();
+        List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
+        if (choiceElement.size() > 0) {
+            for (TreeItem<VirtualTree> e : choiceElement) {
+                BaseConfig.deleteElement(e.getValue());
+            }
         }
+        updateList();
+        enableSaveButton();
     }
 
     public void alert(String message) {
@@ -339,4 +375,6 @@ public class MainWindowController implements Initializable {
         alert.setResizable(false);
         alert.show();
     }
+
+
 }

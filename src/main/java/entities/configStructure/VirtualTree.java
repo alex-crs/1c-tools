@@ -139,7 +139,7 @@ public class VirtualTree {
         } else if (path.length > 0 && path[0].length() > 0) {
             VirtualTree treeObject = new Folder(path[0]);
             treeObject.setPath((getPath() + (elementName != null ? "/" + elementName : "")
-                    .replaceAll("//","/")));
+                    .replaceAll("//", "/")));
             treeObject.addVirtualElement(pathCut(path), element);
             elements.add(treeObject);
         } else if (findElement(element) > 0) {
@@ -174,7 +174,7 @@ public class VirtualTree {
             @Override
             public void accept(VirtualTree virtualTree) {
                 if (virtualTree.isFolder()) {
-                    configList.addAll(transformFolderToArray((Folder) virtualTree));
+                    configList.addAll(transformFolderToArray(virtualTree));
                     configList.addAll(virtualTree.virtualTreeAsListCollector());
                 } else {
                     configList.addAll(transformConfigToArray((Base) virtualTree));
@@ -234,7 +234,7 @@ public class VirtualTree {
     }
 
     //формирует массив с параметрами папки
-    private synchronized ArrayList<String> transformFolderToArray(Folder folder) {
+    private synchronized ArrayList<String> transformFolderToArray(VirtualTree folder) {
         ArrayList<String> list = new ArrayList<>();
         list.add("[" + folder.getElementName() + "]");
         if (folder.getBaseId().length() > 0) {
@@ -289,7 +289,10 @@ public class VirtualTree {
     /*Возвращает TreeItem из объекта типа VirtualTree с иконкой папочки или конфигурации*/
     private TreeItem<VirtualTree> treeItemGenerator(VirtualTree element) {
         TreeItem<VirtualTree> item = new TreeItem<>(element);
-        if (element.folder) {
+        if (element.getElementName().equals("")){
+            item.setGraphic(new ImageView(new Image("images/root.png")));
+            element.setExpand(true);
+        } else if (element.isFolder()) {
             item.setGraphic(new ImageView(new Image("images/folder.png")));
         } else {
             item.setGraphic(new ImageView(new Image("images/config.png")));

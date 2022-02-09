@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -21,7 +22,6 @@
         <menus>
           <Menu mnemonicParsing="false" text="Меню">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Сохранить список пользователей" />
                   <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
@@ -51,7 +51,7 @@
                                           </Button>
                                        </items>
                                     </ToolBar>
-                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onMouseClicked="#clickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onMouseClicked="#userListClickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                                     <Label layoutX="5.0" layoutY="5.0" text="Список пользователей:" />
                                  </children>
                               </AnchorPane>
@@ -59,11 +59,16 @@
                                  <children>
                                     <ToolBar layoutY="333.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                       <items>
-                                        <Button fx:id="addConfigButton" mnemonicParsing="false" onAction="#addToTree" text="➕">
+                                          <SplitMenuButton fx:id="addConfigButton" mnemonicParsing="false" onAction="#addToTree" text="➕">
+                                            <items>
+                                              <MenuItem mnemonicParsing="false" onAction="#addToTree" text="Добавить новый элемент в список" />
+                                              <MenuItem mnemonicParsing="false" text="Добавить конфигурацию из хранилища" />
+                                                <MenuItem mnemonicParsing="false" text="Добавить конфигурацию в хранилище" />
+                                            </items>
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
-                                          </Button>
+                                          </SplitMenuButton>
                                           <Button fx:id="deleteConfigButton" mnemonicParsing="false" onAction="#deleteElementFromTree" text="➖">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
@@ -74,11 +79,18 @@
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#moveConfig" text="Переместить" />
+                                          <Button mnemonicParsing="false" onAction="#moveConfig" text="Переместить">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor></Button>
+                                          <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#saveChanges" text="Сохранить изменения">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor></Button>
                                       </items>
                                     </ToolBar>
                                     <Label layoutX="6.0" layoutY="6.0" text="Список конфигураций 1С доступных пользователю:" />
-                                    <TreeView fx:id="configList_MainTab" layoutY="23.0" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0" />
+                                    <TreeView fx:id="configList_MainTab" layoutY="23.0" onMouseClicked="#setConfigList_MainTabClickEvent" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0" />
                                  </children>
                               </AnchorPane>
                           </items>

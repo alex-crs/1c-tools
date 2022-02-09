@@ -58,8 +58,8 @@ public class BaseConfig {
 
     //записывает в текущее древо конфигураций в файл
     public static void writeConfigToFile(String userName, OS operatingSystem) {
-//        File file = new File(operatingSystem.basePathConstructor(userName));
-        File file = new File("ibases.v8i");
+        File file = new File(operatingSystem.basePathConstructor(userName));
+//        File file = new File("ibases.v8i");
         ArrayList<String> list = configTree.virtualTreeAsListCollector();
         try (FileOutputStream fis = new FileOutputStream(file);
         BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis,StandardCharsets.UTF_8)))){

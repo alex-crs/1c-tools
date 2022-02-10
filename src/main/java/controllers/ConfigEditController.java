@@ -60,6 +60,9 @@ public class ConfigEditController implements Initializable {
     Label pathLabel;
 
     @FXML
+    Label windowMessage;
+
+    @FXML
     TextField defaultVersion;
 
     @FXML
@@ -166,6 +169,7 @@ public class ConfigEditController implements Initializable {
 
     //из объекта определяет тип соединения (формирует форму вывода и заполняет необходимые поля)
     private void connectionChoiceHandler() {
+        windowMessage.setText("Настройка прокси не поддерживается. Доступен импорт конфигурации с указанием прокси.");
         String[] path = (((Base) element).getConnect().split("="));
         switch (path[0]) {
             case "File":
@@ -244,12 +248,14 @@ public class ConfigEditController implements Initializable {
         virtualTreeType.setOnAction(event -> {
             if (virtualTreeType.getSelectionModel().getSelectedItem().equals("Конфигурация")) {
                 changeWindowSize(400);
+                windowMessage.setText("Настройка прокси не поддерживается. Доступен импорт конфигурации с указанием прокси.");
                 connectionType = "File=";
                 element = new Base(configName.getText());
                 element.setFolder(false);
             }
             if (virtualTreeType.getSelectionModel().getSelectedItem().equals("Папка")) {
                 changeWindowSize(100);
+                windowMessage.setText("");
                 connectionType = null;
                 element = new Folder(configName.getText());
             }

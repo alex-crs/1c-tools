@@ -19,10 +19,7 @@ import service.DataBaseService;
 import settings.BaseConfig;
 import settings.Ignored_objects;
 import settings.UserList;
-import stages.ConfigEditStage;
-import stages.AlertWindowStage;
-import stages.GroupEditStage;
-import stages.TreeViewDialogStage;
+import stages.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +36,7 @@ public class MainWindowController implements Initializable {
     private Ignored_objects ignoredObjects;
     private OS operatingSystem;
     public DataBaseService data_base;
-    private StringBuilder currentUser;
+    private User currentUser;
     public static String SYSTEM_LIST = "system";
     public static String LOCAL_LIST = "local";
     public static String BD_LIST = "BD";
@@ -95,6 +92,10 @@ public class MainWindowController implements Initializable {
         this.unSavedChanges = unSavedChanges;
     }
 
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -126,7 +127,8 @@ public class MainWindowController implements Initializable {
         deleteConfigButton.setFocusTraversable(false);
         saveChangesButton.setFocusTraversable(false);
 
-        currentUser = new StringBuilder();
+        currentUser = new User();
+        currentUser.setName("");
         displayUserList(); //показываем список пользователей
     }
 
@@ -188,6 +190,10 @@ public class MainWindowController implements Initializable {
                     event.consume();
                     configList_MainTab.getSelectionModel().clearSelection();
                 }
+                if (event.getCode() == KeyCode.DELETE) {
+                    event.consume();
+                    deleteElementFromTree();
+                }
             }
         });
     }
@@ -218,6 +224,12 @@ public class MainWindowController implements Initializable {
         TreeViewDialogStage treeViewDialogStage = new TreeViewDialogStage(this);
         treeViewDialogStage.setResizable(false);
         treeViewDialogStage.show();
+    }
+
+    public void showActionQuestion(Const action) {
+        ActionWindowStage aw = new ActionWindowStage(action, this);
+        aw.setResizable(false);
+        aw.show();
     }
 
 
@@ -255,9 +267,8 @@ public class MainWindowController implements Initializable {
 
     //заполняет лист доступных пользователю баз 1С
     public void fillBaseList(User userName) {
-        if (!currentUser.toString().equals(userName.getName())) {
-            currentUser.delete(0, currentUser.length());
-            currentUser.append(userName);
+        if (!currentUser.getName().equals(userName.getName())) {
+            currentUser = userName;
             BaseConfig.clearTree();
             BaseConfig.readConfigParameter(userName.getName(), operatingSystem);
             Platform.runLater(new Runnable() {
@@ -280,13 +291,15 @@ public class MainWindowController implements Initializable {
 
     //отслеживает список выделенных пользователей
     public void userListClickEvent(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 1 && userList_MainTab.getSelectionModel().getSelectedItems().size() > 0) {
+        if (mouseEvent.getClickCount() == 1 && userList_MainTab.getSelectionModel().getSelectedItems().size() > 0 && !isUnSavedChanges()) {
             calcCashSpace();
             fillBaseList(userList_MainTab.getSelectionModel().getSelectedItem());
+        } else if (isUnSavedChanges() && userList_MainTab.getSelectionModel().getSelectedItem() != currentUser) {
+            showActionQuestion(CHECK_UNSAVED_DATA);
         }
     }
 
-    public void setConfigList_MainTabClickEvent(MouseEvent mouseEvent){
+    public void setConfigList_MainTabClickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             editElement();
         }
@@ -332,7 +345,7 @@ public class MainWindowController implements Initializable {
         });
     }
 
-    private void updateList() {
+    public void updateList() {
         configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
     }
 
@@ -360,14 +373,7 @@ public class MainWindowController implements Initializable {
     }
 
     public void deleteElementFromTree() {
-        List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
-        if (choiceElement.size() > 0) {
-            for (TreeItem<VirtualTree> e : choiceElement) {
-                BaseConfig.deleteElement(e.getValue());
-            }
-        }
-        updateList();
-        enableSaveButton();
+        showActionQuestion(DELETE_ELEMENT);
     }
 
     public void alert(String message) {

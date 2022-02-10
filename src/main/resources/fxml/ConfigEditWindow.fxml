@@ -17,7 +17,7 @@
       <TextField fx:id="sqlName" layoutX="13.0" layoutY="233.0" onAction="#accept" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
       <Label fx:id="serverLabel1" layoutX="13.0" layoutY="167.0" text="Кластер серверов:" />
       <Label fx:id="serverLabel2" layoutX="13.0" layoutY="215.0" text="Имя информационной базы:" />
-      <Label layoutX="15.0" layoutY="315.0" prefHeight="17.0" prefWidth="525.0" text="Настройка прокси не поддерживается. Доступен импорт конфигурации с указанием прокси." />
+      <Label fx:id="windowMessage" layoutX="15.0" layoutY="315.0" prefHeight="17.0" prefWidth="525.0" />
       <Separator layoutX="272.0" layoutY="16.0" orientation="VERTICAL" prefHeight="254.0" prefWidth="5.0" />
       <Label fx:id="pathLabel" layoutX="13.0" layoutY="118.0" text="Путь к информационной базе:" />
       <ChoiceBox fx:id="baseType" layoutX="13.0" layoutY="86.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />

@@ -15,7 +15,9 @@ public enum Const {
     //константы для конфигураций
     CREATE_TREE_ELEMENT("Создать элемент"),
     EDIT_TREE_FOLDER("Изменить имя папки"),
-    EDIT_TREE_CONFIG("Изменить параметры конфигурации");
+    EDIT_TREE_CONFIG("Изменить параметры конфигурации"),
+    CHECK_UNSAVED_DATA("Имеются несохраненные данные"),
+    DELETE_ELEMENT("Удалить элемент?");
 
     private final String title;
 

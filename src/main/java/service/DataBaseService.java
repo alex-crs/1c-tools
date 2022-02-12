@@ -6,12 +6,14 @@ import entities.User;
 import entities.GroupDTO;
 import entities.configStructure.Base;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,15 +31,21 @@ public class DataBaseService {
     Session session = null;
 
 
-    public void addToBase(Base baseElement, String group) {
-        session = factory.getCurrentSession();
-        session.beginTransaction();
-        Groups groups = (Groups) session
-                .createQuery("from Groups p where p.name = :name")
-                .setParameter("name", group)
-                .getSingleResult();
-        groups.getBaseElements().add(baseElement);
-        session.getTransaction().commit();
+    public int addToBase(Base baseElement, String group) {
+        try {
+            session = factory.getCurrentSession();
+            session.beginTransaction();
+            Groups groups = (Groups) session
+                    .createQuery("from Groups p where p.name = :name")
+                    .setParameter("name", group)
+                    .getSingleResult();
+            groups.getBaseElements().add(baseElement);
+            session.getTransaction().commit();
+            return 1;
+        } catch (HibernateException e) {
+            LOGGER.error(e);
+            return -1;
+        }
     }
 
     public List<String> getGroups() {
@@ -50,6 +58,32 @@ public class DataBaseService {
                 .collect(Collectors.toList());
         session.getTransaction().commit();
         return groups;
+    }
+
+    public void editConfig(Base base) {
+        session = factory.getCurrentSession();
+        session.beginTransaction();
+        session.save(base);
+        session.getTransaction().commit();
+    }
+
+    public void deleteConfig(Base base){
+        session = factory.getCurrentSession();
+        session.beginTransaction();
+        session.delete(base);
+        session.getTransaction().commit();
+    }
+
+    public List<Base> getBaseListByGroup(String groupName) {
+        session = factory.getCurrentSession();
+        session.beginTransaction();
+        Groups groups = (Groups) session
+                .createQuery("from Groups p where p.name = :name")
+                .setParameter("name", groupName)
+                .getSingleResult();
+        List<Base> list = new ArrayList<>(groups.getBaseElements());
+        session.getTransaction().commit();
+        return list;
     }
 
     public void addUser(User userName, String groupName) {

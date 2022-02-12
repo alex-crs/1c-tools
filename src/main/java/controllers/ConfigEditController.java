@@ -131,6 +131,7 @@ public class ConfigEditController implements Initializable {
                 break;
             //если редактируем существующую конфигурацию
             case EDIT_TREE_CONFIG:
+            case EDIT_SQL_CONFIG:
                 initEditingObject();
                 initListeners();
                 changeWindowSize(400);
@@ -493,6 +494,14 @@ public class ConfigEditController implements Initializable {
                 mainController.enableSaveButton();
                 stage.close();
                 break;
+            case EDIT_SQL_CONFIG:
+                connectionPathConstructor();
+                element.setElementName(configName.getText());
+                ((Base) element).setVersion(defaultVersion.getText());
+                mainController.data_base.editConfig((Base) element);
+                mainController.loadSQLConfigListByGroup();
+                stage.close();
+                break;
         }
     }
 
@@ -510,9 +519,9 @@ public class ConfigEditController implements Initializable {
         if (!element.isFolder()) {
             if (connectionType.equals("Srvr=")) {
                 ((Base) element).setConnect(connectionType + "\"" +
-                        sqlAddress.getText() + "\";Ref=\"" + sqlName.getText() + "\"");
+                        sqlAddress.getText() + "\";Ref=\"" + sqlName.getText() + "\";");
             } else {
-                ((Base) element).setConnect(connectionType + pathField.getText());
+                ((Base) element).setConnect(connectionType + "\"" + pathField.getText() + "\";");
             }
         }
     }

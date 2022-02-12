@@ -42,6 +42,7 @@ public class ActionWindowController implements Initializable {
                 message.setText("Имеются несохраненные данные, желаете сохранить?");
                 break;
             case DELETE_ELEMENT:
+            case DELETE_SQL_CONFIG:
                 message.setText("Желаете удалить элемент(ы)?");
                 break;
         }
@@ -58,6 +59,12 @@ public class ActionWindowController implements Initializable {
             case DELETE_ELEMENT:
                 deleteElements();
                 mainController.enableSaveButton();
+                break;
+            case DELETE_SQL_CONFIG:
+                mainController.data_base.deleteConfig(mainController.configCollection
+                        .getSelectionModel()
+                        .getSelectedItem());
+                mainController.loadSQLConfigListByGroup();
                 break;
         }
         stage.close();

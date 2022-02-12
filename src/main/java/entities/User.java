@@ -19,6 +19,10 @@ import java.util.List;
 @Entity
 @Table(name = "User")
 public class User {
+    public User(String name) {
+        this.name = name;
+    }
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,18 +1,22 @@
 package controllers;
 
 
-import entities.Const;
-import entities.OS;
-import entities.User;
-import entities.Windows;
+import entities.*;
+import entities.configStructure.Base;
 import entities.configStructure.VirtualTree;
 import entities.configStructure.Folder;
 import handlers.FileLengthCalculator;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import org.apache.log4j.Logger;
 import service.DataBaseService;
@@ -82,7 +86,26 @@ public class MainWindowController implements Initializable {
     ListView<User> usersList_System_ConfigTab;
 
     @FXML
+    TabPane tabControl;
+
+    @FXML
     Button addUser_ConfigTab;
+    //----------------------------------
+
+    //вкладка №3: редактирование конфигураций в хранилище
+    @FXML
+    TableView<Base> configCollection = new TableView<>();
+
+    final ObservableList<Base> configCollectionList = FXCollections.observableArrayList();
+
+    @FXML
+    Button addNewSQLConfig;
+
+    @FXML
+    Button editSQLConfig;
+
+    @FXML
+    Button deleteSQLConfig;
 
     public boolean isUnSavedChanges() {
         return unSavedChanges;
@@ -98,6 +121,7 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        SQLConfigListInit();
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
         disableSaveButton();
@@ -126,6 +150,9 @@ public class MainWindowController implements Initializable {
         editConfigButton.setFocusTraversable(false);
         deleteConfigButton.setFocusTraversable(false);
         saveChangesButton.setFocusTraversable(false);
+        addNewSQLConfig.setFocusTraversable(false);
+        editSQLConfig.setFocusTraversable(false);
+        deleteSQLConfig.setFocusTraversable(false);
 
         currentUser = new User();
         currentUser.setName("");
@@ -159,6 +186,7 @@ public class MainWindowController implements Initializable {
                     case DEFAULT_GROUP:
                         user_list.loadUserListByGroup(DEFAULT_GROUP.getTitle());
                         displayUserList();
+                        loadSQLConfigListByGroup();
                         break;
                     case RENAME_GROUP:
                         showGroupEditWindow(RENAME_GROUP);
@@ -178,6 +206,7 @@ public class MainWindowController implements Initializable {
             } catch (IllegalArgumentException e) {
                 user_list.loadUserListByGroup(query);
                 displayUserList();
+                loadSQLConfigListByGroup();
             }
         });
 
@@ -305,6 +334,12 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    public void setConfigList_SQLTabClickEvent(MouseEvent mouseEvent){
+        if (mouseEvent.getClickCount() == 2) {
+            editSQLElement();
+        }
+    }
+
     //сохранить конфигурацию в файл
     public void saveChanges() {
         BaseConfig.writeConfigToFile(currentUser.toString(), operatingSystem);
@@ -366,6 +401,29 @@ public class MainWindowController implements Initializable {
             alert("Необходимо выбрать редактируемый элемент");
         }
     }
+    public void saveConfigToDataBase() {
+        if (configList_MainTab.getSelectionModel().getSelectedItem() != null) {
+            if (data_base.addToBase((Base) configList_MainTab.getSelectionModel().getSelectedItem().getValue(), group_choice_box.getValue()) > 0) {
+                alert("База добавлена в хранилище.");
+            } else {
+                alert("При добавлении базы возникла ошибка! (подробнее см. журнал)");
+            }
+        }
+    }
+
+    public void editSQLElement() {
+        if (configCollection.getSelectionModel().getSelectedItem() != null) {
+            TreeItem<VirtualTree> choiceElement = new TreeItem<>(configCollection.getSelectionModel().getSelectedItem());
+            choiceElement.getValue().setFolder(false);
+            showEditConfigWindow(EDIT_SQL_CONFIG, choiceElement);
+        }
+    }
+
+    public void deleteSQLElementFromBase(){
+        if (configCollection.getSelectionModel().getSelectedItem() != null) {
+            showActionQuestion(DELETE_SQL_CONFIG);
+        }
+    }
 
     //позволяет добавлять пользователя вручную
     public void addUserManually() {
@@ -382,5 +440,84 @@ public class MainWindowController implements Initializable {
         alert.show();
     }
 
+    //инициализация таблицы для управления базой данных
+    private void SQLConfigListInit() {
+        TableColumn<Base, String> configName = new TableColumn<>("Имя конфигурации");
+        configName.setMinWidth(200);
+        TableColumn<Base, String> baseType = new TableColumn<>("Тип базы");
+        baseType.setMinWidth(100);
+        TableColumn<Base, String> configPath = new TableColumn<>("Путь");
+        configPath.setMinWidth(400);
+        configCollection.getColumns().add(configName);
+        configCollection.getColumns().add(baseType);
+        configCollection.getColumns().add(configPath);
+        configName.setCellValueFactory(new PropertyValueFactory<>("elementName"));
 
+        baseType.setCellValueFactory(param -> {
+            String baseType1 = null;
+            if (param.getValue().getConnect().contains("File")) {
+                baseType1 = "Файловая база";
+            }
+            if (param.getValue().getConnect().contains("ws")) {
+                baseType1 = "WEB-сервер";
+            }
+            if (param.getValue().getConnect().contains("Srvr")) {
+                baseType1 = "1С сервер";
+            }
+            String finalBaseType = baseType1;
+            return getStringObservableValue(finalBaseType);
+        });
+        configPath.setCellValueFactory(param -> {
+            String path = null;
+            String connect = param.getValue().getConnect();
+            if (param.getValue().getConnect().contains("File")) {
+                path = connect.substring(5).replaceAll("[\";]", "");
+            }
+            if (param.getValue().getConnect().contains("ws")) {
+                path = connect.substring(3).replaceAll("[\";]", "");
+            }
+            if (param.getValue().getConnect().contains("Srvr")) {
+                String[] server = connect.split("=");
+                path = "Кластер серверов = " + server[1].replaceAll("[Ref;\"]", "")
+                        + ", Имя базы = " + server[2].replaceAll("[;\"]", "");
+            }
+            final String exitPath = path;
+            return getStringObservableValue(exitPath);
+        });
+        configCollection.setItems(configCollectionList);
+    }
+
+    public void loadSQLConfigListByGroup() {
+        configCollectionList.clear();
+        configCollectionList.addAll(data_base.getBaseListByGroup(group_choice_box.getValue()));
+    }
+
+    private ObservableValue<String> getStringObservableValue(String exitPath) {
+        return new ObservableValue<String>() {
+            @Override
+            public void addListener(ChangeListener<? super String> listener) {
+
+            }
+
+            @Override
+            public void removeListener(ChangeListener<? super String> listener) {
+
+            }
+
+            @Override
+            public String getValue() {
+                return exitPath;
+            }
+
+            @Override
+            public void addListener(InvalidationListener listener) {
+
+            }
+
+            @Override
+            public void removeListener(InvalidationListener listener) {
+
+            }
+        };
+    }
 }

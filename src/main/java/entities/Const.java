@@ -17,7 +17,11 @@ public enum Const {
     EDIT_TREE_FOLDER("Изменить имя папки"),
     EDIT_TREE_CONFIG("Изменить параметры конфигурации"),
     CHECK_UNSAVED_DATA("Имеются несохраненные данные"),
-    DELETE_ELEMENT("Удалить элемент?");
+    DELETE_ELEMENT("Удалить элемент?"),
+
+    //константы для конфигураций в хранилище
+    EDIT_SQL_CONFIG("Изменение конфигурации в хранилище"),
+    DELETE_SQL_CONFIG("Удалить конфигурацию из хранилища?");
 
     private final String title;
 

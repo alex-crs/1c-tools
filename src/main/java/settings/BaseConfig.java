@@ -62,7 +62,7 @@ public class BaseConfig {
 //        File file = new File("ibases.v8i");
         ArrayList<String> list = configTree.virtualTreeAsListCollector();
         try (FileOutputStream fis = new FileOutputStream(file);
-        BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis,StandardCharsets.UTF_8)))){
+             BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis, StandardCharsets.UTF_8)))) {
             writer.write(65279);
             for (String l : list) {
                 writer.write(l);
@@ -137,5 +137,15 @@ public class BaseConfig {
     //изменяет isExpand статус элемента (раскрыт или закрыт элемент
     public static void changeCurrentExpandStatement(VirtualTree element, boolean status) {
         configTree.changeCurrentExpandStatement(element, status);
+    }
+
+    public static ArrayList<Base> returnList() {
+        ArrayList<Base> list = new ArrayList<>();
+        for (VirtualTree l : configTree.getElements()) {
+            if (!l.isFolder()) {
+                list.add((Base) l);
+            }
+        }
+        return list;
     }
 }

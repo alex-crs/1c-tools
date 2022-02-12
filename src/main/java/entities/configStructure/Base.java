@@ -82,7 +82,7 @@ public class Base extends VirtualTree {
         this.elementName = elementName;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "Config_full_info",
             joinColumns = @JoinColumn(name = "config_id"),

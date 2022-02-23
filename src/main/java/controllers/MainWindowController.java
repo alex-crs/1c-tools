@@ -334,7 +334,7 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    public void setConfigList_SQLTabClickEvent(MouseEvent mouseEvent){
+    public void setConfigList_SQLTabClickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             editSQLElement();
         }
@@ -401,14 +401,22 @@ public class MainWindowController implements Initializable {
             alert("Необходимо выбрать редактируемый элемент");
         }
     }
+
     public void saveConfigToDataBase() {
-        if (configList_MainTab.getSelectionModel().getSelectedItem() != null) {
-            if (data_base.addToBase((Base) configList_MainTab.getSelectionModel().getSelectedItem().getValue(), group_choice_box.getValue()) > 0) {
-                alert("База добавлена в хранилище.");
+        TreeItem<VirtualTree> choiceElement = configList_MainTab.getSelectionModel().getSelectedItem();
+        if (choiceElement != null && !choiceElement.getValue().isFolder()) {
+            if (data_base.addToBase((Base) choiceElement.getValue(), group_choice_box.getValue()) > 0) {
+                alert("Конфигурация добавлена в хранилище.");
             } else {
                 alert("При добавлении базы возникла ошибка! (подробнее см. журнал)");
             }
+        } else {
+            alert("Выберете конфигурацию для добавления в хранилище.");
         }
+    }
+
+    public void addNewSQLConfig() {
+        showEditConfigWindow(CREATE_SQL_CONFIG, null);
     }
 
     public void editSQLElement() {
@@ -419,7 +427,7 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    public void deleteSQLElementFromBase(){
+    public void deleteSQLElementFromBase() {
         if (configCollection.getSelectionModel().getSelectedItem() != null) {
             showActionQuestion(DELETE_SQL_CONFIG);
         }

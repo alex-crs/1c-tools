@@ -35,11 +35,11 @@ public class DataBaseService {
         try {
             session = factory.getCurrentSession();
             session.beginTransaction();
-            Groups groups = (Groups) session
+            Groups currentGroup = (Groups) session
                     .createQuery("from Groups p where p.name = :name")
                     .setParameter("name", group)
                     .getSingleResult();
-            groups.getBaseElements().add(baseElement);
+            currentGroup.getBaseElements().add(baseElement);
             session.getTransaction().commit();
             return 1;
         } catch (HibernateException e) {
@@ -48,26 +48,14 @@ public class DataBaseService {
         }
     }
 
-    public List<String> getGroups() {
+    public void updateConfig(Base base) {
         session = factory.getCurrentSession();
         session.beginTransaction();
-        List<String> groups = castList(Groups.class, session.createQuery("from Groups")
-                .getResultList())
-                .stream()
-                .map(Groups::getName)
-                .collect(Collectors.toList());
-        session.getTransaction().commit();
-        return groups;
-    }
-
-    public void editConfig(Base base) {
-        session = factory.getCurrentSession();
-        session.beginTransaction();
-        session.save(base);
+        session.update(base);
         session.getTransaction().commit();
     }
 
-    public void deleteConfig(Base base){
+    public void deleteConfig(Base base) {
         session = factory.getCurrentSession();
         session.beginTransaction();
         session.delete(base);
@@ -81,6 +69,7 @@ public class DataBaseService {
                 .createQuery("from Groups p where p.name = :name")
                 .setParameter("name", groupName)
                 .getSingleResult();
+        session.save(groups);
         List<Base> list = new ArrayList<>(groups.getBaseElements());
         session.getTransaction().commit();
         return list;
@@ -97,6 +86,18 @@ public class DataBaseService {
         userName.setGroups(group);
         session.save(userName);
         session.getTransaction().commit();
+    }
+
+    public List<String> getGroups() {
+        session = factory.getCurrentSession();
+        session.beginTransaction();
+        List<String> groups = castList(Groups.class, session.createQuery("from Groups")
+                .getResultList())
+                .stream()
+                .map(Groups::getName)
+                .collect(Collectors.toList());
+        session.getTransaction().commit();
+        return groups;
     }
 
     public void addGroup(String title) {

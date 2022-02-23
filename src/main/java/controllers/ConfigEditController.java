@@ -129,6 +129,17 @@ public class ConfigEditController implements Initializable {
                 initListeners();
                 nameNonNullInspector();
                 break;
+            case CREATE_SQL_CONFIG:
+                element = new Base("");
+                setDefaultValueForChoiceBoxElements();
+                changeWindowSize(400);
+                virtualTreeType.setValue("Конфигурация");
+                connectionType = "File=";
+                element.setFolder(false);
+                hideSQLServerConfigElements();
+                initListeners();
+                nameNonNullInspector();
+                break;
             //если редактируем существующую конфигурацию
             case EDIT_TREE_CONFIG:
             case EDIT_SQL_CONFIG:
@@ -439,6 +450,7 @@ public class ConfigEditController implements Initializable {
         startType.setDisable(true);
         bitDepth.setDisable(true);
         accept.setDisable(true);
+        defaultVersion.setDisable(true);
     }
 
     private void enableAllConfigElements() {
@@ -456,6 +468,7 @@ public class ConfigEditController implements Initializable {
         startType.setDisable(false);
         bitDepth.setDisable(false);
         accept.setDisable(false);
+        defaultVersion.setDisable(false);
     }
 
     //открывает диалог выбора файла конфигурации
@@ -476,29 +489,35 @@ public class ConfigEditController implements Initializable {
     }
 
     private void action() {
+        element.setElementName(configName.getText());
+        if (!element.isFolder()) {
+            ((Base) element).setVersion(defaultVersion.getText());
+        }
         switch (action) {
             case CREATE_TREE_ELEMENT:
                 choiceElementNonNullInspector();
                 connectionPathConstructor();
                 //формируем путь хранения конфигурации в древе
                 element.setPath(choiceElement.getValue().getPath());
-                element.setElementName(configName.getText());
                 addToConfigTree();
                 break;
             case EDIT_TREE_CONFIG:
             case EDIT_TREE_FOLDER:
                 connectionPathConstructor();
                 mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
-                element.setElementName(configName.getText());
-                ((Base) element).setVersion(defaultVersion.getText());
                 mainController.enableSaveButton();
                 stage.close();
                 break;
             case EDIT_SQL_CONFIG:
                 connectionPathConstructor();
-                element.setElementName(configName.getText());
-                ((Base) element).setVersion(defaultVersion.getText());
-                mainController.data_base.editConfig((Base) element);
+                mainController.data_base.updateConfig((Base) element);
+                mainController.loadSQLConfigListByGroup();
+                stage.close();
+                break;
+            case CREATE_SQL_CONFIG:
+                choiceElementNonNullInspector();
+                connectionPathConstructor();
+                mainController.data_base.addToBase((Base) element, mainController.group_choice_box.getSelectionModel().getSelectedItem());
                 mainController.loadSQLConfigListByGroup();
                 stage.close();
                 break;

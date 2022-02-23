@@ -21,7 +21,8 @@ public enum Const {
 
     //константы для конфигураций в хранилище
     EDIT_SQL_CONFIG("Изменение конфигурации в хранилище"),
-    DELETE_SQL_CONFIG("Удалить конфигурацию из хранилища?");
+    DELETE_SQL_CONFIG("Удалить конфигурацию из хранилища?"),
+    CREATE_SQL_CONFIG("Создать конфигурацию");
 
     private final String title;
 

@@ -64,7 +64,7 @@ public class ActionWindowController implements Initializable {
                 mainController.data_base.deleteConfig(mainController.configCollection
                         .getSelectionModel()
                         .getSelectedItem());
-                mainController.loadSQLConfigListByGroup();
+//                mainController.loadSQLConfigListByGroup();
                 break;
         }
         stage.close();

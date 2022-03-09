@@ -511,14 +511,14 @@ public class ConfigEditController implements Initializable {
             case EDIT_SQL_CONFIG:
                 connectionPathConstructor();
                 mainController.data_base.updateConfig((Base) element);
-                mainController.loadSQLConfigListByGroup();
+                mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
                 stage.close();
                 break;
             case CREATE_SQL_CONFIG:
                 choiceElementNonNullInspector();
                 connectionPathConstructor();
                 mainController.data_base.addToBase((Base) element, mainController.group_choice_box.getSelectionModel().getSelectedItem());
-                mainController.loadSQLConfigListByGroup();
+                mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
                 stage.close();
                 break;
         }

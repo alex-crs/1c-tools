@@ -94,9 +94,11 @@ public class MainWindowController implements Initializable {
 
     //вкладка №3: редактирование конфигураций в хранилище
     @FXML
-    TableView<Base> configCollection = new TableView<>();
+    TableView<Base> configCollection;
 
-    final ObservableList<Base> configCollectionList = FXCollections.observableArrayList();
+//    final ObservableList<Base> configCollectionList = FXCollections.observableArrayList();
+
+    public TableViewElement tableElement;
 
     @FXML
     Button addNewSQLConfig;
@@ -121,7 +123,9 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        SQLConfigListInit();
+//        SQLConfigListInit(configCollection);
+//        configCollection.setItems(configCollectionList);
+        tableElement = new TableViewElement(this, configCollection);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
         disableSaveButton();
@@ -186,7 +190,7 @@ public class MainWindowController implements Initializable {
                     case DEFAULT_GROUP:
                         user_list.loadUserListByGroup(DEFAULT_GROUP.getTitle());
                         displayUserList();
-                        loadSQLConfigListByGroup();
+                        tableElement.loadSQLConfigListByGroup(group_choice_box);
                         break;
                     case RENAME_GROUP:
                         showGroupEditWindow(RENAME_GROUP);
@@ -206,7 +210,7 @@ public class MainWindowController implements Initializable {
             } catch (IllegalArgumentException e) {
                 user_list.loadUserListByGroup(query);
                 displayUserList();
-                loadSQLConfigListByGroup();
+                tableElement.loadSQLConfigListByGroup(group_choice_box);
             }
         });
 
@@ -393,6 +397,11 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    public void addConfigFromBase() {
+        AddConfigFromBaseStage addConfigFromBaseStage = new AddConfigFromBaseStage(this);
+        addConfigFromBaseStage.show();
+    }
+
     public void editElement() {
         if (configList_MainTab.getSelectionModel().getSelectedItem() != null) {
             TreeItem<VirtualTree> choiceElement = configList_MainTab.getSelectionModel().getSelectedItem();
@@ -449,83 +458,5 @@ public class MainWindowController implements Initializable {
     }
 
     //инициализация таблицы для управления базой данных
-    private void SQLConfigListInit() {
-        TableColumn<Base, String> configName = new TableColumn<>("Имя конфигурации");
-        configName.setMinWidth(200);
-        TableColumn<Base, String> baseType = new TableColumn<>("Тип базы");
-        baseType.setMinWidth(100);
-        TableColumn<Base, String> configPath = new TableColumn<>("Путь");
-        configPath.setMinWidth(400);
-        configCollection.getColumns().add(configName);
-        configCollection.getColumns().add(baseType);
-        configCollection.getColumns().add(configPath);
-        configName.setCellValueFactory(new PropertyValueFactory<>("elementName"));
 
-        baseType.setCellValueFactory(param -> {
-            String baseType1 = null;
-            if (param.getValue().getConnect().contains("File")) {
-                baseType1 = "Файловая база";
-            }
-            if (param.getValue().getConnect().contains("ws")) {
-                baseType1 = "WEB-сервер";
-            }
-            if (param.getValue().getConnect().contains("Srvr")) {
-                baseType1 = "1С сервер";
-            }
-            String finalBaseType = baseType1;
-            return getStringObservableValue(finalBaseType);
-        });
-        configPath.setCellValueFactory(param -> {
-            String path = null;
-            String connect = param.getValue().getConnect();
-            if (param.getValue().getConnect().contains("File")) {
-                path = connect.substring(5).replaceAll("[\";]", "");
-            }
-            if (param.getValue().getConnect().contains("ws")) {
-                path = connect.substring(3).replaceAll("[\";]", "");
-            }
-            if (param.getValue().getConnect().contains("Srvr")) {
-                String[] server = connect.split("=");
-                path = "Кластер серверов = " + server[1].replaceAll("[Ref;\"]", "")
-                        + ", Имя базы = " + server[2].replaceAll("[;\"]", "");
-            }
-            final String exitPath = path;
-            return getStringObservableValue(exitPath);
-        });
-        configCollection.setItems(configCollectionList);
-    }
-
-    public void loadSQLConfigListByGroup() {
-        configCollectionList.clear();
-        configCollectionList.addAll(data_base.getBaseListByGroup(group_choice_box.getValue()));
-    }
-
-    private ObservableValue<String> getStringObservableValue(String exitPath) {
-        return new ObservableValue<String>() {
-            @Override
-            public void addListener(ChangeListener<? super String> listener) {
-
-            }
-
-            @Override
-            public void removeListener(ChangeListener<? super String> listener) {
-
-            }
-
-            @Override
-            public String getValue() {
-                return exitPath;
-            }
-
-            @Override
-            public void addListener(InvalidationListener listener) {
-
-            }
-
-            @Override
-            public void removeListener(InvalidationListener listener) {
-
-            }
-        };
-    }
 }

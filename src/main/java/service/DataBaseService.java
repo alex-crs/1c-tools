@@ -30,7 +30,7 @@ public class DataBaseService {
             .buildSessionFactory();
     Session session = null;
 
-
+    @Transactional
     public int addToBase(Base baseElement, String group) {
         try {
             session = factory.getCurrentSession();
@@ -55,6 +55,7 @@ public class DataBaseService {
         session.getTransaction().commit();
     }
 
+    @Transactional
     public void deleteConfig(Base base) {
         session = factory.getCurrentSession();
         session.beginTransaction();

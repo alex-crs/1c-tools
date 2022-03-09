@@ -63,7 +63,7 @@
                                           <SplitMenuButton fx:id="addConfigButton" mnemonicParsing="false" onAction="#addToTree" text="➕">
                                             <items>
                                               <MenuItem mnemonicParsing="false" onAction="#addToTree" text="Добавить новый элемент в список" />
-                                              <MenuItem mnemonicParsing="false" text="Добавить конфигурацию из хранилища" />
+                                              <MenuItem mnemonicParsing="false" onAction="#addConfigFromBase" text="Добавить конфигурацию из хранилища" />
                                                 <MenuItem mnemonicParsing="false" onAction="#saveConfigToDataBase" text="Добавить конфигурацию в хранилище" />
                                             </items>
                                              <cursor>
@@ -136,7 +136,7 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab onSelectionChanged="#loadSQLConfigListByGroup" text="Хранилище конфигураций">
+            <Tab text="Хранилище конфигураций">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>

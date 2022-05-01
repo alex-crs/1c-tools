@@ -2,14 +2,19 @@ package controllers;
 
 import entities.TableViewElement;
 import entities.configStructure.Base;
+import entities.configStructure.VirtualTree;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
+import settings.BaseConfig;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static entities.Const.CREATE_TREE_ELEMENT;
 
 public class AddConfigFromBaseController implements Initializable {
 
@@ -32,19 +37,32 @@ public class AddConfigFromBaseController implements Initializable {
 
     }
 
+    public void initListeners(){
+        group_choice_box.setOnAction(event -> {
+            tableViewElement.loadSQLConfigListByGroup(group_choice_box);
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tableViewElement = new TableViewElement(mainWindowController, configList);
-//        mainWindowController.SQLConfigListInit(configCollection);
-//        configCollection.setItems(configCollectionList);
         group_choice_box.getItems().addAll(mainWindowController.data_base.getGroups());
         group_choice_box.setValue(mainWindowController.group_choice_box.getValue());
-//        configCollectionList.addAll(mainWindowController.data_base.getBaseListByGroup(groups.getValue()));
         tableViewElement.loadSQLConfigListByGroup(group_choice_box);
+        initListeners();
     }
 
-    public void show() {
-        tableViewElement.loadSQLConfigListByGroup(group_choice_box);
+    public void addToConfigList_MainTab(){
+        Base element = configList.getSelectionModel().getSelectedItem();
+        element.setFolder(false);
+        TreeItem<VirtualTree> choiceElement = mainWindowController.configList_MainTab.getSelectionModel().getSelectedItem();
+        MainWindowController.editConfigControllerManager(CREATE_TREE_ELEMENT,choiceElement,element);
+        mainWindowController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
+        close();
+    }
+
+    public void close(){
+        this.stage.close();
     }
 
 }

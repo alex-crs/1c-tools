@@ -15,6 +15,7 @@ import stages.ConfigEditStage;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class ConfigEditController implements Initializable {
     @FXML
@@ -475,10 +476,12 @@ public class ConfigEditController implements Initializable {
     public void openFileChoiceDialog() {
         FileChooser dialog = new FileChooser();
         Stage stage = ((ConfigEditStage) choiceButton.getScene().getWindow());
-        dialog.setTitle("1Cv8.1CD");
+        dialog.setTitle("Выберете файл конфигурации");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Конфигурация 1С", "*.1CD");
+        dialog.getExtensionFilters().add(filter);
         file = dialog.showOpenDialog(stage);
         if (file != null) {
-            pathField.setText(file.getPath());
+            pathField.setText(file.getPath().substring(0, file.getPath().length() - (file.getName().length() + 1)));
         }
     }
 

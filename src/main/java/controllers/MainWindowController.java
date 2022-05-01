@@ -436,6 +436,10 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    public void showConfigs(){
+        tableElement.loadSQLConfigListByGroup(group_choice_box);
+    }
+
     public void deleteSQLElementFromBase() {
         if (configCollection.getSelectionModel().getSelectedItem() != null) {
             showActionQuestion(DELETE_SQL_CONFIG);
@@ -456,7 +460,5 @@ public class MainWindowController implements Initializable {
         alert.setResizable(false);
         alert.show();
     }
-
-    //инициализация таблицы для управления базой данных
 
 }

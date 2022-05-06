@@ -15,7 +15,6 @@ import stages.ConfigEditStage;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Predicate;
 
 public class ConfigEditController implements Initializable {
     @FXML
@@ -520,7 +519,7 @@ public class ConfigEditController implements Initializable {
             case CREATE_SQL_CONFIG:
                 choiceElementNonNullInspector();
                 connectionPathConstructor();
-                mainController.data_base.addToBase((Base) element, mainController.group_choice_box.getSelectionModel().getSelectedItem());
+                mainController.data_base.addConfigToBase((Base) element, mainController.group_choice_box.getSelectionModel().getSelectedItem());
                 mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
                 stage.close();
                 break;

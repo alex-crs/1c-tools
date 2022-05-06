@@ -31,7 +31,7 @@ public class DataBaseService {
     Session session = null;
 
     @Transactional
-    public int addToBase(Base baseElement, String group) {
+    public int addConfigToBase(Base baseElement, String group) {
         try {
             session = factory.getCurrentSession();
             session.beginTransaction();
@@ -40,6 +40,7 @@ public class DataBaseService {
                     .setParameter("name", group)
                     .getSingleResult();
             currentGroup.getBaseElements().add(baseElement);
+            session.save(baseElement);
             session.getTransaction().commit();
             return 1;
         } catch (HibernateException e) {

@@ -7,16 +7,10 @@ import entities.configStructure.VirtualTree;
 import entities.configStructure.Folder;
 import handlers.FileLengthCalculator;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import org.apache.log4j.Logger;
 import service.DataBaseService;
@@ -393,13 +387,17 @@ public class MainWindowController implements Initializable {
             TreeItem<VirtualTree> choiceElement = configList_MainTab.getSelectionModel().getSelectedItem();
             showEditConfigWindow(CREATE_TREE_ELEMENT, choiceElement);
         } else {
-            alert("Необходимо выбрать одного пользователя.");
+            alert("Необходимо выбрать пользователя");
         }
     }
 
     public void addConfigFromBase() {
-        AddConfigFromBaseStage addConfigFromBaseStage = new AddConfigFromBaseStage(this);
-        addConfigFromBaseStage.show();
+        if (userList_MainTab.getSelectionModel().getSelectedItem() != null) {
+            AddConfigFromBaseStage addConfigFromBaseStage = new AddConfigFromBaseStage(this);
+            addConfigFromBaseStage.show();
+        } else {
+            alert("Необходимо выбрать пользователя");
+        }
     }
 
     public void editElement() {
@@ -414,7 +412,7 @@ public class MainWindowController implements Initializable {
     public void saveConfigToDataBase() {
         TreeItem<VirtualTree> choiceElement = configList_MainTab.getSelectionModel().getSelectedItem();
         if (choiceElement != null && !choiceElement.getValue().isFolder()) {
-            if (data_base.addToBase((Base) choiceElement.getValue(), group_choice_box.getValue()) > 0) {
+            if (data_base.addConfigToBase((Base) choiceElement.getValue(), group_choice_box.getValue()) > 0) {
                 alert("Конфигурация добавлена в хранилище.");
             } else {
                 alert("При добавлении базы возникла ошибка! (подробнее см. журнал)");
@@ -436,7 +434,7 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    public void showConfigs(){
+    public void showConfigs() {
         tableElement.loadSQLConfigListByGroup(group_choice_box);
     }
 

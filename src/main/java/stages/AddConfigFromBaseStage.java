@@ -19,7 +19,7 @@ public class AddConfigFromBaseStage extends Stage {
             loader.setController(configEditController);
             root = loader.load();
             setTitle("Добавление конфигурации из хранилища");
-            Scene scene = new Scene(root, 560, 350);
+            Scene scene = new Scene(root, 500, 290);
             setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();

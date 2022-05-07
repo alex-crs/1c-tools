@@ -55,7 +55,6 @@ public class AddConfigFromBaseController implements Initializable {
 
     public void addToConfigList_MainTab() {
         List<Base> element = configList.getSelectionModel().getSelectedItems();
-//        element.setFolder(false);
         TreeItem<VirtualTree> choiceElement = mainWindowController.configList_MainTab.getSelectionModel().getSelectedItem();
         if (choiceElement == null) {
             choiceElement = mainWindowController.configList_MainTab.getRoot();

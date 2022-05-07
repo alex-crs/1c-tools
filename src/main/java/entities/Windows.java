@@ -7,6 +7,8 @@ public class Windows implements OS {
     StringBuilder homeDirectory;
     StringBuilder tempPath = new StringBuilder().append("\\AppData\\Local\\1C\\");
     StringBuilder baseConfig = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart\\ibases.v8i");
+    StringBuilder platformConfig = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv83\\1cv8strt.pfl");
+    StringBuilder cEStart = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart\\1CEStart.cfg");
 
     public StringBuilder getTempPath() {
         return tempPath;
@@ -49,5 +51,15 @@ public class Windows implements OS {
 
     public String basePathConstructor(String userName) {
         return homeDirectory + userName + baseConfig;
+    }
+
+    @Override
+    public String platformConfigPathConstructor(String userName) {
+        return homeDirectory + userName + platformConfig;
+    }
+
+    @Override
+    public String ceStartPathConstructor(String userName) {
+        return homeDirectory + userName + cEStart;
     }
 }

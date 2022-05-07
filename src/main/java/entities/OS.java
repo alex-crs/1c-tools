@@ -5,7 +5,11 @@ public interface OS {
 
     String getHomeDirectory();
 
-    public String cachePathConstructor(String userName);
+    String cachePathConstructor(String userName);
 
-    public String basePathConstructor(String userName);
+    String basePathConstructor(String userName);
+
+    String platformConfigPathConstructor(String userName);
+
+    String ceStartPathConstructor(String userName);
 }

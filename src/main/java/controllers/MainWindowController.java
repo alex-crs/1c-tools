@@ -115,6 +115,13 @@ public class MainWindowController implements Initializable {
         return currentUser;
     }
 
+    public String getPlatformConfigPath(){
+        return operatingSystem.platformConfigPathConstructor(currentUser.toString());
+    }
+    public String getCeStartPath(){
+        return operatingSystem.ceStartPathConstructor(currentUser.toString());
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 //        SQLConfigListInit(configCollection);
@@ -457,6 +464,16 @@ public class MainWindowController implements Initializable {
         AlertWindowStage alert = new AlertWindowStage(message);
         alert.setResizable(false);
         alert.show();
+    }
+
+    //показывает настройки платформы для текущего пользователя
+    public void runPlatformEdit(){
+        if (userList_MainTab.getSelectionModel().getSelectedItem()!=null){
+            PlatformEditorStage platformEditorStage = new PlatformEditorStage(this);
+            platformEditorStage.show();
+        }else {
+            alert("Необходимо выбрать пользователя");
+        }
     }
 
 }

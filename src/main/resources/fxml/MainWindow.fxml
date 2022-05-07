@@ -91,7 +91,8 @@
                                       </items>
                                     </ToolBar>
                                     <Label layoutX="6.0" layoutY="6.0" text="Список конфигураций 1С доступных пользователю:" />
-                                    <TreeView fx:id="configList_MainTab" layoutY="23.0" onMouseClicked="#setConfigList_MainTabClickEvent" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="23.0" />
+                                    <TreeView fx:id="configList_MainTab" layoutY="25.0" onMouseClicked="#setConfigList_MainTabClickEvent" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <Button focusTraversable="false" layoutX="463.0" layoutY="2.0" mnemonicParsing="false" onAction="#runPlatformEdit" text="Настройки платформы" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                           </items>

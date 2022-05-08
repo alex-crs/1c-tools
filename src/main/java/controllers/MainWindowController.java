@@ -90,8 +90,6 @@ public class MainWindowController implements Initializable {
     @FXML
     TableView<Base> configCollection;
 
-//    final ObservableList<Base> configCollectionList = FXCollections.observableArrayList();
-
     public TableViewElement tableElement;
 
     @FXML
@@ -333,13 +331,13 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    public void setConfigList_MainTabClickEvent(MouseEvent mouseEvent) {
+    public void ConfigList_MainTabClickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             editElement();
         }
     }
 
-    public void setConfigList_SQLTabClickEvent(MouseEvent mouseEvent) {
+    public void ConfigList_SQLTabClickEvent(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             editSQLElement();
         }

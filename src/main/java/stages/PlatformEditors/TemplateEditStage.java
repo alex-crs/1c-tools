@@ -1,6 +1,5 @@
 package stages.PlatformEditors;
 
-import controllers.MainWindowController;
 import controllers.PlatformEditorController;
 import controllers.PlatformEditors.TemplateEditController;
 import entities.PlatformParams.Templates;
@@ -21,6 +20,7 @@ public class TemplateEditStage extends Stage {
             root = loader.load();
             setTitle(operation);
             Scene scene = new Scene(root, 400, 90);
+            setResizable(false);
             setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();

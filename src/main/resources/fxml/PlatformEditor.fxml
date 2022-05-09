@@ -29,8 +29,8 @@
       </ToolBar>
       <ToolBar layoutX="5.0" layoutY="321.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <items>
-            <Button focusTraversable="false" mnemonicParsing="false" text="✚" />
-            <Button focusTraversable="false" mnemonicParsing="false" text="✎" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#addService" text="✚" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#editService" text="✎" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteService" text="✖" />
          </items>
       </ToolBar>
@@ -42,9 +42,9 @@
       <Label layoutX="20.0" layoutY="468.0" text="Используемые версии:" AnchorPane.leftAnchor="10.0" />
       <ToolBar layoutX="5.0" layoutY="489.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <items>
-            <Button focusTraversable="false" mnemonicParsing="false" text="✚" />
-            <Button focusTraversable="false" mnemonicParsing="false" text="🗍" />
-            <Button focusTraversable="false" mnemonicParsing="false" text="✎" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#addDefaultVersion" text="✚" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#copyDefaultVersion" text="🗍" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#editDefaultVersion" text="✎" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteDefaultVersion" text="✖" />
          </items>
       </ToolBar>

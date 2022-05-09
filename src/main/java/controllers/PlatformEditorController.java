@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.log4j.Logger;
+import stages.PlatformEditors.DefaultVersionEditStage;
+import stages.PlatformEditors.SharedBaseEditStage;
 import stages.PlatformEditors.TemplateEditStage;
 
 import java.io.BufferedReader;
@@ -63,7 +65,6 @@ public class PlatformEditorController implements Initializable {
 
     @FXML
     ListView<DefaultVersionObject> defaultVersionListView;
-
 
 
     @Override
@@ -139,8 +140,12 @@ public class PlatformEditorController implements Initializable {
                 defaultVersion.add(new DefaultVersionObject(paramArray[1]));
                 break;
             case "InternetService":
+                SharedBase sb = new SharedBase(paramArray[1]);
+                sb.setIService(true);
+                sharedBaseList.add(sb);
+                break;
             case "CommonInfoBases":
-                sharedBaseList.add(new SharedBase(paramArray));
+                sharedBaseList.add(new SharedBase(paramArray[1]));
                 break;
             case "ConfigurationTemplatesLocation":
                 configurationTemplatesLocation.add(new Templates(paramArray[1]));
@@ -251,7 +256,10 @@ public class PlatformEditorController implements Initializable {
 
     //операции со списком интернет сервисов
     public void addService() {
-
+        SharedBaseEditStage sharedBaseEditStage = new SharedBaseEditStage(this,
+                null,
+                "Добавить");
+        sharedBaseEditStage.show();
     }
 
     public void deleteService() {
@@ -273,12 +281,22 @@ public class PlatformEditorController implements Initializable {
     }
 
     public void editService() {
-
+        SharedBase element = sharedBaseListView.getSelectionModel().getSelectedItem();
+        if (element != null) {
+            SharedBaseEditStage sharedBaseEditStage = new SharedBaseEditStage(this,
+                    element, "Изменить");
+            sharedBaseEditStage.show();
+        } else {
+            mainController.alert("Для изменения необходимо выбрать элемент");
+        }
     }
 
     //операции со списком версий по умолчанию
     public void addDefaultVersion() {
-
+        DefaultVersionEditStage defaultStage = new DefaultVersionEditStage(this,
+                null,
+                "Добавить");
+        defaultStage.show();
     }
 
     public void deleteDefaultVersion() {
@@ -300,7 +318,29 @@ public class PlatformEditorController implements Initializable {
     }
 
     public void editDefaultVersion() {
+        DefaultVersionObject element = defaultVersionListView.getSelectionModel().getSelectedItem();
+        if (element != null) {
+            DefaultVersionEditStage defaultStage = new DefaultVersionEditStage(this,
+                    element,
+                    "Изменить");
+            defaultStage.show();
+        }
+        else {
+            mainController.alert("Для редактирования необходимо выбрать элемент");
+        }
+    }
 
+    public void copyDefaultVersion(){
+        DefaultVersionObject element = defaultVersionListView.getSelectionModel().getSelectedItem();
+        if (element != null) {
+            DefaultVersionEditStage defaultStage = new DefaultVersionEditStage(this,
+                    element,
+                    "Скопировать");
+            defaultStage.show();
+        }
+        else {
+            mainController.alert("Для копирования необходимо выбрать элемент");
+        }
     }
 
 }

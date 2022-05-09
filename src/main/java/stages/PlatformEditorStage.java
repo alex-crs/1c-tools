@@ -20,6 +20,7 @@ public class PlatformEditorStage extends Stage {
             loader.setController(platformEditorController);
             root = loader.load();
             setTitle(String.format("Настройки 1C: [%s]", mainWindowController.getCurrentUser()));
+            setResizable(false);
             Scene scene = new Scene(root, 600, 750);
             setScene(scene);
         } catch (IOException e) {

@@ -7,9 +7,9 @@
 
 <AnchorPane prefHeight="90.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField fx:id="templateField" layoutX="5.0" layoutY="18.0" prefHeight="25.0" prefWidth="320.0" promptText="Укажите путь до шаблона" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="70.0" />
-      <Label layoutX="5.0" layoutY="1.0" text="Путь до шаблона:" AnchorPane.leftAnchor="5.0" />
-      <Button fx:id="choiceButton" focusTraversable="false" layoutX="332.0" layoutY="18.0" mnemonicParsing="false" onAction="#openFileChoiceDialog" text="Выбрать" AnchorPane.rightAnchor="5.0" />
+      <TextField fx:id="templateField" layoutX="5.0" layoutY="23.0" prefHeight="25.0" prefWidth="320.0" promptText="Укажите путь до шаблона" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="70.0" />
+      <Label layoutX="5.0" layoutY="4.0" text="Путь до шаблона:" AnchorPane.leftAnchor="5.0" />
+      <Button fx:id="choiceButton" focusTraversable="false" layoutX="332.0" layoutY="23.0" mnemonicParsing="false" onAction="#openFileChoiceDialog" text="Выбрать" AnchorPane.rightAnchor="5.0" />
       <Button fx:id="acceptButton" focusTraversable="false" layoutX="156.0" layoutY="56.0" mnemonicParsing="false" onAction="#action" prefHeight="25.0" prefWidth="88.0" text="Добавить" AnchorPane.rightAnchor="156.0" />
    </children>
 </AnchorPane>

@@ -1,7 +1,6 @@
 package stages;
 
 import controllers.ActionWindowController;
-import controllers.GroupEditController;
 import controllers.MainWindowController;
 import entities.Const;
 import javafx.fxml.FXMLLoader;

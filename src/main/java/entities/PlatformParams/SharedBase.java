@@ -1,24 +1,24 @@
 package entities.PlatformParams;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
+@Getter
 public class SharedBase {
+
+    @Getter
     private String paramName;
+
+    @Getter
     private boolean iService;
 
     public String returnParam() {
         return iService ? "CommonInfoBases=" + paramName : "InternetService=" + paramName;
     }
 
-    public SharedBase(String[] paramName) {
-        if (paramName[0].equals("CommonInfoBases")) {
-            this.paramName = paramName[1];
-        }
-        if (paramName[0].equals("InternetService")) {
-            this.paramName = paramName[1];
-            iService = true;
-        }
+    public SharedBase(String paramName) {
+        this.paramName = paramName;
     }
 
     @Override

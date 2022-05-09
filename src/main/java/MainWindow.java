@@ -22,6 +22,7 @@ public class MainWindow extends Application {
             @Override
             public void handle(WindowEvent event) {
                 MainWindowController controller = mainWindow.getController();
+                System.exit(0);
             }
         });
     }

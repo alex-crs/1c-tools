@@ -10,7 +10,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.log4j.Logger;
 import stages.PlatformEditors.DefaultVersionEditStage;
@@ -36,11 +35,19 @@ public class PlatformEditorController implements Initializable {
     private final ArrayList<String> cv8config;
 
     @FXML
-    CheckBox treeView;
+    CheckBox showIBsAsTree;
 
     @FXML
-    TextField numberOfLatestConfig;
+    CheckBox autoSortIBs;
 
+    @FXML
+    TextField lRInfoBaseIDListSize;
+
+    @FXML
+    CheckBox showRecentIBs;
+
+    @FXML
+    CheckBox showStartEDTButton;
 
     //параметры для файла 1CEStart.cfg (параметр 2)
     String commonCfgLocation;
@@ -54,8 +61,11 @@ public class PlatformEditorController implements Initializable {
     @Getter
     ArrayList<SharedBase> sharedBaseList;
 
-    int useHWLicenses;
-    int appAutoInstallLastVersion;
+    @FXML
+    CheckBox useHWLicenses; //1 - true, 0 - false
+
+    @FXML
+    CheckBox appAutoInstallLastVersion; //1 - true, 0 - false
 
     @FXML
     ListView<Templates> templatesListView;
@@ -80,6 +90,8 @@ public class PlatformEditorController implements Initializable {
 
         //заполняем список версий по умолчанию
         fillDefaultVersionList();
+
+        cv8init();
     }
 
     public PlatformEditorController(MainWindowController mainWindowController, Stage stage) {
@@ -120,14 +132,16 @@ public class PlatformEditorController implements Initializable {
     }
 
     private void cv8configReader(String string) {
-        if (string.contains("AutoSortIBs") && string.charAt(5) == '1') {
-            treeView.setSelected(true);
-        }
-        if (string.contains("ShowIBsAsTree")) {
-            numberOfLatestConfig.setText(string.substring(5, 6));
-        }
         cv8config.add(string);
+    }
 
+    //пока не понятно
+    private void cv8init() {
+        lRInfoBaseIDListSize.setText(cv8config.get(2).substring(5, 6));
+        showIBsAsTree.setSelected(cv8config.get(3).charAt(5) == '1');
+        autoSortIBs.setSelected(cv8config.get(4).charAt(5) == '1');
+        showRecentIBs.setSelected(cv8config.get(5).charAt(5) == '1');
+        showStartEDTButton.setSelected(cv8config.get(7).charAt(5) == '1');
     }
 
     private void ceStartConfigReader(String string) {
@@ -151,10 +165,10 @@ public class PlatformEditorController implements Initializable {
                 configurationTemplatesLocation.add(new Templates(paramArray[1]));
                 break;
             case "UseHWLicenses":
-                useHWLicenses = Integer.parseInt(paramArray[1]);
+                useHWLicenses.setSelected(Integer.parseInt(paramArray[1]) == 1);
                 break;
             case "AppAutoInstallLastVersion":
-                appAutoInstallLastVersion = Integer.parseInt(paramArray[1]);
+                appAutoInstallLastVersion.setSelected(Integer.parseInt(paramArray[1]) == 1);
                 break;
         }
     }
@@ -189,7 +203,7 @@ public class PlatformEditorController implements Initializable {
     //операции со списком шаблонов
     public void addTemplate() {
         TemplateEditStage templateEditStage = new TemplateEditStage(this, null, "Добавить");
-        templateEditStage.show();
+        templateEditStage.showAndWait();
     }
 
     public void moveUpTemplateFromList() {
@@ -248,7 +262,7 @@ public class PlatformEditorController implements Initializable {
         Templates element = templatesListView.getSelectionModel().getSelectedItem();
         if (element != null) {
             TemplateEditStage templateEditStage = new TemplateEditStage(this, element, "Изменить");
-            templateEditStage.show();
+            templateEditStage.showAndWait();
         } else {
             mainController.alert("Необходимо выбрать элемент");
         }
@@ -259,7 +273,7 @@ public class PlatformEditorController implements Initializable {
         SharedBaseEditStage sharedBaseEditStage = new SharedBaseEditStage(this,
                 null,
                 "Добавить");
-        sharedBaseEditStage.show();
+        sharedBaseEditStage.showAndWait();
     }
 
     public void deleteService() {
@@ -285,7 +299,7 @@ public class PlatformEditorController implements Initializable {
         if (element != null) {
             SharedBaseEditStage sharedBaseEditStage = new SharedBaseEditStage(this,
                     element, "Изменить");
-            sharedBaseEditStage.show();
+            sharedBaseEditStage.showAndWait();
         } else {
             mainController.alert("Для изменения необходимо выбрать элемент");
         }
@@ -296,7 +310,7 @@ public class PlatformEditorController implements Initializable {
         DefaultVersionEditStage defaultStage = new DefaultVersionEditStage(this,
                 null,
                 "Добавить");
-        defaultStage.show();
+        defaultStage.showAndWait();
     }
 
     public void deleteDefaultVersion() {
@@ -323,22 +337,20 @@ public class PlatformEditorController implements Initializable {
             DefaultVersionEditStage defaultStage = new DefaultVersionEditStage(this,
                     element,
                     "Изменить");
-            defaultStage.show();
-        }
-        else {
+            defaultStage.showAndWait();
+        } else {
             mainController.alert("Для редактирования необходимо выбрать элемент");
         }
     }
 
-    public void copyDefaultVersion(){
+    public void copyDefaultVersion() {
         DefaultVersionObject element = defaultVersionListView.getSelectionModel().getSelectedItem();
         if (element != null) {
             DefaultVersionEditStage defaultStage = new DefaultVersionEditStage(this,
                     element,
                     "Скопировать");
-            defaultStage.show();
-        }
-        else {
+            defaultStage.showAndWait();
+        } else {
             mainController.alert("Для копирования необходимо выбрать элемент");
         }
     }

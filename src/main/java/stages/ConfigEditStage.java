@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -20,6 +21,8 @@ public class ConfigEditStage extends Stage {
             loader.setController(configEditController);
             root = loader.load();
             setTitle(action.getTitle());
+            setResizable(false);
+            initModality(Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root, 560, 70);
             setScene(scene);
         } catch (IOException e) {

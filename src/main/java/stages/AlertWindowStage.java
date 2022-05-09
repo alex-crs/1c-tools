@@ -3,6 +3,7 @@ package stages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,6 +23,8 @@ public class AlertWindowStage extends Stage {
         try {
             root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/AlertWindow.fxml")));
             setTitle("Внимание!");
+            setResizable(false);
+            initModality(Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root, 400, 70);
             setScene(scene);
         } catch (IOException e) {

@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -23,6 +24,8 @@ public class TreeViewDialogStage extends Stage {
             loader.setController(tvd);
             root = loader.load();
             setTitle("Перемещение элемента");
+            initModality(Modality.APPLICATION_MODAL);
+            setResizable(false);
             Scene scene = new Scene(root, 400, 250);
             setScene(scene);
         } catch (IOException e) {

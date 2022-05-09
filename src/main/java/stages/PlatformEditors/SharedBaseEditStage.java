@@ -6,6 +6,7 @@ import entities.PlatformParams.SharedBase;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class SharedBaseEditStage extends Stage {
             setTitle(operation);
             Scene scene = new Scene(root, 400, 90);
             setResizable(false);
+            initModality(Modality.APPLICATION_MODAL);
             setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();

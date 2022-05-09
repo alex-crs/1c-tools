@@ -8,6 +8,7 @@ import entities.PlatformParams.SharedBase;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class DefaultVersionEditStage extends Stage {
             root = loader.load();
             setTitle(operation);
             setResizable(false);
+            initModality(Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root, 300, 170);
             setScene(scene);
         } catch (IOException e) {

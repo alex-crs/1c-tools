@@ -5,6 +5,7 @@ import controllers.MainWindowController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ public class AddConfigFromBaseStage extends Stage {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AddConfigFromBase.fxml"));
             loader.setController(configEditController);
             root = loader.load();
+            setResizable(false);
+            initModality(Modality.APPLICATION_MODAL);
             setTitle("Добавление конфигурации из хранилища");
             Scene scene = new Scene(root, 500, 290);
             setScene(scene);

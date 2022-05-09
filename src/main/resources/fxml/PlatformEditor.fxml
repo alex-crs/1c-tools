@@ -11,12 +11,12 @@
 <AnchorPane prefHeight="750.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button layoutX="448.0" layoutY="668.0" mnemonicParsing="false" text="Сохранить и выйти" />
-      <CheckBox fx:id="treeView" layoutX="24.0" layoutY="18.0" mnemonicParsing="false" text="Отображать в виде древа" AnchorPane.leftAnchor="10.0" />
-      <TextField fx:id="numberOfLatestConfig" layoutX="241.0" layoutY="98.0" AnchorPane.leftAnchor="230.0" />
+      <CheckBox fx:id="showIBsAsTree" layoutX="24.0" layoutY="18.0" mnemonicParsing="false" text="Отображать в виде древа" AnchorPane.leftAnchor="10.0" />
+      <TextField fx:id="lRInfoBaseIDListSize" layoutX="241.0" layoutY="98.0" AnchorPane.leftAnchor="230.0" />
       <ListView fx:id="templatesListView" layoutX="5.0" layoutY="191.0" prefHeight="100.0" prefWidth="502.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
       <ListView fx:id="sharedBaseListView" layoutX="5.0" layoutY="356.0" prefHeight="100.0" prefWidth="502.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-      <CheckBox layoutX="24.0" layoutY="44.0" mnemonicParsing="false" text="Сортировать по наименованию" AnchorPane.leftAnchor="10.0" />
-      <CheckBox layoutX="24.0" layoutY="70.0" mnemonicParsing="false" text="Показывать последние выбранные информационные базы" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="autoSortIBs" layoutX="24.0" layoutY="44.0" mnemonicParsing="false" text="Сортировать по наименованию" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="showRecentIBs" layoutX="24.0" layoutY="70.0" mnemonicParsing="false" text="Показывать последние выбранные информационные базы" AnchorPane.leftAnchor="10.0" />
       <Label layoutX="33.0" layoutY="102.0" text="Запоминать последние выбранные:" AnchorPane.leftAnchor="10.0" />
       <ToolBar layoutX="5.0" layoutY="156.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
         <items>
@@ -36,9 +36,9 @@
       </ToolBar>
       <Label layoutX="19.0" layoutY="132.0" text="Каталоги шаблонов конфигураций и обновлений:" AnchorPane.leftAnchor="10.0" />
       <Label layoutX="20.0" layoutY="299.0" text="Адреса Интернет-сервисов и списки общих информационных баз:" AnchorPane.leftAnchor="10.0" />
-      <CheckBox layoutX="20.0" layoutY="643.0" mnemonicParsing="false" text="Устанавливать автоматически новую версию" AnchorPane.leftAnchor="10.0" />
-      <CheckBox layoutX="20.0" layoutY="672.0" mnemonicParsing="false" text="Использовать аппаратную лицензию (ключ защиты)" AnchorPane.leftAnchor="10.0" />
-      <CheckBox layoutX="20.0" layoutY="703.0" mnemonicParsing="false" text="Разрешать запуск 1C:Enterprise Development Tools" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="appAutoInstallLastVersion" layoutX="20.0" layoutY="643.0" mnemonicParsing="false" text="Устанавливать автоматически новую версию" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="useHWLicenses" layoutX="20.0" layoutY="672.0" mnemonicParsing="false" text="Использовать аппаратную лицензию (ключ защиты)" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="showStartEDTButton" layoutX="20.0" layoutY="703.0" mnemonicParsing="false" text="Разрешать запуск 1C:Enterprise Development Tools" AnchorPane.leftAnchor="10.0" />
       <Label layoutX="20.0" layoutY="468.0" text="Используемые версии:" AnchorPane.leftAnchor="10.0" />
       <ToolBar layoutX="5.0" layoutY="489.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <items>

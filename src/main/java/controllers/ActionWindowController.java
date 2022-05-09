@@ -40,6 +40,7 @@ public class ActionWindowController implements Initializable {
         switch (action) {
             case CHECK_UNSAVED_DATA:
                 message.setText("Имеются несохраненные данные, желаете сохранить?");
+                accept.setText("Сохранить");
                 break;
             case DELETE_ELEMENT:
             case DELETE_SQL_CONFIG:
@@ -53,8 +54,7 @@ public class ActionWindowController implements Initializable {
             case CHECK_UNSAVED_DATA:
                 mainController.saveChanges();
                 mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
-                mainController.userList_MainTab.getSelectionModel().clearSelection();
-                mainController.userList_MainTab.getSelectionModel().select(mainController.getCurrentUser());
+                mainController.fillBaseList(mainController.userList_MainTab.getSelectionModel().getSelectedItem());
                 break;
             case DELETE_ELEMENT:
                 deleteElements();
@@ -84,6 +84,9 @@ public class ActionWindowController implements Initializable {
     }
 
     public void cancel() {
+        if (action == Const.CHECK_UNSAVED_DATA && mainController.userList_MainTab.getItems().size() > 0) {
+            mainController.fillBaseList(mainController.userList_MainTab.getSelectionModel().getSelectedItem());
+        }
         mainController.disableSaveButton();
         stage.close();
     }

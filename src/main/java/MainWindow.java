@@ -1,4 +1,5 @@
 import controllers.MainWindowController;
+import entities.Const;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -6,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import stages.ActionWindowStage;
 
 public class MainWindow extends Application {
     @Override
@@ -22,7 +24,10 @@ public class MainWindow extends Application {
             @Override
             public void handle(WindowEvent event) {
                 MainWindowController controller = mainWindow.getController();
-                System.exit(0);
+                if (controller.isUnSavedChanges()){
+                    ActionWindowStage actionWindowStage = new ActionWindowStage(Const.CHECK_UNSAVED_DATA,controller);
+                    actionWindowStage.showAndWait();
+                }
             }
         });
     }

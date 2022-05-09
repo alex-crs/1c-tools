@@ -240,28 +240,24 @@ public class MainWindowController implements Initializable {
 
     private void showEditConfigWindow(Const action, TreeItem<VirtualTree> choiceElement) {
         ConfigEditStage configEditStage = new ConfigEditStage(choiceElement, action, this);
-        configEditStage.setResizable(false);
-        configEditStage.show();
+        configEditStage.showAndWait();
     }
 
     /*позволяет редактировать группы в выпадающем меню, также универсально можно использовать
      и для добавления пользователя вручную*/
     private void showGroupEditWindow(Const action) {
         GroupEditStage groupEditStage = new GroupEditStage(action, this);
-        groupEditStage.setResizable(false);
-        groupEditStage.show();
+        groupEditStage.showAndWait();
     }
 
     public void moveConfig() {
         TreeViewDialogStage treeViewDialogStage = new TreeViewDialogStage(this);
-        treeViewDialogStage.setResizable(false);
-        treeViewDialogStage.show();
+        treeViewDialogStage.showAndWait();
     }
 
     public void showActionQuestion(Const action) {
         ActionWindowStage aw = new ActionWindowStage(action, this);
-        aw.setResizable(false);
-        aw.show();
+        aw.showAndWait();
     }
 
 
@@ -323,7 +319,9 @@ public class MainWindowController implements Initializable {
 
     //отслеживает список выделенных пользователей
     public void userListClickEvent(MouseEvent mouseEvent) {
-        if (mouseEvent.getClickCount() == 1 && userList_MainTab.getSelectionModel().getSelectedItems().size() > 0 && !isUnSavedChanges()) {
+        if (mouseEvent.getClickCount() == 1
+                && userList_MainTab.getSelectionModel().getSelectedItems().size() > 0
+                && !isUnSavedChanges()) {
             calcCashSpace();
             fillBaseList(userList_MainTab.getSelectionModel().getSelectedItem());
         } else if (isUnSavedChanges() && userList_MainTab.getSelectionModel().getSelectedItem() != currentUser) {
@@ -399,7 +397,7 @@ public class MainWindowController implements Initializable {
     public void addConfigFromBase() {
         if (userList_MainTab.getSelectionModel().getSelectedItem() != null) {
             AddConfigFromBaseStage addConfigFromBaseStage = new AddConfigFromBaseStage(this);
-            addConfigFromBaseStage.show();
+            addConfigFromBaseStage.showAndWait();
         } else {
             alert("Необходимо выбрать пользователя");
         }
@@ -460,15 +458,14 @@ public class MainWindowController implements Initializable {
 
     public void alert(String message) {
         AlertWindowStage alert = new AlertWindowStage(message);
-        alert.setResizable(false);
-        alert.show();
+        alert.showAndWait();
     }
 
     //показывает настройки платформы для текущего пользователя
     public void runPlatformEdit(){
         if (userList_MainTab.getSelectionModel().getSelectedItem()!=null){
             PlatformEditorStage platformEditorStage = new PlatformEditorStage(this);
-            platformEditorStage.show();
+            platformEditorStage.showAndWait();
         }else {
             alert("Необходимо выбрать пользователя");
         }

@@ -54,7 +54,7 @@ public class Windows implements OS {
     }
 
     @Override
-    public String platformConfigPathConstructor(String userName) {
+    public String cv8StartConfigPathConstructor(String userName) {
         return homeDirectory + userName + platformConfig;
     }
 

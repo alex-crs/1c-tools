@@ -113,8 +113,8 @@ public class MainWindowController implements Initializable {
         return currentUser;
     }
 
-    public String getPlatformConfigPath(){
-        return operatingSystem.platformConfigPathConstructor(currentUser.toString());
+    public String getCV8ConfigPath(){
+        return operatingSystem.cv8StartConfigPathConstructor(currentUser.toString());
     }
     public String getCeStartPath(){
         return operatingSystem.ceStartPathConstructor(currentUser.toString());
@@ -122,8 +122,6 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        SQLConfigListInit(configCollection);
-//        configCollection.setItems(configCollectionList);
         tableElement = new TableViewElement(this, configCollection);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
@@ -146,16 +144,6 @@ public class MainWindowController implements Initializable {
         userList_Local_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         usersList_System_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         operatingSystem = new Windows();
-
-        //отключаем фокусировку на кнопках
-        clearCacheButton.setFocusTraversable(false);
-        addConfigButton.setFocusTraversable(false);
-        editConfigButton.setFocusTraversable(false);
-        deleteConfigButton.setFocusTraversable(false);
-        saveChangesButton.setFocusTraversable(false);
-        addNewSQLConfig.setFocusTraversable(false);
-        editSQLConfig.setFocusTraversable(false);
-        deleteSQLConfig.setFocusTraversable(false);
 
         currentUser = new User();
         currentUser.setName("");

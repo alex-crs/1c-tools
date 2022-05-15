@@ -4,11 +4,19 @@ import entities.PlatformParams.DefaultVersionObject;
 import entities.PlatformParams.SharedBase;
 import entities.PlatformParams.Templates;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Getter;
 import org.apache.log4j.Logger;
@@ -16,20 +24,21 @@ import stages.PlatformEditors.DefaultVersionEditStage;
 import stages.PlatformEditors.SharedBaseEditStage;
 import stages.PlatformEditors.TemplateEditStage;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
+import java.nio.file.Path;
+import java.util.*;
 
 @Getter
 public class PlatformEditorController implements Initializable {
 
     private final MainWindowController mainController;
     private static final Logger LOGGER = Logger.getLogger(PlatformEditorController.class);
+    private final Stage stage;
+
+    private File cv8Start;
+    private File ceStart;
 
     //массивы с параметрами для 1cv8strt.pfl (параметр 1)
     private final ArrayList<String> cv8config;
@@ -48,6 +57,9 @@ public class PlatformEditorController implements Initializable {
 
     @FXML
     CheckBox showStartEDTButton;
+
+    @FXML
+    Label lRInfoLabel;
 
     //параметры для файла 1CEStart.cfg (параметр 2)
     String commonCfgLocation;
@@ -76,11 +88,27 @@ public class PlatformEditorController implements Initializable {
     @FXML
     ListView<DefaultVersionObject> defaultVersionListView;
 
+    @FXML
+    AnchorPane configWindow;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        readFileParams(new File(mainController.getPlatformConfigPath()), 1);
-        readFileParams(new File(mainController.getCeStartPath()), 2);
+        cv8Start = new File(mainController.getCV8ConfigPath());
+        ceStart = new File(mainController.getCeStartPath());
+        try {
+            if (!cv8Start.exists()) {
+                cv8Start.createNewFile();
+                initNewC8ConfigFile();
+            }
+            if (!ceStart.exists()) {
+                ceStart.createNewFile();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Отсутствует доступ к файлу");
+        }
+        readFileParams(cv8Start, 1);
+        readFileParams(ceStart, 2);
 
         //заполняем список шаблонов
         fillTemplatesList();
@@ -91,15 +119,91 @@ public class PlatformEditorController implements Initializable {
         //заполняем список версий по умолчанию
         fillDefaultVersionList();
 
-        cv8init();
+        cv8ModelViewInit(cv8config);
+
+        //инициализируем слушатели
+        initKeyListeners();
+
+        //установим фокус на панель шаблонов
+        templatesListView.focusedProperty();
     }
 
     public PlatformEditorController(MainWindowController mainWindowController, Stage stage) {
         this.mainController = mainWindowController;
+        this.stage = stage;
         cv8config = new ArrayList<>();
         configurationTemplatesLocation = new ArrayList<>();
         sharedBaseList = new ArrayList<>();
         defaultVersion = new ArrayList<>();
+    }
+
+    private void initKeyListeners() {
+        configWindow.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    event.consume();
+                    stage.close();
+                }
+            }
+        });
+        templatesListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.DELETE) {
+                    event.consume();
+                    deleteTemplate();
+                }
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    event.consume();
+                    stage.close();
+                }
+            }
+        });
+        sharedBaseListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.DELETE) {
+                    event.consume();
+                    deleteService();
+                }
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    event.consume();
+                    stage.close();
+                }
+            }
+        });
+        defaultVersionListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.DELETE) {
+                    event.consume();
+                    deleteDefaultVersion();
+                }
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    event.consume();
+                    stage.close();
+                }
+            }
+        });
+    }
+
+    public void templateClickEvent(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2) {
+            editTemplate();
+        }
+    }
+
+    public void serviceClickEvent(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2) {
+            editService();
+        }
+    }
+
+    public void defaultVersionClickEvent(MouseEvent mouseEvent) {
+        if (mouseEvent.getClickCount() == 2) {
+            editDefaultVersion();
+        }
     }
 
     public void readFileParams(File file, int config) {
@@ -131,20 +235,211 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
+    public void saveUserParams() {
+        LinkedList<String> cache = new LinkedList<>();
+        if (numberFormatInspector()) {
+            updateC8ConfigList();
+            build_1CeStartConfig(cache);
+            saveParametersToFile(cv8Start, cv8config, 1);
+            saveParametersToFile(ceStart, cache, 2);
+            stage.close();
+        }
+    }
+
+    private void updateC8ConfigList() {
+        StringBuilder param = new StringBuilder();
+        for (int i = 0; i < cv8config.size(); i++) {
+            if (cv8config.get(i).contains("LRInfoBaseIDListSize")) {
+                param.append(cv8config.get(i + 1));
+                param.replace(5, 6, lRInfoBaseIDListSize.getText());
+                cv8config.set(i + 1, param.toString());
+            }
+            if (cv8config.get(i).contains("ShowIBsAsTree")) {
+                param.append(cv8config.get(i + 1));
+                param.replace(5, 6, showIBsAsTree.isSelected() ? "1" : "0");
+                cv8config.set(i + 1, param.toString());
+            }
+            if (cv8config.get(i).contains("AutoSortIBs")) {
+                param.append(cv8config.get(i + 1));
+                param.replace(5, 6, autoSortIBs.isSelected() ? "1" : "0");
+                cv8config.set(i + 1, param.toString());
+            }
+            if (cv8config.get(i).contains("ShowRecentIBs")) {
+                param.append(cv8config.get(i + 1));
+                param.replace(5, 6, showRecentIBs.isSelected() ? "1" : "0");
+                cv8config.set(i + 1, param.toString());
+            }
+            if (cv8config.get(i).contains("ShowStartEDTButton")) {
+                param.append(cv8config.get(i + 1));
+                param.replace(5, 6, showStartEDTButton.isSelected() ? "1" : "0");
+                cv8config.set(i + 1, param.toString());
+                i = cv8config.size();
+            }
+            param.delete(0, param.length());
+        }
+    }
+
+    private boolean numberFormatInspector() {
+        String string = lRInfoBaseIDListSize.getText();
+        int result = -1;
+        try {
+            result = Integer.parseInt(string);
+            if (result < 0) {
+                mainController.alert("Необходимо ввести целое число");
+                lRInfoLabel.setTextFill(Color.web("red"));
+            } else {
+                lRInfoLabel.setTextFill(Color.web("black"));
+            }
+        } catch (NumberFormatException e) {
+            mainController.alert("Необходимо ввести целое число");
+            lRInfoLabel.setTextFill(Color.web("red"));
+            return false;
+        }
+        return true;
+    }
+
+    private void build_1CeStartConfig(LinkedList<String> cache) {
+        if (commonCfgLocation != null) {
+            cache.add("CommonCfgLocation=" + commonCfgLocation);
+        }
+        for (DefaultVersionObject dob : defaultVersion) {
+            cache.add(dob.returnParam());
+        }
+        for (SharedBase sb : sharedBaseList) {
+            if (sb.isIService()) {
+                cache.add(sb.returnParam());
+            }
+        }
+        for (Templates t : configurationTemplatesLocation) {
+            cache.add(t.returnParam());
+        }
+        for (SharedBase sb : sharedBaseList) {
+            if (!sb.isIService()) {
+                cache.add(sb.returnParam());
+            }
+        }
+        cache.add("UseHWLicenses=" + (useHWLicenses.isSelected() ? "1" : "0"));
+        cache.add("AppAutoInstallLastVersion=" + (appAutoInstallLastVersion.isSelected() ? "1" : "0"));
+    }
+
+    private LinkedList<String> build_1Cv8StartConfig() {
+        LinkedList<String> cache = new LinkedList<>();
+        cache.add("LRInfoBaseIDListSize=" + lRInfoBaseIDListSize.getText());
+        cache.add("ShowIBsAsTree=" + (showIBsAsTree.isSelected() ? "1" : "0"));
+        cache.add("AutoSortIBs=" + (autoSortIBs.isSelected() ? "1" : "0"));
+        cache.add("ShowRecentIBs=" + (showRecentIBs.isSelected() ? "1" : "0"));
+        cache.add("ShowStartEDTButton=" + (showStartEDTButton.isSelected() ? "1" : "0"));
+        return cache;
+    }
+
+    private void loadParametersFromChosenFile(File file) {
+        cv8config.clear();
+        defaultVersion.clear();
+        configurationTemplatesLocation.clear();
+        sharedBaseList.clear();
+
+        StringBuilder string = new StringBuilder();
+        if (file.exists() && file.length() > 0) {
+            try (FileInputStream fis = new FileInputStream(file);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(fis, StandardCharsets.UTF_8))) {
+                while (reader.ready()) {
+                    string.append(reader.readLine());
+                    ceStartConfigReader(string.toString());
+                    string.delete(0, string.length());
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        fillTemplatesList();
+        fillDefaultVersionList();
+        fillSharedBaseList();
+    }
+
+    public void openLoadFileDialog() {
+        FileChooser dialog = new FileChooser();
+        File file;
+        dialog.setTitle("Выберете место расположения шаблонов");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Параметры платформы", "*.pconf");
+        dialog.getExtensionFilters().add(filter);
+        dialog.setInitialDirectory(new File((new File("").getAbsolutePath())));
+        file = dialog.showOpenDialog(stage);
+        if (file != null) {
+            loadParametersFromChosenFile(file);
+        }
+    }
+
+    //если параметр 1, то пишем в UTF-8, если 2, то в UTF-16LE
+    private void saveParametersToFile(File file, List<String> cache, int param) {
+        try (FileOutputStream fis = new FileOutputStream(file);
+             BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis,
+                     (param == 1 ? StandardCharsets.UTF_8 : StandardCharsets.UTF_16LE))))) {
+            if (param == 2) {
+                writer.write(65279);
+            }
+            for (String l : cache) {
+                writer.write(l);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openSaveFileDialog() {
+        if (numberFormatInspector()) {
+            LinkedList<String> cache = new LinkedList<>();
+            FileChooser dialog = new FileChooser();
+            File file;
+            dialog.setTitle("Выберете место расположения настроек платформы");
+            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Параметры платформы", "*.pconf");
+            dialog.getExtensionFilters().add(filter);
+            dialog.setInitialDirectory(new File((new File("").getAbsolutePath())));
+            file = dialog.showSaveDialog(stage);
+            if (file != null) {
+                build_1CeStartConfig(cache);
+                cache.addAll(build_1Cv8StartConfig());
+                saveParametersToFile(file, cache, 1);
+            }
+        }
+    }
+
     private void cv8configReader(String string) {
         cv8config.add(string);
     }
 
-    //пока не понятно
-    private void cv8init() {
-        lRInfoBaseIDListSize.setText(cv8config.get(2).substring(5, 6));
-        showIBsAsTree.setSelected(cv8config.get(3).charAt(5) == '1');
-        autoSortIBs.setSelected(cv8config.get(4).charAt(5) == '1');
-        showRecentIBs.setSelected(cv8config.get(5).charAt(5) == '1');
-        showStartEDTButton.setSelected(cv8config.get(7).charAt(5) == '1');
+
+    private void cv8ModelViewInit(ArrayList<String> config) {
+        for (int i = 0; i < config.size(); i++) {
+            if (config.get(i).contains("LRInfoBaseIDListSize")) {
+                lRInfoBaseIDListSize.setText(config.get(i + 1).substring(5, 6));
+            }
+            if (config.get(i).contains("ShowIBsAsTree")) {
+                showIBsAsTree.setSelected(config.get(i + 1).charAt(5) == '1');
+            }
+            if (config.get(i).contains("AutoSortIBs")) {
+                autoSortIBs.setSelected(config.get(i + 1).charAt(5) == '1');
+            }
+            if (config.get(i).contains("ShowRecentIBs")) {
+                showRecentIBs.setSelected(config.get(i + 1).charAt(5) == '1');
+            }
+            if (config.get(i).contains("ShowStartEDTButton")) {
+                showStartEDTButton.setSelected(config.get(i + 1).charAt(5) == '1');
+                break;
+            }
+        }
     }
 
+
     private void ceStartConfigReader(String string) {
+        if (string.charAt(0) == 65279) { //это ZERO WIDTH NO-BREAK SPACE по сути это char -
+            // символ кодировки UTF-8 без BOM (Byte order Mark) знак порядка байтов
+            ; //удалим его и добавим при записи
+            string = string.substring(1);
+        }
         String[] paramArray = string.split("=", 2);
         switch (paramArray[0]) {
             case "CommonCfgLocation":
@@ -169,6 +464,21 @@ public class PlatformEditorController implements Initializable {
                 break;
             case "AppAutoInstallLastVersion":
                 appAutoInstallLastVersion.setSelected(Integer.parseInt(paramArray[1]) == 1);
+                break;
+            case "LRInfoBaseIDListSize":
+                lRInfoBaseIDListSize.setText(paramArray[1]);
+                break;
+            case "ShowIBsAsTree":
+                showIBsAsTree.setSelected(Integer.parseInt(paramArray[1]) == 1);
+                break;
+            case "AutoSortIBs":
+                autoSortIBs.setSelected(Integer.parseInt(paramArray[1]) == 1);
+                break;
+            case "ShowRecentIBs":
+                showRecentIBs.setSelected(Integer.parseInt(paramArray[1]) == 1);
+                break;
+            case "ShowStartEDTButton":
+                showStartEDTButton.setSelected(Integer.parseInt(paramArray[1]) == 1);
                 break;
         }
     }
@@ -355,4 +665,33 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
+    private void initNewC8ConfigFile() {
+        List<String> c8ConfigNew = Arrays.asList("{",
+                "{\"LRInfoBaseIDListSize\",",
+                "{\"N\",4},\"ShowIBsAsTree\",",
+                "{\"B\",0},\"AutoSortIBs\",",
+                "{\"B\",1},\"ShowRecentIBs\",",
+                "{\"B\",0},\"DefaultConnectionSpeed\",",
+                "{\"N\",1},\"ShowStartEDTButton\",",
+                "{\"B\",0},\"\"},",
+                "{",
+                "{\"OfflineCustomizationStorage\",",
+                "{\"StartupDlgWindowPos\",",
+                "{\"S\",\"{1,1,\"\"StartUpDlg.f\"\",\"\"{3,1,\"\"\"\"TopLevelTaxiPlus/_TDI\"\"\"\",\"\"\"\"{7,1,1034,505,1526,896,490,349,0,0,0,00000000-0000-0000-0000-000000000000,0,AAAAAAAAAAAAAAAAAAAAAAAAAAA=,0,0,0,0,0,1,0}\"\"\"\"}\"\"}\"},\"\"},",
+                "{",
+                "{\"\"}",
+                "}",
+                "},",
+                "{\"ModalViewsTaxiPlus\",",
+                "{\"Запуск 1С:Предприятия\",",
+                "{\"S\",\"{9,1,490,349,-2147483648,-2147483648,0,0,\"\"{1,0,149}\"\",1}\"},\"\"},",
+                "{",
+                "{\"\"}",
+                "}",
+                "},",
+                "{\"\"}",
+                "}",
+                "}");
+        cv8config.addAll(c8ConfigNew);
+    }
 }

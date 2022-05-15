@@ -14,7 +14,7 @@ public class SharedBase {
     private boolean iService;
 
     public String returnParam() {
-        return iService ? "CommonInfoBases=" + paramName : "InternetService=" + paramName;
+        return !iService ? "CommonInfoBases=" + paramName : "InternetService=" + paramName;
     }
 
     public SharedBase(String paramName) {

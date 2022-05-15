@@ -9,7 +9,7 @@ public interface OS {
 
     String basePathConstructor(String userName);
 
-    String platformConfigPathConstructor(String userName);
+    String cv8StartConfigPathConstructor(String userName);
 
     String ceStartPathConstructor(String userName);
 }

@@ -55,7 +55,7 @@ public class DefaultVersionEditController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initChoicebox();
+        initChoiceBox();
         if (operation.equals("Изменить") || operation.equals("Скопировать")) {
             target.setText(defaultObject.getTargetVersion());
             use.setText(defaultObject.getUsedVersion());
@@ -63,7 +63,7 @@ public class DefaultVersionEditController implements Initializable {
         }
     }
 
-    private void initChoicebox() {
+    private void initChoiceBox() {
         bitDepthValues = new HashMap<>();
         bitDepthValues.put("x86", "32 (x86)");
         bitDepthValues.put("x86_prt", "Приоритет 32 (x86)");

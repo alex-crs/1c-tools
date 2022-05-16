@@ -2,13 +2,17 @@ package controllers.PlatformEditors;
 
 import controllers.PlatformEditorController;
 import entities.PlatformParams.DefaultVersionObject;
+import entities.WindowControllers;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import service.HotKeys;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,7 +21,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Function;
 
-public class DefaultVersionEditController implements Initializable {
+public class DefaultVersionEditController extends WindowControllers implements Initializable {
 
     PlatformEditorController platformController;
     DefaultVersionObject defaultObject;
@@ -42,6 +46,12 @@ public class DefaultVersionEditController implements Initializable {
     @FXML
     Label useLabel;
 
+    @FXML
+    AnchorPane defaultVersionWindow;
+
+    @FXML
+    Button actionButton;
+
     public DefaultVersionEditController(PlatformEditorController platformController,
                                         DefaultVersionObject defaultObject,
                                         Stage stage,
@@ -61,6 +71,7 @@ public class DefaultVersionEditController implements Initializable {
             use.setText(defaultObject.getUsedVersion());
             bitDepth.setValue(bitDepthValues.get(defaultObject.getBitDepth()));
         }
+        initKeyListeners();
     }
 
     private void initChoiceBox() {
@@ -72,6 +83,22 @@ public class DefaultVersionEditController implements Initializable {
         bitDepth.getItems().addAll(new ArrayList<>(bitDepthValues.values()));
     }
 
+    private void initKeyListeners() {
+        //на ESCAPE
+        HotKeys.closeListener(defaultVersionWindow, stage);
+        HotKeys.closeListener(target, stage);
+        HotKeys.closeListener(actionButton, stage);
+        HotKeys.closeListener(use, stage);
+        HotKeys.closeListener(bitDepth, stage);
+
+        //на ENTER
+        HotKeys.enterListener(target, stage, this);
+        HotKeys.enterListener(use, stage, this);
+        HotKeys.enterListener(actionButton, stage, this);
+        HotKeys.enterListener(bitDepth, stage, this);
+    }
+
+    @Override
     public void action() {
         String targetParam = target.getText();
         String useParam = use.getText();

@@ -4,21 +4,24 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane fx:id="configWindow" prefHeight="750.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button focusTraversable="false" layoutX="441.0" layoutY="648.0" mnemonicParsing="false" onAction="#saveUserParams" text="Сохранить и выйти" />
-      <CheckBox fx:id="showIBsAsTree" focusTraversable="false" layoutX="24.0" layoutY="18.0" mnemonicParsing="false" text="Отображать в виде древа" AnchorPane.leftAnchor="10.0" />
-      <TextField fx:id="lRInfoBaseIDListSize" focusTraversable="false" layoutX="241.0" layoutY="98.0" AnchorPane.leftAnchor="230.0" />
-      <ListView fx:id="templatesListView" layoutX="5.0" layoutY="191.0" onMouseClicked="#templateClickEvent" prefHeight="100.0" prefWidth="502.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-      <ListView fx:id="sharedBaseListView" layoutX="5.0" layoutY="356.0" onMouseClicked="#serviceClickEvent" prefHeight="100.0" prefWidth="502.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-      <CheckBox fx:id="autoSortIBs" focusTraversable="false" layoutX="24.0" layoutY="44.0" mnemonicParsing="false" text="Сортировать по наименованию" AnchorPane.leftAnchor="10.0" />
-      <CheckBox fx:id="showRecentIBs" focusTraversable="false" layoutX="24.0" layoutY="70.0" mnemonicParsing="false" text="Показывать последние выбранные информационные базы" AnchorPane.leftAnchor="10.0" />
-      <Label fx:id="lRInfoLabel" focusTraversable="false" layoutX="33.0" layoutY="102.0" text="Запоминать последние выбранные:" AnchorPane.leftAnchor="10.0" />
-      <ToolBar layoutX="5.0" layoutY="156.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+      <Button focusTraversable="false" layoutX="404.0" layoutY="700.0" mnemonicParsing="false" onAction="#action" prefHeight="25.0" prefWidth="170.0" text="Сохранить и закрыть" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="10.0" />
+      <CheckBox fx:id="showIBsAsTree" focusTraversable="false" layoutX="10.0" layoutY="40.0" mnemonicParsing="false" text="Отображать в виде древа" AnchorPane.leftAnchor="10.0" />
+      <TextField fx:id="lRInfoBaseIDListSize" focusTraversable="false" layoutX="230.0" layoutY="120.0" AnchorPane.leftAnchor="230.0" />
+      <ListView fx:id="templatesListView" layoutX="5.0" layoutY="209.0" onMouseClicked="#templateClickEvent" prefHeight="100.0" prefWidth="502.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+      <ListView fx:id="sharedBaseListView" layoutX="5.0" layoutY="374.0" onMouseClicked="#serviceClickEvent" prefHeight="100.0" prefWidth="502.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+      <CheckBox fx:id="autoSortIBs" focusTraversable="false" layoutX="10.0" layoutY="66.0" mnemonicParsing="false" text="Сортировать по наименованию" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="showRecentIBs" focusTraversable="false" layoutX="10.0" layoutY="92.0" mnemonicParsing="false" text="Показывать последние выбранные информационные базы" AnchorPane.leftAnchor="10.0" />
+      <Label fx:id="lRInfoLabel" focusTraversable="false" layoutX="10.0" layoutY="124.0" text="Запоминать последние выбранные:" AnchorPane.leftAnchor="10.0" />
+      <ToolBar layoutX="5.0" layoutY="174.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
         <items>
           <Button focusTraversable="false" mnemonicParsing="false" onAction="#addTemplate" text="✚" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#editTemplate" text="✎" />
@@ -27,20 +30,20 @@
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#moveDownTemplateFromList" text="↓" />
         </items>
       </ToolBar>
-      <ToolBar layoutX="5.0" layoutY="321.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+      <ToolBar layoutX="5.0" layoutY="339.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <items>
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#addService" text="✚" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#editService" text="✎" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteService" text="✖" />
          </items>
       </ToolBar>
-      <Label focusTraversable="false" layoutX="19.0" layoutY="132.0" text="Каталоги шаблонов конфигураций и обновлений:" AnchorPane.leftAnchor="10.0" />
-      <Label focusTraversable="false" layoutX="20.0" layoutY="299.0" text="Адреса Интернет-сервисов и списки общих информационных баз:" AnchorPane.leftAnchor="10.0" />
-      <CheckBox fx:id="appAutoInstallLastVersion" focusTraversable="false" layoutX="20.0" layoutY="643.0" mnemonicParsing="false" text="Устанавливать автоматически новую версию" AnchorPane.leftAnchor="10.0" />
-      <CheckBox fx:id="useHWLicenses" focusTraversable="false" layoutX="20.0" layoutY="672.0" mnemonicParsing="false" text="Использовать аппаратную лицензию (ключ защиты)" AnchorPane.leftAnchor="10.0" />
-      <CheckBox fx:id="showStartEDTButton" focusTraversable="false" layoutX="20.0" layoutY="703.0" mnemonicParsing="false" text="Разрешать запуск 1C:Enterprise Development Tools" AnchorPane.leftAnchor="10.0" />
-      <Label focusTraversable="false" layoutX="20.0" layoutY="468.0" text="Используемые версии:" AnchorPane.leftAnchor="10.0" />
-      <ToolBar layoutX="5.0" layoutY="489.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+      <Label focusTraversable="false" layoutX="10.0" layoutY="150.0" text="Каталоги шаблонов конфигураций и обновлений:" AnchorPane.leftAnchor="10.0" />
+      <Label focusTraversable="false" layoutX="10.0" layoutY="317.0" text="Адреса Интернет-сервисов и списки общих информационных баз:" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="appAutoInstallLastVersion" focusTraversable="false" layoutX="10.0" layoutY="661.0" mnemonicParsing="false" text="Устанавливать автоматически новую версию" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="useHWLicenses" focusTraversable="false" layoutX="10.0" layoutY="690.0" mnemonicParsing="false" text="Использовать аппаратную лицензию (ключ защиты)" AnchorPane.leftAnchor="10.0" />
+      <CheckBox fx:id="showStartEDTButton" focusTraversable="false" layoutX="10.0" layoutY="721.0" mnemonicParsing="false" text="Разрешать запуск 1C:Enterprise Development Tools" AnchorPane.leftAnchor="10.0" />
+      <Label focusTraversable="false" layoutX="10.0" layoutY="486.0" text="Используемые версии:" AnchorPane.leftAnchor="10.0" />
+      <ToolBar layoutX="5.0" layoutY="507.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <items>
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#addDefaultVersion" text="✚" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#copyDefaultVersion" text="🗍" />
@@ -48,8 +51,17 @@
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteDefaultVersion" text="✖" />
          </items>
       </ToolBar>
-      <ListView fx:id="defaultVersionListView" layoutY="524.0" onMouseClicked="#defaultVersionClickEvent" prefHeight="100.0" prefWidth="600.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-      <Button focusTraversable="false" layoutX="422.0" layoutY="677.0" mnemonicParsing="false" onAction="#openSaveFileDialog" text="Сохранить конфигурацию" />
-      <Button focusTraversable="false" layoutX="422.0" layoutY="708.0" mnemonicParsing="false" onAction="#openLoadFileDialog" text="Загрузить параметры" />
+      <ListView fx:id="defaultVersionListView" layoutX="5.0" layoutY="542.0" onMouseClicked="#defaultVersionClickEvent" prefHeight="100.0" prefWidth="600.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+      <MenuBar layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Настройки">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#openLoadFileDialog" text="Импортировать настройки" />
+                  <MenuItem mnemonicParsing="false" onAction="#openSaveFileDialog" text="Экспортировать настройки" />
+                  <MenuItem mnemonicParsing="false" onAction="#close" text="Закрыть окно" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
    </children>
 </AnchorPane>

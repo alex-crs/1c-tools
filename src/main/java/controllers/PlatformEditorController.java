@@ -3,6 +3,7 @@ package controllers;
 import entities.PlatformParams.DefaultVersionObject;
 import entities.PlatformParams.SharedBase;
 import entities.PlatformParams.Templates;
+import entities.WindowControllers;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,6 +21,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.Getter;
 import org.apache.log4j.Logger;
+import service.HotKeys;
 import stages.PlatformEditors.DefaultVersionEditStage;
 import stages.PlatformEditors.SharedBaseEditStage;
 import stages.PlatformEditors.TemplateEditStage;
@@ -31,7 +33,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 @Getter
-public class PlatformEditorController implements Initializable {
+public class PlatformEditorController extends WindowControllers implements Initializable {
 
     private final MainWindowController mainController;
     private static final Logger LOGGER = Logger.getLogger(PlatformEditorController.class);
@@ -100,6 +102,7 @@ public class PlatformEditorController implements Initializable {
             if (!cv8Start.exists()) {
                 cv8Start.createNewFile();
                 initNewC8ConfigFile();
+                saveParametersToFile(cv8Start, cv8config, 1);
             }
             if (!ceStart.exists()) {
                 ceStart.createNewFile();
@@ -138,28 +141,21 @@ public class PlatformEditorController implements Initializable {
     }
 
     private void initKeyListeners() {
-        configWindow.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    event.consume();
-                    stage.close();
-                }
+        HotKeys.closeListener(configWindow,stage);
+        HotKeys.enterListener(configWindow,stage, this);
+        HotKeys.closeListener(templatesListView,stage);
+        templatesListView.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                event.consume();
+                stage.close();
+            }
+            if (event.getCode() == KeyCode.ENTER) {
+                event.consume();
+                editTemplate();
             }
         });
-        templatesListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.DELETE) {
-                    event.consume();
-                    deleteTemplate();
-                }
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    event.consume();
-                    stage.close();
-                }
-            }
-        });
+        HotKeys.closeListener(sharedBaseListView,stage);
+        HotKeys.enterListener(sharedBaseListView,stage, this);
         sharedBaseListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -167,12 +163,14 @@ public class PlatformEditorController implements Initializable {
                     event.consume();
                     deleteService();
                 }
-                if (event.getCode() == KeyCode.ESCAPE) {
+                if (event.getCode() == KeyCode.ENTER) {
                     event.consume();
-                    stage.close();
+                    editService();
                 }
             }
         });
+        HotKeys.closeListener(defaultVersionListView,stage);
+        HotKeys.enterListener(defaultVersionListView,stage, this);
         defaultVersionListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -180,9 +178,9 @@ public class PlatformEditorController implements Initializable {
                     event.consume();
                     deleteDefaultVersion();
                 }
-                if (event.getCode() == KeyCode.ESCAPE) {
+                if (event.getCode() == KeyCode.ENTER) {
                     event.consume();
-                    stage.close();
+                    editDefaultVersion();
                 }
             }
         });
@@ -235,7 +233,8 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
-    public void saveUserParams() {
+    @Override
+    public void action() {
         LinkedList<String> cache = new LinkedList<>();
         if (numberFormatInspector()) {
             updateC8ConfigList();
@@ -677,7 +676,10 @@ public class PlatformEditorController implements Initializable {
                 "{",
                 "{\"OfflineCustomizationStorage\",",
                 "{\"StartupDlgWindowPos\",",
-                "{\"S\",\"{1,1,\"\"StartUpDlg.f\"\",\"\"{3,1,\"\"\"\"TopLevelTaxiPlus/_TDI\"\"\"\",\"\"\"\"{7,1,1034,505,1526,896,490,349,0,0,0,00000000-0000-0000-0000-000000000000,0,AAAAAAAAAAAAAAAAAAAAAAAAAAA=,0,0,0,0,0,1,0}\"\"\"\"}\"\"}\"},\"\"},",
+                "{\"S\",\"{1,1,\"\"StartUpDlg.f\"\",\"\"{3,1,\"\"\"\"TopLevel" +
+                        "TaxiPlus/_TDI\"\"\"\",\"\"\"\"{7,1,1034,505,1526,896,490,349,0,0,0," +
+                        "00000000-0000-0000-0000-000000000000,0," +
+                        "AAAAAAAAAAAAAAAAAAAAAAAAAAA=,0,0,0,0,0,1,0}\"\"\"\"}\"\"}\"},\"\"},",
                 "{",
                 "{\"\"}",
                 "}",
@@ -693,5 +695,9 @@ public class PlatformEditorController implements Initializable {
                 "}",
                 "}");
         cv8config.addAll(c8ConfigNew);
+    }
+
+    public void close(){
+        stage.close();
     }
 }

@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 @Table(name = "Config")
 @NoArgsConstructor
 @Data
-public class Base extends VirtualTree {
+public class Base extends VirtualTree implements Cloneable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -176,6 +176,15 @@ public class Base extends VirtualTree {
             return folder;
         } else {
             return this;
+        }
+    }
+
+    public Base clone(){
+        try {
+            return (Base) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

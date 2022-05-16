@@ -184,7 +184,7 @@ public class DataBaseService {
     public void deleteUserFromBase(User user) {
         session = factory.getCurrentSession();
         session.beginTransaction();
-
+        user.setGroups(null);
         session.delete(user);
         session.getTransaction().commit();
     }

@@ -52,7 +52,7 @@
                                           </Button>
                                        </items>
                                     </ToolBar>
-                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onKeyReleased="#userListKeyListen" onMouseClicked="#userListClickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onKeyPressed="#userListKeyListen" onMouseClicked="#userListClickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                                     <Label layoutX="5.0" layoutY="5.0" text="Список пользователей:" />
                                  </children>
                               </AnchorPane>
@@ -111,7 +111,7 @@
                                  <children>
                                     <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
-                                        <Button mnemonicParsing="false" text="Очистить список" />
+                                        <Button mnemonicParsing="false" onAction="#cleanUserList" text="Очистить список" />
                                           <Button fx:id="addUser_ConfigTab" mnemonicParsing="false" onAction="#addUserManually" text="Добавить вручную" />
                                           <Button mnemonicParsing="false" onAction="#deleteFromLocalUserList" text="Удалить" />
                                       </items>
@@ -141,11 +141,11 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="configCollection" layoutX="20.0" layoutY="28.0" onMouseClicked="#ConfigList_SQLTabClickEvent" prefHeight="431.0" prefWidth="762.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TableView fx:id="configCollection" layoutX="20.0" layoutY="28.0" onKeyPressed="#configListSQLKeyListen" onMouseClicked="#ConfigList_SQLTabClickEvent" prefHeight="431.0" prefWidth="762.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <ToolBar layoutX="20.0" layoutY="470.0" prefHeight="40.0" prefWidth="622.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <items>
                               <Button fx:id="addNewSQLConfig" focusTraversable="false" mnemonicParsing="false" onAction="#addNewSQLConfig" text="Добавить" />
-                              <Button mnemonicParsing="false" text="Создать копию" />
+                              <Button mnemonicParsing="false" onAction="#cloneSQLConfig" text="Создать копию" />
                               <Button fx:id="editSQLConfig" focusTraversable="false" mnemonicParsing="false" onAction="#editSQLElement" text="Изменить" />
                               <Button fx:id="deleteSQLConfig" focusTraversable="false" mnemonicParsing="false" onAction="#deleteSQLElementFromBase" text="Удалить" />
                            </items>

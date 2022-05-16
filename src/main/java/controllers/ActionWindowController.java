@@ -1,20 +1,25 @@
 package controllers;
 
 import entities.Const;
+import entities.WindowControllers;
 import entities.configStructure.VirtualTree;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import service.HotKeys;
 import settings.BaseConfig;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ActionWindowController implements Initializable {
+public class ActionWindowController extends WindowControllers implements Initializable {
     private final Const action;
     private final MainWindowController mainController;
     private final Stage stage;
@@ -27,6 +32,9 @@ public class ActionWindowController implements Initializable {
 
     @FXML
     Label message;
+
+    @FXML
+    AnchorPane actionWindow;
 
     public ActionWindowController(Const action, MainWindowController mainController, Stage stage) {
         this.action = action;
@@ -41,6 +49,7 @@ public class ActionWindowController implements Initializable {
             case CHECK_UNSAVED_DATA:
                 message.setText("Имеются несохраненные данные, желаете сохранить?");
                 accept.setText("Сохранить");
+                cancel.setText("Закрыть без сохранения");
                 break;
             case DELETE_ELEMENT:
             case DELETE_SQL_CONFIG:
@@ -49,7 +58,20 @@ public class ActionWindowController implements Initializable {
         }
     }
 
-    public void accept() {
+    public void keyListen(KeyEvent event){
+        if (event.getCode() == KeyCode.ENTER) {
+            event.consume();
+            action();
+            stage.close();
+        }
+        if (event.getCode() == KeyCode.ESCAPE) {
+            event.consume();
+            cancel();
+        }
+    }
+
+    @Override
+    public void action() {
         switch (action) {
             case CHECK_UNSAVED_DATA:
                 mainController.saveChanges();

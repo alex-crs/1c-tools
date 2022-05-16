@@ -7,6 +7,7 @@ import entities.configStructure.VirtualTree;
 import entities.configStructure.Folder;
 import handlers.FileLengthCalculator;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -113,10 +114,11 @@ public class MainWindowController implements Initializable {
         return currentUser;
     }
 
-    public String getCV8ConfigPath(){
+    public String getCV8ConfigPath() {
         return operatingSystem.cv8StartConfigPathConstructor(currentUser.toString());
     }
-    public String getCeStartPath(){
+
+    public String getCeStartPath() {
         return operatingSystem.ceStartPathConstructor(currentUser.toString());
     }
 
@@ -148,6 +150,63 @@ public class MainWindowController implements Initializable {
         currentUser = new User();
         currentUser.setName("");
         displayUserList(); //показываем список пользователей
+        contextMenuInit();
+    }
+
+    //горячие клавиши для user_list
+    public void userListKeyListen(KeyEvent event) {
+        if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP) {
+            event.consume();
+            userListClickEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
+                    0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
+                    true, true, true, true, true, true, null));
+        }
+    }
+
+    public void configListKeyListen(KeyEvent event) {
+        final KeyCombination createElement = new KeyCodeCombination(KeyCode.W,
+                KeyCombination.SHIFT_ANY);
+        final KeyCombination addFromSQLBase = new KeyCodeCombination(KeyCode.F,
+                KeyCombination.SHIFT_ANY);
+        if (createElement.match(event)) {
+            event.consume();
+            addToTree();
+        }
+        if (addFromSQLBase.match(event)) {
+            event.consume();
+            addConfigFromBase();
+        }
+    }
+
+    //контекстное меню в древе конфигурации
+    private void contextMenuInit() {
+        ContextMenu configTreeContextMenu = new ContextMenu();
+
+        MenuItem addElement = new MenuItem("Создать SHIFT+W");
+        addElement.setOnAction(event -> addToTree());
+
+        MenuItem moveElement = new MenuItem("Переместить");
+        moveElement.setOnAction(event -> moveConfig());
+
+        MenuItem editConfig = new MenuItem("Редактировать");
+        editConfig.setOnAction(event -> editElement());
+
+        MenuItem addToBase = new MenuItem("Добавить в хранилище");
+        addToBase.setOnAction(event -> saveConfigToDataBase());
+
+        MenuItem addFromBase = new MenuItem("Добавить из хранилища SHIFT+F");
+        addFromBase.setOnAction(event -> addConfigFromBase());
+
+        MenuItem deleteConfig = new MenuItem("Удалить");
+        deleteConfig.setOnAction(event -> deleteElementFromTree());
+
+        configTreeContextMenu.getItems().addAll(addElement,
+                editConfig,
+                moveElement,
+                addToBase,
+                addFromBase,
+                deleteConfig);
+        configList_MainTab.setContextMenu(configTreeContextMenu);
     }
 
     //загрузка пользователей из системы
@@ -450,11 +509,11 @@ public class MainWindowController implements Initializable {
     }
 
     //показывает настройки платформы для текущего пользователя
-    public void runPlatformEdit(){
-        if (userList_MainTab.getSelectionModel().getSelectedItem()!=null){
+    public void runPlatformEdit() {
+        if (userList_MainTab.getSelectionModel().getSelectedItem() != null) {
             PlatformEditorStage platformEditorStage = new PlatformEditorStage(this);
             platformEditorStage.showAndWait();
-        }else {
+        } else {
             alert("Необходимо выбрать пользователя");
         }
     }

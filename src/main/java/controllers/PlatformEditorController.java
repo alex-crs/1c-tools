@@ -4,7 +4,6 @@ import entities.PlatformParams.DefaultVersionObject;
 import entities.PlatformParams.SharedBase;
 import entities.PlatformParams.Templates;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -27,7 +26,6 @@ import stages.PlatformEditors.TemplateEditStage;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.*;
 
 @Getter
@@ -100,6 +98,7 @@ public class PlatformEditorController implements Initializable {
             if (!cv8Start.exists()) {
                 cv8Start.createNewFile();
                 initNewC8ConfigFile();
+                saveParametersToFile(cv8Start, cv8config, 1);
             }
             if (!ceStart.exists()) {
                 ceStart.createNewFile();
@@ -121,9 +120,6 @@ public class PlatformEditorController implements Initializable {
 
         cv8ModelViewInit(cv8config);
 
-        //инициализируем слушатели
-        initKeyListeners();
-
         //установим фокус на панель шаблонов
         templatesListView.focusedProperty();
     }
@@ -137,55 +133,49 @@ public class PlatformEditorController implements Initializable {
         defaultVersion = new ArrayList<>();
     }
 
-    private void initKeyListeners() {
-        configWindow.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    event.consume();
-                    stage.close();
-                }
-            }
-        });
-        templatesListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.DELETE) {
-                    event.consume();
-                    deleteTemplate();
-                }
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    event.consume();
-                    stage.close();
-                }
-            }
-        });
-        sharedBaseListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.DELETE) {
-                    event.consume();
-                    deleteService();
-                }
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    event.consume();
-                    stage.close();
-                }
-            }
-        });
-        defaultVersionListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.DELETE) {
-                    event.consume();
-                    deleteDefaultVersion();
-                }
-                if (event.getCode() == KeyCode.ESCAPE) {
-                    event.consume();
-                    stage.close();
-                }
-            }
-        });
+    public void templateKeyListener(KeyEvent keyEvent){
+        if (keyEvent.getCode() == KeyCode.DELETE) {
+            keyEvent.consume();
+            deleteTemplate();
+        }
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            keyEvent.consume();
+            editTemplate();
+        }
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            keyEvent.consume();
+            stage.close();
+        }
+    }
+
+    public void sharedBaseKeyListener(KeyEvent keyEvent){
+        if (keyEvent.getCode() == KeyCode.DELETE) {
+            keyEvent.consume();
+            deleteService();
+        }
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            keyEvent.consume();
+            editService();
+        }
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            keyEvent.consume();
+            stage.close();
+        }
+    }
+
+    public void defaultVersionKeyListener(KeyEvent keyEvent){
+        if (keyEvent.getCode() == KeyCode.DELETE) {
+            keyEvent.consume();
+            deleteDefaultVersion();
+        }
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            keyEvent.consume();
+            editDefaultVersion();
+        }
+        if (keyEvent.getCode() == KeyCode.ESCAPE) {
+            keyEvent.consume();
+            stage.close();
+        }
     }
 
     public void templateClickEvent(MouseEvent mouseEvent) {
@@ -235,7 +225,7 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
-    public void saveUserParams() {
+    public void action() {
         LinkedList<String> cache = new LinkedList<>();
         if (numberFormatInspector()) {
             updateC8ConfigList();
@@ -333,7 +323,7 @@ public class PlatformEditorController implements Initializable {
     }
 
     private void loadParametersFromChosenFile(File file) {
-        cv8config.clear();
+//        cv8config.clear();
         defaultVersion.clear();
         configurationTemplatesLocation.clear();
         sharedBaseList.clear();
@@ -677,7 +667,10 @@ public class PlatformEditorController implements Initializable {
                 "{",
                 "{\"OfflineCustomizationStorage\",",
                 "{\"StartupDlgWindowPos\",",
-                "{\"S\",\"{1,1,\"\"StartUpDlg.f\"\",\"\"{3,1,\"\"\"\"TopLevelTaxiPlus/_TDI\"\"\"\",\"\"\"\"{7,1,1034,505,1526,896,490,349,0,0,0,00000000-0000-0000-0000-000000000000,0,AAAAAAAAAAAAAAAAAAAAAAAAAAA=,0,0,0,0,0,1,0}\"\"\"\"}\"\"}\"},\"\"},",
+                "{\"S\",\"{1,1,\"\"StartUpDlg.f\"\",\"\"{3,1,\"\"\"\"TopLevel" +
+                        "TaxiPlus/_TDI\"\"\"\",\"\"\"\"{7,1,1034,505,1526,896,490,349,0,0,0," +
+                        "00000000-0000-0000-0000-000000000000,0," +
+                        "AAAAAAAAAAAAAAAAAAAAAAAAAAA=,0,0,0,0,0,1,0}\"\"\"\"}\"\"}\"},\"\"},",
                 "{",
                 "{\"\"}",
                 "}",
@@ -693,5 +686,9 @@ public class PlatformEditorController implements Initializable {
                 "}",
                 "}");
         cv8config.addAll(c8ConfigNew);
+    }
+
+    public void close(){
+        stage.close();
     }
 }

@@ -101,6 +101,11 @@ public class MainWindowController implements Initializable {
     @FXML
     Button deleteSQLConfig;
 
+    final KeyCombination createElement = new KeyCodeCombination(KeyCode.W,
+            KeyCombination.SHIFT_ANY);
+    final KeyCombination addFromSQLBase = new KeyCodeCombination(KeyCode.F,
+            KeyCombination.SHIFT_ANY);
+
     public boolean isUnSavedChanges() {
         return unSavedChanges;
     }
@@ -113,10 +118,11 @@ public class MainWindowController implements Initializable {
         return currentUser;
     }
 
-    public String getCV8ConfigPath(){
+    public String getCV8ConfigPath() {
         return operatingSystem.cv8StartConfigPathConstructor(currentUser.toString());
     }
-    public String getCeStartPath(){
+
+    public String getCeStartPath() {
         return operatingSystem.ceStartPathConstructor(currentUser.toString());
     }
 
@@ -148,6 +154,103 @@ public class MainWindowController implements Initializable {
         currentUser = new User();
         currentUser.setName("");
         displayUserList(); //показываем список пользователей
+        contextMenuConfigListMainTabInit();
+        contextMenuConfigListSQLInit();
+    }
+
+    //горячие клавиши для user_list
+    public void userListKeyListen(KeyEvent event) {
+        if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.UP) {
+            event.consume();
+            userListClickEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
+                    0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
+                    true, true, true, true, true, true, null));
+        }
+    }
+
+    public void configListKeyListen(KeyEvent event) {
+
+        if (createElement.match(event)) {
+            event.consume();
+            addToTree();
+        }
+        if (addFromSQLBase.match(event)) {
+            event.consume();
+            addConfigFromBase();
+        }
+        if (event.getCode() == KeyCode.ENTER) {
+            event.consume();
+            editElement();
+        }
+    }
+
+    public void configListSQLKeyListen(KeyEvent event) {
+        if (createElement.match(event)) {
+            event.consume();
+            addNewSQLConfig();
+        }
+        if (event.getCode() == KeyCode.ENTER) {
+            event.consume();
+            editSQLElement();
+        }
+        if (event.getCode() == KeyCode.DELETE) {
+            event.consume();
+            deleteSQLElementFromBase();
+        }
+    }
+
+    //контекстное меню в древе конфигурации
+    private void contextMenuConfigListMainTabInit() {
+        ContextMenu configTreeContextMenu = new ContextMenu();
+
+        MenuItem addElement = new MenuItem("Создать SHIFT+W");
+        addElement.setOnAction(event -> addToTree());
+
+        MenuItem moveElement = new MenuItem("Переместить");
+        moveElement.setOnAction(event -> moveConfig());
+
+        MenuItem editConfig = new MenuItem("Редактировать");
+        editConfig.setOnAction(event -> editElement());
+
+        MenuItem addToBase = new MenuItem("Добавить в хранилище");
+        addToBase.setOnAction(event -> saveConfigToDataBase());
+
+        MenuItem addFromBase = new MenuItem("Добавить из хранилища SHIFT+F");
+        addFromBase.setOnAction(event -> addConfigFromBase());
+
+        MenuItem deleteConfig = new MenuItem("Удалить");
+        deleteConfig.setOnAction(event -> deleteElementFromTree());
+
+        configTreeContextMenu.getItems().addAll(addElement,
+                editConfig,
+                moveElement,
+                addToBase,
+                addFromBase,
+                deleteConfig);
+        configList_MainTab.setContextMenu(configTreeContextMenu);
+    }
+
+    //контекстное меню в древе конфигурации
+    private void contextMenuConfigListSQLInit() {
+        ContextMenu configTreeSQLContextMenu = new ContextMenu();
+
+        MenuItem addElement = new MenuItem("Создать SHIFT+W");
+        addElement.setOnAction(event -> addNewSQLConfig());
+
+        MenuItem editConfig = new MenuItem("Редактировать");
+        editConfig.setOnAction(event -> editSQLElement());
+
+        MenuItem cloneConfig = new MenuItem("Клонировать");
+        cloneConfig.setOnAction(event -> cloneSQLConfig());
+
+        MenuItem deleteConfig = new MenuItem("Удалить");
+        deleteConfig.setOnAction(event -> deleteSQLElementFromBase());
+
+        configTreeSQLContextMenu.getItems().addAll(addElement,
+                editConfig,
+                cloneConfig,
+                deleteConfig);
+        configCollection.setContextMenu(configTreeSQLContextMenu);
     }
 
     //загрузка пользователей из системы
@@ -274,10 +377,21 @@ public class MainWindowController implements Initializable {
         displayUserList();
     }
 
+    //очистка списка пользователей
+    public void cleanUserList(){
+        List<User> users = userList_Local_ConfigTab.getItems();
+        user_list.deleteFromLocalList(users);
+        for (User u : users) {
+            data_base.deleteUserFromBase(u);
+        }
+        displayUserList();
+    }
+
     //добавляет пользователя в базу из системы
     public void addToLocalList() {
         user_list.addUserToDataBase(usersList_System_ConfigTab.getSelectionModel().getSelectedItems(),
                 group_choice_box.getSelectionModel().getSelectedItem());
+        usersList_System_ConfigTab.getSelectionModel().clearSelection();
         displayUserList();
     }
 
@@ -401,15 +515,15 @@ public class MainWindowController implements Initializable {
     }
 
     public void saveConfigToDataBase() {
-        TreeItem<VirtualTree> choiceElement = configList_MainTab.getSelectionModel().getSelectedItem();
-        if (choiceElement != null && !choiceElement.getValue().isFolder()) {
-            if (data_base.addConfigToBase((Base) choiceElement.getValue(), group_choice_box.getValue()) > 0) {
+        List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
+        if (choiceElement != null && !choiceElement.get(0).getValue().isFolder() && choiceElement.size() == 1) {
+            if (data_base.addConfigToBase((Base) choiceElement.get(0).getValue(), group_choice_box.getValue()) > 0) {
                 alert("Конфигурация добавлена в хранилище.");
             } else {
                 alert("При добавлении базы возникла ошибка! (подробнее см. журнал)");
             }
         } else {
-            alert("Выберете конфигурацию для добавления в хранилище.");
+            alert("Для добавления необходимо выбрать одну конфигурацию");
         }
     }
 
@@ -450,12 +564,23 @@ public class MainWindowController implements Initializable {
     }
 
     //показывает настройки платформы для текущего пользователя
-    public void runPlatformEdit(){
-        if (userList_MainTab.getSelectionModel().getSelectedItem()!=null){
+    public void runPlatformEdit() {
+        if (userList_MainTab.getSelectionModel().getSelectedItem() != null) {
             PlatformEditorStage platformEditorStage = new PlatformEditorStage(this);
             platformEditorStage.showAndWait();
-        }else {
+        } else {
             alert("Необходимо выбрать пользователя");
+        }
+    }
+
+    public void cloneSQLConfig() {
+        Base base = configCollection.getSelectionModel().getSelectedItem();
+        if (base != null) {
+            Base cloneBase = base.clone();
+            cloneBase.setId(0);
+            cloneBase.setGroups(null);
+            data_base.addConfigToBase(cloneBase, group_choice_box.getSelectionModel().getSelectedItem());
+            tableElement.loadSQLConfigListByGroup(group_choice_box);
         }
     }
 

@@ -33,7 +33,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <TabPane fx:id="tabControl" layoutX="37.0" layoutY="80.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
+      <TabPane fx:id="tabControl" focusTraversable="false" layoutX="37.0" layoutY="80.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
         <tabs>
           <Tab text="Управление базами 1С">
             <content>
@@ -45,14 +45,14 @@
                                  <children>
                                     <ToolBar layoutX="-27.0" layoutY="201.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <items>
-                                          <Button fx:id="clearCacheButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clearCache" prefHeight="25.0" prefWidth="250.0" text="Очистить кэш">
+                                          <Button fx:id="clearCacheButton" focusTraversable="false" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#clearCache" prefHeight="25.0" prefWidth="250.0" text="Очистить кэш">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
                                        </items>
                                     </ToolBar>
-                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onMouseClicked="#userListClickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <ListView fx:id="userList_MainTab" layoutX="17.0" layoutY="87.0" onKeyPressed="#userListKeyListen" onMouseClicked="#userListClickEvent" prefHeight="200.0" prefWidth="210.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                                     <Label layoutX="5.0" layoutY="5.0" text="Список пользователей:" />
                                  </children>
                               </AnchorPane>
@@ -60,7 +60,7 @@
                                  <children>
                                     <ToolBar layoutY="333.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                       <items>
-                                          <SplitMenuButton fx:id="addConfigButton" mnemonicParsing="false" onAction="#addToTree" text="➕">
+                                          <SplitMenuButton fx:id="addConfigButton" focusTraversable="false" mnemonicParsing="false" onAction="#addToTree" text="➕">
                                             <items>
                                               <MenuItem mnemonicParsing="false" onAction="#addToTree" text="Добавить новый элемент в список" />
                                               <MenuItem mnemonicParsing="false" onAction="#addConfigFromBase" text="Добавить конфигурацию из хранилища" />
@@ -70,28 +70,28 @@
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </SplitMenuButton>
-                                          <Button fx:id="deleteConfigButton" mnemonicParsing="false" onAction="#deleteElementFromTree" text="➖">
+                                          <Button fx:id="deleteConfigButton" focusTraversable="false" mnemonicParsing="false" onAction="#deleteElementFromTree" text="➖">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
-                                          <Button fx:id="editConfigButton" mnemonicParsing="false" onAction="#editElement" text="Редактировать">
+                                          <Button fx:id="editConfigButton" focusTraversable="false" mnemonicParsing="false" onAction="#editElement" text="Редактировать">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#moveConfig" text="Переместить">
+                                          <Button focusTraversable="false" mnemonicParsing="false" onAction="#moveConfig" text="Переместить">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor></Button>
-                                          <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#saveChanges" text="Сохранить изменения">
+                                          <Button fx:id="saveChangesButton" focusTraversable="false" mnemonicParsing="false" onAction="#saveChanges" text="Сохранить изменения">
                                              <cursor>
                                                 <Cursor fx:constant="HAND" />
                                              </cursor></Button>
                                       </items>
                                     </ToolBar>
                                     <Label layoutX="6.0" layoutY="6.0" text="Список конфигураций 1С доступных пользователю:" />
-                                    <TreeView fx:id="configList_MainTab" layoutY="25.0" onMouseClicked="#ConfigList_MainTabClickEvent" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
+                                    <TreeView fx:id="configList_MainTab" layoutY="25.0" onKeyReleased="#configListKeyListen" onMouseClicked="#ConfigList_MainTabClickEvent" prefHeight="434.0" prefWidth="350.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0" />
                                     <Button focusTraversable="false" layoutX="463.0" layoutY="2.0" mnemonicParsing="false" onAction="#runPlatformEdit" text="Настройки платформы" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
@@ -111,7 +111,7 @@
                                  <children>
                                     <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <items>
-                                        <Button mnemonicParsing="false" text="Очистить список" />
+                                        <Button mnemonicParsing="false" onAction="#cleanUserList" text="Очистить список" />
                                           <Button fx:id="addUser_ConfigTab" mnemonicParsing="false" onAction="#addUserManually" text="Добавить вручную" />
                                           <Button mnemonicParsing="false" onAction="#deleteFromLocalUserList" text="Удалить" />
                                       </items>
@@ -141,11 +141,11 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="configCollection" layoutX="20.0" layoutY="28.0" onMouseClicked="#ConfigList_SQLTabClickEvent" prefHeight="431.0" prefWidth="762.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TableView fx:id="configCollection" layoutX="20.0" layoutY="28.0" onKeyPressed="#configListSQLKeyListen" onMouseClicked="#ConfigList_SQLTabClickEvent" prefHeight="431.0" prefWidth="762.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                         <ToolBar layoutX="20.0" layoutY="470.0" prefHeight="40.0" prefWidth="622.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <items>
                               <Button fx:id="addNewSQLConfig" focusTraversable="false" mnemonicParsing="false" onAction="#addNewSQLConfig" text="Добавить" />
-                              <Button mnemonicParsing="false" text="Создать копию" />
+                              <Button mnemonicParsing="false" onAction="#cloneSQLConfig" text="Создать копию" />
                               <Button fx:id="editSQLConfig" focusTraversable="false" mnemonicParsing="false" onAction="#editSQLElement" text="Изменить" />
                               <Button fx:id="deleteSQLConfig" focusTraversable="false" mnemonicParsing="false" onAction="#deleteSQLElementFromBase" text="Удалить" />
                            </items>
@@ -155,6 +155,6 @@
             </Tab>
         </tabs>
       </TabPane>
-      <ComboBox fx:id="group_choice_box" layoutY="28.0" prefWidth="150.0" promptText="Выбрать организацию" AnchorPane.bottomAnchor="546.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
+      <ComboBox fx:id="group_choice_box" focusTraversable="false" layoutY="28.0" prefWidth="150.0" promptText="Выбрать организацию" AnchorPane.bottomAnchor="546.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0" />
    </children>
 </AnchorPane>

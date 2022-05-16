@@ -6,10 +6,10 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="290.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="addConfigFromBaseWindow" prefHeight="290.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView fx:id="configList" focusTraversable="false" layoutX="8.0" layoutY="54.0" prefHeight="200.0" prefWidth="477.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0" />
-      <Button focusTraversable="false" layoutX="14.0" layoutY="260.0" mnemonicParsing="false" onAction="#addToConfigList_MainTab" prefHeight="25.0" prefWidth="197.0" text="Добавить в список" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+      <TableView fx:id="configList" layoutX="8.0" layoutY="54.0" onKeyReleased="#keyListen" onMouseClicked="#configListMouseListener" prefHeight="200.0" prefWidth="477.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="55.0" />
+      <Button fx:id="actionButton" focusTraversable="false" layoutX="14.0" layoutY="260.0" mnemonicParsing="false" onAction="#action" prefHeight="25.0" prefWidth="197.0" text="Добавить в список" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
       <ComboBox fx:id="group_choice_box" focusTraversable="false" layoutX="30.0" layoutY="29.0" prefHeight="25.0" prefWidth="430.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
       <Label layoutX="30.0" layoutY="6.0" text="Группа:" AnchorPane.leftAnchor="5.0" />
    </children>

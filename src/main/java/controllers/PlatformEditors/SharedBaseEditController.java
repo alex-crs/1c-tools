@@ -2,6 +2,7 @@ package controllers.PlatformEditors;
 
 import controllers.PlatformEditorController;
 import entities.PlatformParams.SharedBase;
+import entities.WindowControllers;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -9,16 +10,18 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import service.HotKeys;
 import stages.ConfigEditStage;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class SharedBaseEditController implements Initializable {
+public class SharedBaseEditController extends WindowControllers implements Initializable {
     PlatformEditorController platformController;
     SharedBase sharedBase;
     Stage stage;
@@ -39,6 +42,9 @@ public class SharedBaseEditController implements Initializable {
     @FXML
     Label infoLabel;
 
+    @FXML
+    AnchorPane sharedBaseWindow;
+
     public SharedBaseEditController(PlatformEditorController platformController,
                                     SharedBase sharedBase,
                                     Stage stage,
@@ -58,8 +64,20 @@ public class SharedBaseEditController implements Initializable {
             acceptButton.setText("Изменить");
             infoLabel.setText("Адрес WEB-сервиса:");
         }
+        initKeyListeners();
     }
 
+    private void initKeyListeners() {
+        //на ESCAPE
+        HotKeys.closeListener(sharedBaseWindow, stage);
+        HotKeys.closeListener(sharedBaseField, stage);
+        HotKeys.closeListener(acceptButton, stage);
+
+        //на ENTER
+        HotKeys.enterListener(sharedBaseField, stage, this);
+    }
+
+    @Override
     public void action() {
         if (sharedBaseField.getText().length() > 0) {
             switch (operation) {

@@ -7,6 +7,8 @@ import entities.configStructure.VirtualTree;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import settings.BaseConfig;
@@ -108,15 +110,6 @@ public class ConfigEditController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //отключаем фокусировку на кнопку
-        accept.setFocusTraversable(false);
-        choiceButton.setFocusTraversable(false);
-        baseType.setFocusTraversable(false);
-        virtualTreeType.setFocusTraversable(false);
-        connectionSpeed.setFocusTraversable(false);
-        authChoice.setFocusTraversable(false);
-        startType.setFocusTraversable(false);
-        bitDepth.setFocusTraversable(false);
         //инициализируем элементы меню
         initChoiceBoxValues();
         switch (action) {
@@ -162,6 +155,7 @@ public class ConfigEditController implements Initializable {
         element = choiceElement.getValue();
         accept.setText("Изменить");
         virtualTreeType.setDisable(true);
+        virtualTreeType.setFocusTraversable(false);
         mappingObjectToFormElements();
     }
 
@@ -345,6 +339,18 @@ public class ConfigEditController implements Initializable {
         });
     }
 
+    public void keyListen(KeyEvent event){
+        if (event.getCode() == KeyCode.ENTER) {
+            event.consume();
+            action();
+            stage.close();
+        }
+        if (event.getCode() == KeyCode.ESCAPE) {
+            event.consume();
+            stage.close();
+        }
+    }
+
     //Изменяет размер окна
     private void changeWindowSize(double height) {
         stage.setWidth(570);
@@ -402,6 +408,8 @@ public class ConfigEditController implements Initializable {
         serverLabel2.setVisible(false);
         sqlAddress.setVisible(false);
         sqlName.setVisible(false);
+        sqlAddress.setFocusTraversable(false);
+        sqlName.setFocusTraversable(false);
     }
 
     //включает элементы настройки SQL сервера
@@ -410,6 +418,8 @@ public class ConfigEditController implements Initializable {
         serverLabel2.setVisible(true);
         sqlAddress.setVisible(true);
         sqlName.setVisible(true);
+        sqlAddress.setFocusTraversable(true);
+        sqlName.setFocusTraversable(true);
     }
 
     //отключает кнопку выбора пути файловой базы и увеличивает поле ввода адреса базы
@@ -429,6 +439,7 @@ public class ConfigEditController implements Initializable {
         pathLabel.setVisible(false);
         choiceButton.setVisible(false);
         pathField.setVisible(false);
+        pathField.setFocusTraversable(false);
     }
 
     //включает кнопку выбора пути и поле ввода расположения базы
@@ -436,6 +447,7 @@ public class ConfigEditController implements Initializable {
         pathLabel.setVisible(true);
         choiceButton.setVisible(true);
         pathField.setVisible(true);
+        pathField.setFocusTraversable(true);
     }
 
     private void disableAllConfigElements() {
@@ -451,6 +463,16 @@ public class ConfigEditController implements Initializable {
         bitDepth.setDisable(true);
         accept.setDisable(true);
         defaultVersion.setDisable(true);
+
+        pathField.setFocusTraversable(false);
+        sqlAddress.setFocusTraversable(false);
+        sqlName.setFocusTraversable(false);
+        baseType.setFocusTraversable(false);
+        connectionSpeed.setFocusTraversable(false);
+        authChoice.setFocusTraversable(false);
+        startType.setFocusTraversable(false);
+        bitDepth.setFocusTraversable(false);
+        defaultVersion.setFocusTraversable(false);
     }
 
     private void enableAllConfigElements() {

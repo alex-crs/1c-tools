@@ -23,12 +23,14 @@
         <menus>
           <Menu mnemonicParsing="false" text="Меню">
             <items>
-                  <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveConfigToFile" text="Сохранить список в файл" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadConfigFromFile" text="Загрузить список из файла" />
+                  <MenuItem mnemonicParsing="false" onAction="#close" text="Закрыть программу" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="О программе">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="О программе" />
             </items>
           </Menu>
         </menus>

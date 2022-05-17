@@ -12,6 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import service.DataBaseService;
 import settings.BaseConfig;
@@ -22,8 +24,6 @@ import stages.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static entities.Const.*;
@@ -45,6 +45,8 @@ public class MainWindowController implements Initializable {
             new File("users.txt"),
             new File("ignore.txt"),
             new File("base.db"));
+    FileChooser dialog;
+    File file;
 
     //вкладка №1: управление базами 1С
     @FXML
@@ -405,7 +407,8 @@ public class MainWindowController implements Initializable {
         if (!currentUser.getName().equals(userName.getName())) {
             currentUser = userName;
             BaseConfig.clearTree();
-            BaseConfig.readConfigParameter(userName.getName(), operatingSystem);
+            File file = new File(operatingSystem.basePathConstructor(userName.getName()));
+            BaseConfig.readConfigParameter(userName.getName(), file);
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -453,8 +456,44 @@ public class MainWindowController implements Initializable {
 
     //сохранить конфигурацию в файл
     public void saveChanges() {
-        BaseConfig.writeConfigToFile(currentUser.toString(), operatingSystem);
+        BaseConfig.saveConfigTo1CFile(currentUser.toString(), operatingSystem);
         disableSaveButton();
+    }
+
+    public void saveConfigToFile() {
+        file = null;
+        dialog = new FileChooser();
+        dialog.setTitle("Выберете место хранения файла конфигурации?");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Файл конфигурации (*.v8i)",
+                "*.v8i");
+        dialog.getExtensionFilters().add(filter);
+        dialog.setInitialDirectory(new File((new File("").getAbsolutePath())));
+        file = dialog.showSaveDialog((saveChangesButton.getParent()).getScene().getWindow());
+        if (file != null) {
+            BaseConfig.saveConfToChoiceFile(file);
+        }
+    }
+
+    public void loadConfigFromFile() {
+        file = null;
+        dialog = new FileChooser();
+        dialog.setTitle("Выберете место расположения файла конфигурации");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Файл конфигурации (*.v8i)",
+                "*.v8i");
+        dialog.getExtensionFilters().add(filter);
+        dialog.setInitialDirectory(new File((new File("").getAbsolutePath())));
+        file = dialog.showOpenDialog((saveChangesButton.getParent()).getScene().getWindow());
+        if (file != null) {
+            BaseConfig.readConfigParameter(currentUser.getName(), file);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    root = BaseConfig.returnConfigStructure();
+                    configList_MainTab.setRoot(root);
+                }
+            });
+        enableSaveButton();
+        }
     }
 
     //отключить кнопку сохранения конфигураций
@@ -590,6 +629,11 @@ public class MainWindowController implements Initializable {
             data_base.addConfigToBase(cloneBase, group_choice_box.getSelectionModel().getSelectedItem());
             tableElement.loadSQLConfigListByGroup(group_choice_box);
         }
+    }
+
+    public void close(){
+        Stage stage = (Stage) group_choice_box.getScene().getWindow();
+        stage.close();
     }
 
 }

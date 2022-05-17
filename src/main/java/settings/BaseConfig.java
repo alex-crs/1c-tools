@@ -12,17 +12,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class BaseConfig {
     private static final Logger LOGGER = Logger.getLogger(BaseConfig.class);
     private static final VirtualTree configTree = new VirtualTree();
 
     //читает конфигурацию из файла в системе
-    public static void readConfigParameter(String userName, OS operatingSystem) {
+    public static void readConfigParameter(String userName, File file) {
         LOGGER.info(String.format("Чтение коллекции конфигураций пользователя [%s]", userName));
-        File file = new File(operatingSystem.basePathConstructor(userName));
         int stringCount = 0;
         StringBuilder string = new StringBuilder();
         Base baseElement = null;
@@ -61,7 +58,7 @@ public class BaseConfig {
     }
 
     //записывает в текущее древо конфигураций в файл
-    public static void writeConfigToFile(String userName, OS operatingSystem) {
+    public static void saveConfigTo1CFile(String userName, OS operatingSystem) {
         File file = new File(operatingSystem.basePathConstructor(userName));
         File cEStartDir = new File(operatingSystem.getCEStartDirectory(userName));
         ArrayList<String> list = configTree.virtualTreeAsListCollector();
@@ -72,11 +69,20 @@ public class BaseConfig {
         } catch (IOException e) {
             LOGGER.error(String.format("Отсутствует доступ: %s", cEStartDir.getPath()));
         }
+        saveToFile(file, list);
+    }
+
+    public static void saveConfToChoiceFile(File file){
+        ArrayList<String> saveList = configTree.virtualTreeAsListCollector();
+        saveToFile(file, saveList);
+    }
+
+    private static void saveToFile(File file, ArrayList<String> saveList) {
         try (FileOutputStream fis = new FileOutputStream(file);
              BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis, StandardCharsets.UTF_8)))) {
 
             writer.write(65279);
-            for (String l : list) {
+            for (String l : saveList) {
                 writer.write(l);
                 writer.newLine();
             }

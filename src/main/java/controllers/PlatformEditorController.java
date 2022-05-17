@@ -26,6 +26,8 @@ import stages.PlatformEditors.TemplateEditStage;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Getter
@@ -95,6 +97,7 @@ public class PlatformEditorController implements Initializable {
         cv8Start = new File(mainController.getCV8ConfigPath());
         ceStart = new File(mainController.getCeStartPath());
         try {
+            createPathsIfNotExist();
             if (!cv8Start.exists()) {
                 cv8Start.createNewFile();
                 initNewC8ConfigFile();
@@ -117,6 +120,11 @@ public class PlatformEditorController implements Initializable {
 
         //заполняем список версий по умолчанию
         fillDefaultVersionList();
+
+        if (cv8config.size()<6){
+            initNewC8ConfigFile();
+            saveParametersToFile(cv8Start, cv8config, 1);
+        }
 
         cv8ModelViewInit(cv8config);
 
@@ -233,6 +241,25 @@ public class PlatformEditorController implements Initializable {
             saveParametersToFile(cv8Start, cv8config, 1);
             saveParametersToFile(ceStart, cache, 2);
             stage.close();
+        }
+    }
+
+    private void createPathsIfNotExist(){
+        File cEStartDir = new File(mainController
+                .getOperatingSystem()
+                .getCEStartDirectory(mainController.getCurrentUser().getName()));
+        File cv8StartDir = new File(mainController
+                .getOperatingSystem()
+                .getPlatformConfigDirectory(mainController.getCurrentUser().getName()));
+        try{
+            if (!cEStartDir.exists()){
+                Files.createDirectories(Paths.get(String.valueOf(cEStartDir)));
+            }
+            if (!cv8StartDir.exists()){
+                Files.createDirectories(Paths.get(String.valueOf(cv8StartDir)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Const;
+import entities.User;
 import entities.WindowControllers;
 import entities.configStructure.VirtualTree;
 import javafx.fxml.FXML;
@@ -55,6 +56,12 @@ public class ActionWindowController extends WindowControllers implements Initial
             case DELETE_SQL_CONFIG:
                 message.setText("Желаете удалить элемент(ы)?");
                 break;
+            case CLEAN_USER_LIST:
+                message.setText("Очистить список пользователей?");
+                break;
+            case DELETE_USER:
+                message.setText("Удалить выбранные элемент(ы)?");
+                break;
         }
     }
 
@@ -72,6 +79,7 @@ public class ActionWindowController extends WindowControllers implements Initial
 
     @Override
     public void action() {
+        List<User> users;
         switch (action) {
             case CHECK_UNSAVED_DATA:
                 mainController.saveChanges();
@@ -87,6 +95,22 @@ public class ActionWindowController extends WindowControllers implements Initial
                         .getSelectionModel()
                         .getSelectedItem());
                 mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
+                break;
+            case CLEAN_USER_LIST:
+                users = mainController.userList_Local_ConfigTab.getItems();
+                mainController.user_list.deleteFromLocalList(users);
+                for (User u : users) {
+                    mainController.data_base.deleteUserFromBase(u);
+                }
+                mainController.displayUserList();
+                break;
+            case DELETE_USER:
+                users = mainController.userList_Local_ConfigTab.getSelectionModel().getSelectedItems();
+                mainController.user_list.deleteFromLocalList(users);
+                for (User u : users) {
+                    mainController.data_base.deleteUserFromBase(u);
+                }
+                mainController.displayUserList();
                 break;
         }
         stage.close();

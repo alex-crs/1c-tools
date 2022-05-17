@@ -22,6 +22,8 @@ import stages.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static entities.Const.*;
@@ -106,6 +108,10 @@ public class MainWindowController implements Initializable {
     final KeyCombination addFromSQLBase = new KeyCodeCombination(KeyCode.F,
             KeyCombination.SHIFT_ANY);
 
+    public OS getOperatingSystem() {
+        return operatingSystem;
+    }
+
     public boolean isUnSavedChanges() {
         return unSavedChanges;
     }
@@ -166,24 +172,13 @@ public class MainWindowController implements Initializable {
                     0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
                     true, true, true, true, true, true, null));
         }
-    }
-
-    public void configListKeyListen(KeyEvent event) {
-
-        if (createElement.match(event)) {
-            event.consume();
-            addToTree();
-        }
-        if (addFromSQLBase.match(event)) {
-            event.consume();
-            addConfigFromBase();
-        }
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
-            editElement();
+            runPlatformEdit();
         }
     }
 
+    //горячие клавиши для таблицы SQL конфигураций
     public void configListSQLKeyListen(KeyEvent event) {
         if (createElement.match(event)) {
             event.consume();
@@ -317,6 +312,18 @@ public class MainWindowController implements Initializable {
                     event.consume();
                     deleteElementFromTree();
                 }
+                if (event.getCode() == KeyCode.ENTER) {
+                    event.consume();
+                    editElement();
+                }
+                if (createElement.match(event)) {
+                    event.consume();
+                    addToTree();
+                }
+                if (addFromSQLBase.match(event)) {
+                    event.consume();
+                    addConfigFromBase();
+                }
             }
         });
     }
@@ -369,22 +376,20 @@ public class MainWindowController implements Initializable {
 
     //удаляет пользователя из локальной базы пользователей
     public void deleteFromLocalUserList() {
-        List<User> users = userList_Local_ConfigTab.getSelectionModel().getSelectedItems();
-        user_list.deleteFromLocalList(users);
-        for (User u : users) {
-            data_base.deleteUserFromBase(u);
+        if (userList_Local_ConfigTab.getSelectionModel().getSelectedItems().size() > 0) {
+            showActionQuestion(DELETE_USER);
+        } else {
+            alert("Необходимо выбрать элемент(ы)");
         }
-        displayUserList();
     }
 
     //очистка списка пользователей
-    public void cleanUserList(){
-        List<User> users = userList_Local_ConfigTab.getItems();
-        user_list.deleteFromLocalList(users);
-        for (User u : users) {
-            data_base.deleteUserFromBase(u);
+    public void cleanUserList() {
+        if (userList_Local_ConfigTab.getSelectionModel().getSelectedItems().size() > 0) {
+            showActionQuestion(CLEAN_USER_LIST);
+        } else {
+            alert("Необходимо выбрать элемент(ы)");
         }
-        displayUserList();
     }
 
     //добавляет пользователя в базу из системы
@@ -428,6 +433,9 @@ public class MainWindowController implements Initializable {
             fillBaseList(userList_MainTab.getSelectionModel().getSelectedItem());
         } else if (isUnSavedChanges() && userList_MainTab.getSelectionModel().getSelectedItem() != currentUser) {
             showActionQuestion(CHECK_UNSAVED_DATA);
+        }
+        if (mouseEvent.getClickCount() == 2) {
+            runPlatformEdit();
         }
     }
 

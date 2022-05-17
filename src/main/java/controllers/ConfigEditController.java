@@ -4,10 +4,13 @@ import entities.Const;
 import entities.configStructure.Base;
 import entities.configStructure.Folder;
 import entities.configStructure.VirtualTree;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -99,6 +102,9 @@ public class ConfigEditController implements Initializable {
     VirtualTree element;
 
     String connectionType;
+
+    final KeyCombination saveConfig = new KeyCodeCombination(KeyCode.S,
+            KeyCombination.SHIFT_ANY);
 
     public ConfigEditController(TreeItem<VirtualTree> choiceElement, Const action,
                                 MainWindowController mainController, Stage stage) {
@@ -340,7 +346,7 @@ public class ConfigEditController implements Initializable {
     }
 
     public void keyListen(KeyEvent event){
-        if (event.getCode() == KeyCode.ENTER) {
+        if (saveConfig.match(event)) {
             event.consume();
             action();
             stage.close();

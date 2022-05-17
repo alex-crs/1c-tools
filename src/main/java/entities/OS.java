@@ -12,4 +12,8 @@ public interface OS {
     String cv8StartConfigPathConstructor(String userName);
 
     String ceStartPathConstructor(String userName);
+
+    String getCEStartDirectory(String userName);
+
+    String getPlatformConfigDirectory(String userName);
 }

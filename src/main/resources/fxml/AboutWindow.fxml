@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane onKeyReleased="#close" onMouseClicked="#close" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Separator focusTraversable="false" layoutX="14.0" layoutY="45.0" prefHeight="3.0" prefWidth="268.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+      <Label layoutX="14.0" layoutY="21.0" text="1С-tools ver 1.0 beta" AnchorPane.leftAnchor="10.0" />
+      <TextArea editable="false" focusTraversable="false" layoutX="14.0" layoutY="57.0" onKeyPressed="#close" onMouseClicked="#close" prefHeight="86.0" prefWidth="160.0" text="Вопросы и предложения: alex@0895.ru" wrapText="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0" />
+   </children>
+</AnchorPane>

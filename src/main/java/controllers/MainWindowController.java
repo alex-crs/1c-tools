@@ -492,7 +492,7 @@ public class MainWindowController implements Initializable {
                     configList_MainTab.setRoot(root);
                 }
             });
-        enableSaveButton();
+            enableSaveButton();
         }
     }
 
@@ -631,9 +631,14 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    public void close(){
+    public void close() {
         Stage stage = (Stage) group_choice_box.getScene().getWindow();
         stage.close();
+    }
+
+    public void about() {
+        AboutWindowStage aboutWindowStage = new AboutWindowStage();
+        aboutWindowStage.showAndWait();
     }
 
 }

@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,19 +63,25 @@ public class BaseConfig {
     //записывает в текущее древо конфигураций в файл
     public static void writeConfigToFile(String userName, OS operatingSystem) {
         File file = new File(operatingSystem.basePathConstructor(userName));
-//        File file = new File("ibases.v8i");
+        File cEStartDir = new File(operatingSystem.getCEStartDirectory(userName));
         ArrayList<String> list = configTree.virtualTreeAsListCollector();
+        try {
+            if (!cEStartDir.exists()) {
+                Files.createDirectories(Paths.get(String.valueOf(cEStartDir)));
+            }
+        } catch (IOException e) {
+            LOGGER.error(String.format("Отсутствует доступ: %s", cEStartDir.getPath()));
+        }
         try (FileOutputStream fis = new FileOutputStream(file);
              BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis, StandardCharsets.UTF_8)))) {
+
             writer.write(65279);
             for (String l : list) {
                 writer.write(l);
                 writer.newLine();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(String.format("Отсутствует доступ к файлу: %s", file.getPath()));
         }
     }
 

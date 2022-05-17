@@ -9,10 +9,13 @@
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+      <TextField fx:id="configName" layoutX="13.0" layoutY="29.0" onKeyPressed="#keyListen" onKeyReleased="#nameNonNullInspector" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
+      <ChoiceBox fx:id="virtualTreeType" layoutX="288.0" layoutY="29.0" onKeyPressed="#keyListen" prefHeight="25.0" prefWidth="175.0" />
+      <ChoiceBox fx:id="baseType" focusTraversable="false" layoutX="13.0" layoutY="86.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
+      <Button fx:id="accept" layoutX="465.0" layoutY="29.0" mnemonicParsing="false" onAction="#accept" onKeyPressed="#keyListen" text="Добавить" AnchorPane.rightAnchor="15.0" />
       <Button fx:id="choiceButton" focusTraversable="false" layoutX="162.0" layoutY="137.0" mnemonicParsing="false" onAction="#openFileChoiceDialog" text="Выбрать папку" />
-      <TextField fx:id="pathField" focusTraversable="false" layoutX="13.0" layoutY="137.0" onAction="#openFileChoiceDialog" onKeyPressed="#keyListen" prefWidth="149.0" AnchorPane.leftAnchor="15.0" />
-      <TextField fx:id="configName" layoutX="13.0" layoutY="29.0" onAction="#keyListen" onKeyPressed="#keyListen" onKeyReleased="#nameNonNullInspector" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
-      <Label layoutX="13.0" layoutY="10.0" text="Имя базы" />
+      <TextField fx:id="pathField" focusTraversable="false" layoutX="13.0" layoutY="137.0" onKeyPressed="#keyListen" prefWidth="149.0" AnchorPane.leftAnchor="15.0" />
+      <Label layoutX="13.0" layoutY="10.0" text="Имя базы:" AnchorPane.topAnchor="10.0" />
       <TextField fx:id="sqlAddress" focusTraversable="false" layoutX="13.0" layoutY="187.0" onAction="#accept" onKeyPressed="#keyListen" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
       <TextField fx:id="sqlName" focusTraversable="false" layoutX="13.0" layoutY="233.0" onAction="#accept" onKeyPressed="#keyListen" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
       <Label fx:id="serverLabel1" layoutX="13.0" layoutY="167.0" text="Кластер серверов:" />
@@ -20,19 +23,16 @@
       <Label fx:id="windowMessage" layoutX="15.0" layoutY="315.0" prefHeight="17.0" prefWidth="525.0" />
       <Separator layoutX="272.0" layoutY="16.0" orientation="VERTICAL" prefHeight="254.0" prefWidth="5.0" />
       <Label fx:id="pathLabel" layoutX="13.0" layoutY="118.0" text="Путь к информационной базе:" />
-      <ChoiceBox fx:id="baseType" focusTraversable="false" layoutX="13.0" layoutY="86.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.leftAnchor="15.0" />
-      <ChoiceBox fx:id="virtualTreeType" layoutX="288.0" layoutY="29.0" prefHeight="25.0" prefWidth="175.0" />
       <ChoiceBox fx:id="connectionSpeed" focusTraversable="false" layoutX="288.0" layoutY="86.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label layoutX="13.0" layoutY="66.0" text="Тип подключения к информационной базе:" />
       <Label layoutX="290.0" layoutY="66.0" text="Скорость работы сети:" />
-      <Label layoutX="288.0" layoutY="10.0" text="Тип добавляемого элемента:" />
+      <Label layoutX="288.0" layoutY="10.0" text="Тип добавляемого элемента:" AnchorPane.topAnchor="10.0" />
       <ChoiceBox fx:id="authChoice" focusTraversable="false" layoutX="288.0" layoutY="137.0" onKeyReleased="#keyListen" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label layoutX="290.0" layoutY="118.0" text="Вариант аутентификации:" />
       <ChoiceBox fx:id="startType" focusTraversable="false" layoutX="288.0" layoutY="187.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label fx:id="serverLabel11" layoutX="290.0" layoutY="167.0" text="Основной режим запуска:" />
       <ChoiceBox fx:id="bitDepth" focusTraversable="false" layoutX="288.0" layoutY="233.0" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label fx:id="serverLabel21" layoutX="290.0" layoutY="215.0" text="Разрядность:" />
-      <Button fx:id="accept" layoutX="465.0" layoutY="29.0" mnemonicParsing="false" onAction="#accept" onKeyPressed="#keyListen" text="Добавить" AnchorPane.rightAnchor="15.0" />
       <TextField fx:id="defaultVersion" focusTraversable="false" layoutX="289.0" layoutY="281.0" onAction="#accept" onKeyPressed="#keyListen" prefHeight="25.0" prefWidth="246.0" AnchorPane.rightAnchor="15.0" />
       <Label layoutX="290.0" layoutY="263.0" text="Версия программы:" />
    </children>

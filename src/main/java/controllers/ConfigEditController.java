@@ -4,10 +4,13 @@ import entities.Const;
 import entities.configStructure.Base;
 import entities.configStructure.Folder;
 import entities.configStructure.VirtualTree;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -343,7 +346,6 @@ public class ConfigEditController implements Initializable {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
             action();
-            stage.close();
         }
         if (event.getCode() == KeyCode.ESCAPE) {
             event.consume();

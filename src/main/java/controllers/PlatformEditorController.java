@@ -26,6 +26,8 @@ import stages.PlatformEditors.TemplateEditStage;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Getter
@@ -95,6 +97,7 @@ public class PlatformEditorController implements Initializable {
         cv8Start = new File(mainController.getCV8ConfigPath());
         ceStart = new File(mainController.getCeStartPath());
         try {
+            createPathsIfNotExist();
             if (!cv8Start.exists()) {
                 cv8Start.createNewFile();
                 initNewC8ConfigFile();
@@ -106,6 +109,7 @@ public class PlatformEditorController implements Initializable {
         } catch (IOException e) {
             LOGGER.error("Отсутствует доступ к файлу");
         }
+
         readFileParams(cv8Start, 1);
         readFileParams(ceStart, 2);
 
@@ -117,6 +121,16 @@ public class PlatformEditorController implements Initializable {
 
         //заполняем список версий по умолчанию
         fillDefaultVersionList();
+
+        try {
+            if (cv8config.size() < 6) {
+                initNewC8ConfigFile();
+                saveParametersToFile(cv8Start, cv8config, 1);
+            }
+        } catch (Exception e) {
+            LOGGER.error(String.format("Отсутствует доступ: %s", cv8Start.getPath()));
+            LOGGER.error(String.format("Отсутствует доступ: %s", ceStart.getPath()));
+        }
 
         cv8ModelViewInit(cv8config);
 
@@ -133,7 +147,7 @@ public class PlatformEditorController implements Initializable {
         defaultVersion = new ArrayList<>();
     }
 
-    public void templateKeyListener(KeyEvent keyEvent){
+    public void templateKeyListener(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.DELETE) {
             keyEvent.consume();
             deleteTemplate();
@@ -148,7 +162,7 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
-    public void sharedBaseKeyListener(KeyEvent keyEvent){
+    public void sharedBaseKeyListener(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.DELETE) {
             keyEvent.consume();
             deleteService();
@@ -163,7 +177,7 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
-    public void defaultVersionKeyListener(KeyEvent keyEvent){
+    public void defaultVersionKeyListener(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.DELETE) {
             keyEvent.consume();
             deleteDefaultVersion();
@@ -233,6 +247,25 @@ public class PlatformEditorController implements Initializable {
             saveParametersToFile(cv8Start, cv8config, 1);
             saveParametersToFile(ceStart, cache, 2);
             stage.close();
+        }
+    }
+
+    private void createPathsIfNotExist() {
+        File cEStartDir = new File(mainController
+                .getOperatingSystem()
+                .getCEStartDirectory(mainController.getCurrentUser().getName()));
+        File cv8StartDir = new File(mainController
+                .getOperatingSystem()
+                .getPlatformConfigDirectory(mainController.getCurrentUser().getName()));
+        try {
+            if (!cEStartDir.exists()) {
+                Files.createDirectories(Paths.get(String.valueOf(cEStartDir)));
+            }
+            if (!cv8StartDir.exists()) {
+                Files.createDirectories(Paths.get(String.valueOf(cv8StartDir)));
+            }
+        } catch (IOException e) {
+            LOGGER.error(String.format("Отсутствует доступ: %s, %s", cEStartDir.getPath(), cv8StartDir.getPath()));
         }
     }
 
@@ -323,7 +356,6 @@ public class PlatformEditorController implements Initializable {
     }
 
     private void loadParametersFromChosenFile(File file) {
-//        cv8config.clear();
         defaultVersion.clear();
         configurationTemplatesLocation.clear();
         sharedBaseList.clear();
@@ -338,9 +370,9 @@ public class PlatformEditorController implements Initializable {
                     string.delete(0, string.length());
                 }
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                LOGGER.error(String.format("Файл не обнаружен: %s", file.getPath()));
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Проблема с доступом к файлу");
             }
         }
 
@@ -375,7 +407,7 @@ public class PlatformEditorController implements Initializable {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(String.format("Файл не обнаружен: %s", file.getPath()));
         }
     }
 
@@ -688,7 +720,7 @@ public class PlatformEditorController implements Initializable {
         cv8config.addAll(c8ConfigNew);
     }
 
-    public void close(){
+    public void close() {
         stage.close();
     }
 }

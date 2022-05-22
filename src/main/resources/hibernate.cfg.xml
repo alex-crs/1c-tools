@@ -4,8 +4,8 @@
 
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:sqlite:base.db</property>
         <property name="connection.driver_class">org.sqlite.JDBC</property>
+        <property name="connection.url">jdbc:sqlite:base.db</property>
         <property name="hibernate.hbm2ddl.auto"/>
         <property name="hibernate.dialect">org.hibernate.dialect.SQLiteDialect</property>
         <property name="show_sql">true</property>

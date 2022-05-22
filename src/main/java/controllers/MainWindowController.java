@@ -142,7 +142,7 @@ public class MainWindowController implements Initializable {
         disableSaveButton();
 
         //проверяем наличие необходимых файлов, если таковых нет - создаем
-        checkExternalWorkFiles();
+//        checkExternalWorkFiles();
 
         //инициализируем базу данных и начинаем с ней работать
         data_base = new DataBaseService();

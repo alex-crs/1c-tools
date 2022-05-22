@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class DataBaseService {
             .configure("hibernate.cfg.xml")
             .addAnnotatedClass(Base.class)
             .addAnnotatedClass(Groups.class)
+            .addAnnotatedClass(User.class)
             .buildSessionFactory();
     Session session = null;
 
@@ -77,6 +79,7 @@ public class DataBaseService {
         return list;
     }
 
+    @Transactional
     public void addUser(User userName, String groupName) {
         session = factory.getCurrentSession();
         session.beginTransaction();

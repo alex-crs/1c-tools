@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -19,10 +20,6 @@ import java.util.List;
 @Entity
 @Table(name = "User")
 public class User {
-    public User(String name) {
-        this.name = name;
-    }
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,5 +38,9 @@ public class User {
     @Override
     public String toString() {
         return name;
+    }
+
+    public User(String name) {
+        this.name = name;
     }
 }

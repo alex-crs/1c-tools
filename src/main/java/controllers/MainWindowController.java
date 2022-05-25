@@ -15,6 +15,7 @@ import javafx.scene.input.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
+import service.BDGenerator;
 import service.DataBaseService;
 import settings.BaseConfig;
 import settings.Ignored_objects;
@@ -144,8 +145,23 @@ public class MainWindowController implements Initializable {
         //проверяем наличие необходимых файлов, если таковых нет - создаем
 //        checkExternalWorkFiles();
 
+        //проверка базы данных (если она пустая, то происходит заполнение)
+        BDGenerator.connect();
+        int versionBD = BDGenerator.checkBD();
+        if (versionBD < 0) {
+            BDGenerator.createBD();
+            versionBD = BDGenerator.checkBD();
+        }
+        LOGGER.info(String.format("Версия базы данных: %s", versionBD));
+        BDGenerator.disconnect();
+
         //инициализируем базу данных и начинаем с ней работать
-        data_base = new DataBaseService();
+        if (versionBD > 0) {
+            data_base = new DataBaseService();
+        } else {
+            LOGGER.info("Проблема с базой данных");
+            System.exit(0);
+        }
 
         //загружаем список пользователей из локального файла
         user_list = new UserList(data_base, BD_LIST, group_choice_box);

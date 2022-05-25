@@ -11,6 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import service.DataBaseService;
@@ -61,9 +63,6 @@ public class GroupEditController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         groupList = dataBase.getGroups();
         groupList.remove(DEFAULT_GROUP.getTitle());
-        //отключаем фокусировку на кнопки
-        apply.setFocusTraversable(false);
-        cancel.setFocusTraversable(false);
         //инициализируем выводимое сообщение
         switch (action) {
             case CREATE_GROUP:
@@ -87,6 +86,17 @@ public class GroupEditController implements Initializable {
                 message.setText("Введите имя пользователя:");
                 currentWindow_group_box.setVisible(false);
                 break;
+        }
+    }
+
+    public void keyListen(KeyEvent event){
+        if (event.getCode() == KeyCode.ENTER) {
+            event.consume();
+            action();
+        }
+        if (event.getCode() == KeyCode.ESCAPE) {
+            event.consume();
+            stage.close();
         }
     }
 

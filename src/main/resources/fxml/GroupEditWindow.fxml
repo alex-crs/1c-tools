@@ -8,10 +8,10 @@
 
 <AnchorPane prefHeight="70.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TextField fx:id="name" accessibleHelp="123" layoutY="23.0" onKeyReleased="#nameNonNullInspector" onMouseClicked="#clickEvent" prefHeight="25.0" prefWidth="193.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="140.0" />
-      <Button fx:id="apply" layoutX="260.0" layoutY="23.0" mnemonicParsing="false" onAction="#action" prefWidth="60.0" text="ОК" AnchorPane.rightAnchor="80.0" />
-      <Button fx:id="cancel" layoutX="320.0" layoutY="23.0" mnemonicParsing="false" onAction="#cancel" prefWidth="80.0" text="Отменить" AnchorPane.rightAnchor="0.0" />
+      <TextField fx:id="name" accessibleHelp="123" layoutY="23.0" onKeyPressed="#keyListen" onKeyReleased="#nameNonNullInspector" onMouseClicked="#clickEvent" prefHeight="25.0" prefWidth="193.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="140.0" />
+      <Button fx:id="apply" focusTraversable="false" layoutX="260.0" layoutY="23.0" mnemonicParsing="false" onAction="#action" prefWidth="60.0" text="ОК" AnchorPane.rightAnchor="80.0" />
+      <Button fx:id="cancel" focusTraversable="false" layoutX="320.0" layoutY="23.0" mnemonicParsing="false" onAction="#cancel" prefWidth="80.0" text="Отменить" AnchorPane.rightAnchor="0.0" />
       <Label fx:id="message" layoutX="7.0" layoutY="4.0" text="Label" />
-      <ComboBox fx:id="currentWindow_group_box" layoutY="23.0" prefHeight="25.0" prefWidth="260.0" />
+      <ComboBox fx:id="currentWindow_group_box" layoutY="23.0" onKeyPressed="#keyListen" prefHeight="25.0" prefWidth="260.0" />
    </children>
 </AnchorPane>

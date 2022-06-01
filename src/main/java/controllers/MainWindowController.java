@@ -128,11 +128,15 @@ public class MainWindowController implements Initializable {
     }
 
     public String getCV8ConfigPath() {
-        return operatingSystem.cv8StartConfigPathConstructor(currentUser.toString());
+        return operatingSystem.getPlatformConfigDirectory(currentUser.toString());
     }
 
     public String getCeStartPath() {
         return operatingSystem.ceStartPathConstructor(currentUser.toString());
+    }
+
+    public String getLocationConfigPath() {
+        return operatingSystem.getLocationConfig(currentUser.getName());
     }
 
     @Override

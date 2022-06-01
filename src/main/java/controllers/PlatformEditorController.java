@@ -39,6 +39,7 @@ public class PlatformEditorController implements Initializable {
 
     private File cv8Start;
     private File ceStart;
+    private File cv8FilePathLocation;
 
     //массивы с параметрами для 1cv8strt.pfl (параметр 1)
     private final ArrayList<String> cv8config;
@@ -91,10 +92,20 @@ public class PlatformEditorController implements Initializable {
     @FXML
     AnchorPane configWindow;
 
+    StringBuilder cv8DirectoryLocation = new StringBuilder();
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cv8Start = new File(mainController.getCV8ConfigPath());
+        cv8FilePathLocation = new File(mainController.getLocationConfigPath());
+        if (cv8FilePathLocation.exists()) {
+            readLocationConfigParams(cv8FilePathLocation);
+        }
+        if (cv8DirectoryLocation.length() == 0) {
+            cv8DirectoryLocation.append("1cv83");
+        }
+        cv8Start = new File(mainController.getCV8ConfigPath() + File.separator
+                + cv8DirectoryLocation + File.separator + "1cv8strt.pfl");
         ceStart = new File(mainController.getCeStartPath());
         try {
             createPathsIfNotExist();
@@ -210,7 +221,36 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
-    public void readFileParams(File file, int config) {
+    private void readLocationConfigParams(File file) {
+        StringBuilder string = new StringBuilder();
+        String[] param;
+        if (file.exists() && file.length() > 0) {
+            try (FileInputStream fis = new FileInputStream(file);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(fis,
+                         StandardCharsets.UTF_16LE))) {
+                string.append(reader.readLine());
+                param = string.toString().split("/");
+                cv8DirectoryLocation.append(param[param.length - 1]);
+                LOGGER.info(String.format("Прочитан файл %s", file.getPath()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void saveLocationConfigParams(File file) {
+        try (FileOutputStream fis = new FileOutputStream(file);
+             BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis,
+                     StandardCharsets.UTF_16LE)))) {
+            writer.write(65279);
+            writer.write("location=C:\\Users\\Администратор\\AppData\\Roaming/1C/1Cv83");
+            writer.newLine();
+        } catch (IOException e) {
+            LOGGER.error(String.format("Файл не обнаружен: %s", file.getPath()));
+        }
+    }
+
+    private void readFileParams(File file, int config) {
         int stringCount = 0;
         StringBuilder string = new StringBuilder();
         if (file.exists() && file.length() > 0) {
@@ -256,13 +296,20 @@ public class PlatformEditorController implements Initializable {
                 .getCEStartDirectory(mainController.getCurrentUser().getName()));
         File cv8StartDir = new File(mainController
                 .getOperatingSystem()
-                .getPlatformConfigDirectory(mainController.getCurrentUser().getName()));
+                .getPlatformConfigDirectory(mainController.getCurrentUser().getName()) + File.separator + cv8DirectoryLocation);
+        File configLocation = new File(mainController
+                .getOperatingSystem()
+                .getPlatformConfigDirectory(mainController.getCurrentUser().getName()) + File.separator + "1cv8");
         try {
             if (!cEStartDir.exists()) {
                 Files.createDirectories(Paths.get(String.valueOf(cEStartDir)));
             }
             if (!cv8StartDir.exists()) {
                 Files.createDirectories(Paths.get(String.valueOf(cv8StartDir)));
+            }
+            if (!configLocation.exists()) {
+                Files.createDirectories(Paths.get(String.valueOf(configLocation)));
+                saveLocationConfigParams(cv8FilePathLocation);
             }
         } catch (IOException e) {
             LOGGER.error(String.format("Отсутствует доступ: %s, %s", cEStartDir.getPath(), cv8StartDir.getPath()));

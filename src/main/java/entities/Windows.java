@@ -7,10 +7,12 @@ public class Windows implements OS {
     StringBuilder homeDirectory;
     StringBuilder tempPath = new StringBuilder().append("\\AppData\\Local\\1C\\");
     StringBuilder baseConfig = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart\\ibases.v8i");
-    StringBuilder platformConfig = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv83\\1cv8strt.pfl");
+//    StringBuilder platformConfig = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv83\\1cv8strt.pfl");
     StringBuilder cEStart = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart\\1CEStart.cfg");
     StringBuilder cEStartDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart");
-    StringBuilder platformConfigDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv83");
+//    StringBuilder platformConfigDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv83");
+    StringBuilder platformConfigDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C");
+    StringBuilder locationConfig = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv8\\location.cfg");
 
     @Override
     public String getCEStartDirectory(String userName) {
@@ -66,9 +68,14 @@ public class Windows implements OS {
         return homeDirectory + userName + baseConfig;
     }
 
+//    @Override
+//    public String cv8StartConfigPathConstructor(String userName) {
+//        return homeDirectory + userName + platformConfig;
+//    }
+
     @Override
-    public String cv8StartConfigPathConstructor(String userName) {
-        return homeDirectory + userName + platformConfig;
+    public String getLocationConfig(String userName) {
+        return homeDirectory + userName + locationConfig;
     }
 
     @Override

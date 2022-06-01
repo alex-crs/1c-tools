@@ -53,7 +53,8 @@ public class Ignored_objects {
     public void saveExcludeList() {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
             for (String u : excludedFiles) {
-                writer.append(u + "\n");
+                writer.append(u);
+                writer.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();

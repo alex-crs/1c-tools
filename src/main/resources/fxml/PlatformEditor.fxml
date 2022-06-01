@@ -46,7 +46,7 @@
       <ToolBar layoutX="5.0" layoutY="507.0" prefHeight="11.0" prefWidth="590.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <items>
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#addDefaultVersion" text="✚" />
-            <Button focusTraversable="false" mnemonicParsing="false" onAction="#copyDefaultVersion" text="🗍" />
+            <Button focusTraversable="false" mnemonicParsing="false" onAction="#copyDefaultVersion" text="C" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#editDefaultVersion" text="✎" />
             <Button focusTraversable="false" mnemonicParsing="false" onAction="#deleteDefaultVersion" text="✖" />
          </items>

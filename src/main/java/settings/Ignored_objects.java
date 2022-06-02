@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 public class Ignored_objects {
     private final Logger LOGGER = Logger.getLogger(Ignored_objects.class);
-    private final List<String> excludedFiles;
+    private List<String> excludedFiles;
     private final File file = new File("ignore.txt");
 
     public Ignored_objects() {
-        excludedFiles = readExcludeList();
+        readExcludeList();
     }
 
     public List<String> getExcludedFilesList() {
@@ -24,15 +24,15 @@ public class Ignored_objects {
     }
 
     //чтение списка исключений из файла
-    private List<String> readExcludeList() {
-        List<String> list = new ArrayList<>();
+    private void readExcludeList() {
+        excludedFiles = new ArrayList<>();
         LOGGER.info(String.format("Чтение списка исключений из файла [%s]", file.getName()));
         int stringCount = 0;
-        if (file.exists() && file.length() > 0) {
+        if (file.length() > 0) {
             try (FileInputStream fis = new FileInputStream(file);
                  BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
                 while (reader.ready()) {
-                    list.add(reader.readLine());
+                    excludedFiles.add(reader.readLine());
                     stringCount++;
                 }
             } catch (Exception e) {
@@ -40,13 +40,11 @@ public class Ignored_objects {
             }
         } else if (file.length() == 0) {
             LOGGER.info(String.format("Файл [%s] не содержит записей.", file.getName()));
-            list = fillIgnoredList_default();
-        } else {
-            LOGGER.info(String.format("Файл [%s] не обнаружен.", file.getName()));
-            list = null;
+            excludedFiles = fillIgnoredList_default();
+            saveExcludeList();
+            LOGGER.info("Создан новый файл ignore.txt и заполнен значениями по умолчанию");
         }
         LOGGER.info(String.format("Прочитано [%s] строк.", stringCount));
-        return list;
     }
 
     //обновление файла исключений

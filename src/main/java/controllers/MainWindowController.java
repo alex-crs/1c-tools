@@ -48,6 +48,7 @@ public class MainWindowController implements Initializable {
             new File("base.db"));
     FileChooser dialog;
     File file;
+    private final static StringBuilder version = new StringBuilder();
 
     //вкладка №1: управление базами 1С
     @FXML
@@ -89,6 +90,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     Button addUser_ConfigTab;
+
+    @FXML
+    Label loadingLabel;
+
     //----------------------------------
 
     //вкладка №3: редактирование конфигураций в хранилище
@@ -139,46 +144,56 @@ public class MainWindowController implements Initializable {
         return operatingSystem.getLocationConfig(currentUser.getName());
     }
 
+    public static StringBuilder getVersion() {
+        return version;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        version.append("0.92 beta");
         tableElement = new TableViewElement(this, configCollection);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
         disableSaveButton();
+        new Thread(()->{
+            userList_MainTab.setDisable(true);
+            //проверка базы данных (если она пустая, то происходит заполнение)
+            BDGenerator.connect();
+            int versionBD = BDGenerator.checkBD();
+            if (versionBD < 0) {
+                BDGenerator.createBD();
+                versionBD = BDGenerator.checkBD();
+            }
+            LOGGER.info(String.format("Версия базы данных: %s", versionBD));
+            BDGenerator.disconnect();
 
-        //проверка базы данных (если она пустая, то происходит заполнение)
-        BDGenerator.connect();
-        int versionBD = BDGenerator.checkBD();
-        if (versionBD < 0) {
-            BDGenerator.createBD();
-            versionBD = BDGenerator.checkBD();
-        }
-        LOGGER.info(String.format("Версия базы данных: %s", versionBD));
-        BDGenerator.disconnect();
+            //инициализируем базу данных и начинаем с ней работать
+            if (versionBD > 0) {
+                data_base = new DataBaseService();
+            } else {
+                LOGGER.info("Проблема с базой данных");
+                System.exit(0);
+            }
 
-        //инициализируем базу данных и начинаем с ней работать
-        if (versionBD > 0) {
-            data_base = new DataBaseService();
-        } else {
-            LOGGER.info("Проблема с базой данных");
-            System.exit(0);
-        }
+            //загружаем список пользователей из локального файла
+            user_list = new UserList(data_base, BD_LIST, group_choice_box);
 
-        //загружаем список пользователей из локального файла
-        user_list = new UserList(data_base, BD_LIST, group_choice_box);
+            //инициализируем слушатели
+            initListeners();
+            ignoredObjects = new Ignored_objects();
+            userList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            userList_Local_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            usersList_System_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            operatingSystem = new Windows();
 
-        //инициализируем слушатели
-        initListeners();
-        ignoredObjects = new Ignored_objects();
-        ignoredObjects.saveExcludeList();
-        userList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        userList_Local_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        usersList_System_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        operatingSystem = new Windows();
+            currentUser = new User();
+            currentUser.setName("");
+            displayUserList(); //показываем список пользователей
+            userList_MainTab.setDisable(false);
+            loadingLabel.setVisible(false);
+            loadingLabel.setDisable(true);
+        }).start();
 
-        currentUser = new User();
-        currentUser.setName("");
-        displayUserList(); //показываем список пользователей
         contextMenuConfigListMainTabInit();
         contextMenuConfigListSQLInit();
     }

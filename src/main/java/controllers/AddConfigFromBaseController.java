@@ -4,6 +4,7 @@ import entities.TableViewElement;
 import entities.WindowControllers;
 import entities.configStructure.Base;
 import entities.configStructure.VirtualTree;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,15 +49,18 @@ public class AddConfigFromBaseController extends WindowControllers implements In
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
         tableViewElement = new TableViewElement(mainWindowController, configList);
         group_choice_box.getItems().addAll(mainWindowController.data_base.getGroups());
         group_choice_box.setValue(mainWindowController.group_choice_box.getValue());
-        tableViewElement.loadSQLConfigListByGroup(group_choice_box);
+
+        Platform.runLater(() -> tableViewElement.loadSQLConfigListByGroup(group_choice_box));
+
         configList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         initListeners();
     }
 
-    public void keyListen(KeyEvent event){
+    public void keyListen(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
             action();

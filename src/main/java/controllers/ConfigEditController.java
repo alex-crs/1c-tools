@@ -4,6 +4,7 @@ import entities.Const;
 import entities.configStructure.Base;
 import entities.configStructure.Folder;
 import entities.configStructure.VirtualTree;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -342,7 +343,7 @@ public class ConfigEditController implements Initializable {
         });
     }
 
-    public void keyListen(KeyEvent event){
+    public void keyListen(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
             action();
@@ -515,39 +516,42 @@ public class ConfigEditController implements Initializable {
     }
 
     private void action() {
-        element.setElementName(configName.getText());
-        if (!element.isFolder()) {
-            ((Base) element).setVersion(defaultVersion.getText());
-        }
-        switch (action) {
-            case CREATE_TREE_ELEMENT:
-                choiceElementNonNullInspector();
-                connectionPathConstructor();
-                //формируем путь хранения конфигурации в древе
-                element.setPath(choiceElement.getValue().getPath());
-                addToConfigTree();
-                break;
-            case EDIT_TREE_CONFIG:
-            case EDIT_TREE_FOLDER:
-                connectionPathConstructor();
-                mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
-                mainController.enableSaveButton();
-                stage.close();
-                break;
-            case EDIT_SQL_CONFIG:
-                connectionPathConstructor();
-                mainController.data_base.updateConfig((Base) element);
-                mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
-                stage.close();
-                break;
-            case CREATE_SQL_CONFIG:
-                choiceElementNonNullInspector();
-                connectionPathConstructor();
-                mainController.data_base.addConfigToBase((Base) element, mainController.group_choice_box.getSelectionModel().getSelectedItem());
-                mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
-                stage.close();
-                break;
-        }
+        Platform.runLater(() -> {
+            element.setElementName(configName.getText());
+            if (!element.isFolder()) {
+                ((Base) element).setVersion(defaultVersion.getText());
+            }
+            switch (action) {
+                case CREATE_TREE_ELEMENT:
+                    choiceElementNonNullInspector();
+                    connectionPathConstructor();
+                    //формируем путь хранения конфигурации в древе
+                    element.setPath(choiceElement.getValue().getPath());
+                    addToConfigTree();
+                    break;
+                case EDIT_TREE_CONFIG:
+                case EDIT_TREE_FOLDER:
+                    connectionPathConstructor();
+                    mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
+                    mainController.enableSaveButton();
+                    stage.close();
+                    break;
+                case EDIT_SQL_CONFIG:
+                    connectionPathConstructor();
+                    mainController.data_base.updateConfig((Base) element);
+                    mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
+                    stage.close();
+                    break;
+                case CREATE_SQL_CONFIG:
+                    choiceElementNonNullInspector();
+                    connectionPathConstructor();
+                    mainController.data_base.addConfigToBase((Base) element, mainController.group_choice_box.getSelectionModel().getSelectedItem());
+                    mainController.tableElement.loadSQLConfigListByGroup(mainController.group_choice_box);
+                    stage.close();
+                    break;
+            }
+        });
+
     }
 
     //если элемент не выбран, создается элемент с пустым путем (иначе метод добавления выдаст ошибку)

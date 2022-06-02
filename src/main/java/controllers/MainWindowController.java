@@ -11,6 +11,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -22,10 +25,13 @@ import settings.Ignored_objects;
 import settings.UserList;
 import stages.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.List;
 
 import static entities.Const.*;
 import static handlers.CacheCleaner.clearCacheByUser;
@@ -150,12 +156,12 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        version.append("0.92 beta");
+        version.append("0.94 beta");
         tableElement = new TableViewElement(this, configCollection);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
         disableSaveButton();
-        new Thread(()->{
+        new Thread(() -> {
             userList_MainTab.setDisable(true);
             //проверка базы данных (если она пустая, то происходит заполнение)
             BDGenerator.connect();
@@ -193,6 +199,7 @@ public class MainWindowController implements Initializable {
             loadingLabel.setVisible(false);
             loadingLabel.setDisable(true);
         }).start();
+        group_choice_box.setValue(DEFAULT_GROUP.getTitle());
 
         contextMenuConfigListMainTabInit();
         contextMenuConfigListSQLInit();
@@ -232,6 +239,9 @@ public class MainWindowController implements Initializable {
     private void contextMenuConfigListMainTabInit() {
         ContextMenu configTreeContextMenu = new ContextMenu();
 
+        MenuItem openInExplorer = new MenuItem("Открыть в Проводнике");
+        openInExplorer.setOnAction(event -> openInExplorer());
+
         MenuItem addElement = new MenuItem("Создать SHIFT+W");
         addElement.setOnAction(event -> addToTree());
 
@@ -250,13 +260,35 @@ public class MainWindowController implements Initializable {
         MenuItem deleteConfig = new MenuItem("Удалить");
         deleteConfig.setOnAction(event -> deleteElementFromTree());
 
-        configTreeContextMenu.getItems().addAll(addElement,
+        configTreeContextMenu.getItems().addAll(openInExplorer,
+                addElement,
                 editConfig,
                 moveElement,
                 addToBase,
                 addFromBase,
                 deleteConfig);
         configList_MainTab.setContextMenu(configTreeContextMenu);
+    }
+
+    private void openInExplorer() {
+        List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
+        Base base = (Base) choiceElement.get(0).getValue();
+        if (choiceElement.size() == 1 && base.getConnect().contains("File")) {
+            try {
+                Desktop.getDesktop().open(new File(base.getConnect().replace("File=", "")
+                        .replace(";", "")
+                        .replace("\"", "")));
+            } catch (IllegalArgumentException | IOException e) {
+                LOGGER.info(String.format("Выбранная директория недоступна [%s]", base.getConnect()));
+                alert("Директория недоступна или не существует");
+            }
+        } else if (choiceElement.size() > 1) {
+            LOGGER.info("Выбрано более одной конфигурации");
+            alert("Необходимо выбрать одну конфигурацию");
+        } else {
+            LOGGER.info(String.format("Выбранная конфигурация имеет недопустимый путь [%s]", base.getConnect()));
+            alert("Необходимо выбрать файловую базу");
+        }
     }
 
     //контекстное меню в древе конфигурации
@@ -541,12 +573,13 @@ public class MainWindowController implements Initializable {
     }
 
     private void calcCashSpace() {
-        clearCacheButton.setText("Очистить кэш: " + FileLengthCalculator
+        Platform.runLater(() -> clearCacheButton.setText("Очистить кэш: " + FileLengthCalculator
                 .getOccupiedSpaceByUser(
                         operatingSystem
                                 .cachePathConstructor(userList_MainTab
                                         .getSelectionModel()
-                                        .getSelectedItem().getName())));
+                                        .getSelectedItem().getName()))));
+
     }
 
     //Создаем недостающие файлы в случае отсутствия создаем
@@ -576,12 +609,14 @@ public class MainWindowController implements Initializable {
     }
 
     public void addConfigFromBase() {
-        if (userList_MainTab.getSelectionModel().getSelectedItem() != null) {
-            AddConfigFromBaseStage addConfigFromBaseStage = new AddConfigFromBaseStage(this);
-            addConfigFromBaseStage.showAndWait();
-        } else {
-            alert("Необходимо выбрать пользователя");
-        }
+        Platform.runLater(() -> {
+            if (userList_MainTab.getSelectionModel().getSelectedItem() != null) {
+                AddConfigFromBaseStage addConfigFromBaseStage = new AddConfigFromBaseStage(MainWindowController.this);
+                addConfigFromBaseStage.showAndWait();
+            } else {
+                alert("Необходимо выбрать пользователя");
+            }
+        });
     }
 
     public void editElement() {
@@ -594,16 +629,18 @@ public class MainWindowController implements Initializable {
     }
 
     public void saveConfigToDataBase() {
-        List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
-        if (choiceElement != null && !choiceElement.get(0).getValue().isFolder() && choiceElement.size() == 1) {
-            if (data_base.addConfigToBase((Base) choiceElement.get(0).getValue(), group_choice_box.getValue()) > 0) {
-                alert("Конфигурация добавлена в хранилище.");
+        Platform.runLater(() -> {
+            List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
+            if (choiceElement != null && !choiceElement.get(0).getValue().isFolder() && choiceElement.size() == 1) {
+                if (data_base.addConfigToBase((Base) choiceElement.get(0).getValue(), group_choice_box.getValue()) > 0) {
+                    alert("Конфигурация добавлена в хранилище.");
+                } else {
+                    alert("При добавлении базы возникла ошибка! (подробнее см. журнал)");
+                }
             } else {
-                alert("При добавлении базы возникла ошибка! (подробнее см. журнал)");
+                alert("Для добавления необходимо выбрать одну конфигурацию");
             }
-        } else {
-            alert("Для добавления необходимо выбрать одну конфигурацию");
-        }
+        });
     }
 
     public void addNewSQLConfig() {
@@ -619,13 +656,18 @@ public class MainWindowController implements Initializable {
     }
 
     public void showConfigs() {
-        tableElement.loadSQLConfigListByGroup(group_choice_box);
+        new Thread(() -> {
+            tableElement.loadSQLConfigListByGroup(group_choice_box);
+        }).start();
     }
 
     public void deleteSQLElementFromBase() {
-        if (configCollection.getSelectionModel().getSelectedItem() != null) {
-            showActionQuestion(DELETE_SQL_CONFIG);
-        }
+        Platform.runLater(() -> {
+            if (configCollection.getSelectionModel().getSelectedItem() != null) {
+                showActionQuestion(DELETE_SQL_CONFIG);
+            }
+        });
+
     }
 
     //позволяет добавлять пользователя вручную

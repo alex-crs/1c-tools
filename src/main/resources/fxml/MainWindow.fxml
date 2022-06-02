@@ -63,7 +63,7 @@
                                  <children>
                                     <ToolBar layoutY="333.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                       <items>
-                                          <SplitMenuButton fx:id="addConfigButton" focusTraversable="false" mnemonicParsing="false" onAction="#addToTree" text="➕">
+                                          <SplitMenuButton fx:id="addConfigButton" focusTraversable="false" mnemonicParsing="false" onAction="#addToTree" text="➕ Добавить">
                                             <items>
                                               <MenuItem mnemonicParsing="false" onAction="#addToTree" text="Добавить новый элемент в список" />
                                               <MenuItem mnemonicParsing="false" onAction="#addConfigFromBase" text="Добавить конфигурацию из хранилища" />

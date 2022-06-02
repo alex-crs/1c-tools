@@ -23,7 +23,7 @@ public class ConfigEditStage extends Stage {
             setTitle(action.getTitle());
             setResizable(false);
             initModality(Modality.APPLICATION_MODAL);
-            Scene scene = new Scene(root, 560, 70);
+            Scene scene = new Scene(root, 560, 60);
             setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();

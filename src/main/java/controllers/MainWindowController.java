@@ -146,9 +146,6 @@ public class MainWindowController implements Initializable {
         addUser_ConfigTab.setFocusTraversable(false);
         disableSaveButton();
 
-        //проверяем наличие необходимых файлов, если таковых нет - создаем
-//        checkExternalWorkFiles();
-
         //проверка базы данных (если она пустая, то происходит заполнение)
         BDGenerator.connect();
         int versionBD = BDGenerator.checkBD();

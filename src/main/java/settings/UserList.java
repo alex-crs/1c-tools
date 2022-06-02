@@ -4,10 +4,12 @@ import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.EnumVariant;
 import com.jacob.com.Variant;
+import controllers.MainWindowController;
 import entities.User;
 import javafx.scene.control.ComboBox;
 import org.apache.log4j.Logger;
 import service.DataBaseService;
+import stages.AlertWindowStage;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -175,8 +177,9 @@ public class UserList {
                 user.setName(Dispatch.call(item, "Name").toString());
                 list.add(user);
             }
-        } catch (Exception e) {
-            LOGGER.error(e);
+        } catch (UnsatisfiedLinkError e){
+            AlertWindowStage alert = new AlertWindowStage("Не обнаружена библиотека jacob-1.20-x64/32.dll");
+            alert.showAndWait();
         }
         return list;
     }

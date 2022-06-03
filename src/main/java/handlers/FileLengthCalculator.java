@@ -7,8 +7,8 @@ import java.io.File;
 public class FileLengthCalculator {
     private static final Logger LOGGER = Logger.getLogger(FileLengthCalculator.class);
 
-    public static String getOccupiedSpace(String path) {
-        return spaceToString(calcFileLength(path));
+    public static long getOccupiedSpace(String path) {
+        return calcFileLength(path);
     }
 
     public static String getOccupiedSpaceByUser(String path){
@@ -16,7 +16,7 @@ public class FileLengthCalculator {
     }
 
     //определение размера папки с кэшем
-    private static long calcFileLength(String sourcePath) {
+    public static long calcFileLength(String sourcePath) {
         long totalSize = 0;
         File file;
         File sourceDirectory = new File(sourcePath);
@@ -41,7 +41,7 @@ public class FileLengthCalculator {
     }
 
     //форматирование выводимого размера папки с кэшем
-    private static String spaceToString(float digit) {
+    public static String spaceToString(float digit) {
         if (digit < 1000) {
             return String.format("%.0f byte", digit);
         } else if (digit < 1000000) {

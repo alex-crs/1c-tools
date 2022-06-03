@@ -162,7 +162,7 @@ public class MainWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //ВЕРСИЯ ПРОГРАММЫ
-        version.append("0.95 beta");
+        version.append("0.96 beta");
 
         group_choice_box.setVisible(false);
         tableElement = new TableViewElement(this, configCollection);
@@ -302,24 +302,29 @@ public class MainWindowController implements Initializable {
     private void openInExplorer() {
         List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
         Base base = null;
-        if (choiceElement != null && choiceElement.size() != 0) {
-            base = (Base) choiceElement.get(0).getValue();
-            if (choiceElement.size() == 1 && base.getConnect().contains("File")) {
-                try {
-                    Desktop.getDesktop().open(new File(base.getConnect().replace("File=", "")
-                            .replace(";", "")
-                            .replace("\"", "")));
-                } catch (IllegalArgumentException | IOException e) {
-                    LOGGER.info(String.format("Выбранная директория недоступна [%s]", base.getConnect()));
-                    alert("Директория недоступна или не существует");
+        try {
+            if (choiceElement != null && choiceElement.size() != 0) {
+                base = (Base) choiceElement.get(0).getValue();
+                if (choiceElement.size() == 1 && base.getConnect().contains("File")) {
+                    try {
+                        Desktop.getDesktop().open(new File(base.getConnect().replace("File=", "")
+                                .replace(";", "")
+                                .replace("\"", "")));
+                    } catch (IllegalArgumentException | IOException e) {
+                        LOGGER.info(String.format("Выбранная директория недоступна [%s]", base.getConnect()));
+                        alert("Директория недоступна или не существует");
+                    }
+                } else if (choiceElement.size() > 1) {
+                    LOGGER.info("Выбрано более одной конфигурации");
+                    alert("Необходимо выбрать одну конфигурацию");
+                } else {
+                    LOGGER.info(String.format("Выбранная конфигурация имеет недопустимый путь [%s]", base.getConnect()));
+                    alert("Не выбрана файловая база");
                 }
-            } else if (choiceElement.size() > 1) {
-                LOGGER.info("Выбрано более одной конфигурации");
-                alert("Необходимо выбрать одну конфигурацию");
-            } else {
-                LOGGER.info(String.format("Выбранная конфигурация имеет недопустимый путь [%s]", base.getConnect()));
-                alert("Не выбрана файловая база");
             }
+        } catch (ClassCastException e) {
+            LOGGER.info("Попытка открыть папку в проводнике");
+            alert("Папку невозможно просмотреть в проводнике");
         }
     }
 
@@ -610,24 +615,24 @@ public class MainWindowController implements Initializable {
     }
 
     private void calcCashSpace() {
-        Platform.runLater(() -> clearCacheButton.setText("Очистить кэш: " + FileLengthCalculator
-                .getOccupiedSpaceByUser(
-                        operatingSystem
-                                .cachePathConstructor(userList_MainTab
-                                        .getSelectionModel()
-                                        .getSelectedItem().getName()))));
-
-    }
-
-    //Создаем недостающие файлы в случае отсутствия создаем
-    private void checkExternalWorkFiles() {
-        externalWorkFiles.stream().forEach(file -> {
-            if (!file.exists()) {
-                try {
-                    file.createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        StringBuilder user = new StringBuilder().append(userList_MainTab
+                .getSelectionModel()
+                .getSelectedItem().getName());
+        File cv82 = new File(operatingSystem.cv82cachePathConstructor(user.toString()));
+        File cv83 = new File(operatingSystem.cv83cachePathConstructor(user.toString()));
+        float cv82size = 0;
+        if (cv82.exists()) {
+            cv82size = FileLengthCalculator.calcFileLength(cv82.getPath() + File.separator);
+        }
+        float cv83size = 0;
+        if (cv83.exists()) {
+            cv83size = FileLengthCalculator.calcFileLength(cv83.getPath() + File.separator);
+        }
+        float sum = cv82size + cv83size;
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                clearCacheButton.setText("Очистить кэш: " + FileLengthCalculator.spaceToString(sum));
             }
         });
     }

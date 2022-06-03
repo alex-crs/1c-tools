@@ -5,11 +5,11 @@ public interface OS {
 
     String getHomeDirectory();
 
-    String cachePathConstructor(String userName);
+    String cv82cachePathConstructor(String userName);
+
+    String cv83cachePathConstructor(String userName);
 
     String basePathConstructor(String userName);
-
-//    String cv8StartConfigPathConstructor(String userName);
 
     String getLocationConfig(String userName);
 

@@ -21,6 +21,7 @@ import stages.ConfigEditStage;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ConfigEditController implements Initializable {
     @FXML
@@ -530,10 +531,24 @@ public class ConfigEditController implements Initializable {
                     addToConfigTree();
                     break;
                 case EDIT_TREE_CONFIG:
-                case EDIT_TREE_FOLDER:
                     connectionPathConstructor();
                     mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
                     mainController.enableSaveButton();
+                    stage.close();
+                    break;
+                case EDIT_TREE_FOLDER:
+                    TreeItem<VirtualTree> targetElement = new TreeItem<>();
+                    targetElement.setValue(new VirtualTree());
+                    targetElement.getValue().setFolder(true);
+                    targetElement.getValue().setElementName(configName.getText());
+                    choiceElement.getChildren().forEach(virtualTreeTreeItem -> {
+                        if (!virtualTreeTreeItem.getValue().getElementName().equals(choiceElement.getValue().getElementName())) {
+                            BaseConfig.moveElement(virtualTreeTreeItem.getValue(),targetElement);
+                        }
+                    });
+                    MainWindowController.editConfigControllerManager(Const.CREATE_TREE_ELEMENT, choiceElement.getParent(), targetElement.getValue());
+                    mainController.enableSaveButton();
+                    mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
                     stage.close();
                     break;
                 case EDIT_SQL_CONFIG:

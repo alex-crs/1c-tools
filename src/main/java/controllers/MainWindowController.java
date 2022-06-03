@@ -1,7 +1,5 @@
 package controllers;
 
-
-import com.sun.org.apache.xml.internal.security.Init;
 import entities.*;
 import entities.configStructure.Base;
 import entities.configStructure.VirtualTree;
@@ -30,7 +28,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -104,6 +101,9 @@ public class MainWindowController implements Initializable {
     @FXML
     ProgressIndicator progressIndicator;
 
+    @FXML
+    Label userLoadingInfo;
+
     //----------------------------------
 
     //вкладка №3: редактирование конфигураций в хранилище
@@ -160,8 +160,11 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        group_choice_box.setVisible(false);
+
+        //ВЕРСИЯ ПРОГРАММЫ
         version.append("0.95 beta");
+
+        group_choice_box.setVisible(false);
         tableElement = new TableViewElement(this, configCollection);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
@@ -251,6 +254,14 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    //горячие клавиши для списка пользователей во вкладке редактирование списка пользователей
+    public void userListConfigKeyListen(KeyEvent event) {
+        if (event.getCode() == KeyCode.DELETE) {
+            event.consume();
+            deleteFromLocalUserList();
+        }
+    }
+
     //контекстное меню в древе конфигурации
     private void contextMenuConfigListMainTabInit() {
         ContextMenu configTreeContextMenu = new ContextMenu();
@@ -288,22 +299,25 @@ public class MainWindowController implements Initializable {
 
     private void openInExplorer() {
         List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
-        Base base = (Base) choiceElement.get(0).getValue();
-        if (choiceElement.size() == 1 && base.getConnect().contains("File")) {
-            try {
-                Desktop.getDesktop().open(new File(base.getConnect().replace("File=", "")
-                        .replace(";", "")
-                        .replace("\"", "")));
-            } catch (IllegalArgumentException | IOException e) {
-                LOGGER.info(String.format("Выбранная директория недоступна [%s]", base.getConnect()));
-                alert("Директория недоступна или не существует");
+        Base base = null;
+        if (choiceElement != null && choiceElement.size() != 0) {
+            base = (Base) choiceElement.get(0).getValue();
+            if (choiceElement.size() == 1 && base.getConnect().contains("File")) {
+                try {
+                    Desktop.getDesktop().open(new File(base.getConnect().replace("File=", "")
+                            .replace(";", "")
+                            .replace("\"", "")));
+                } catch (IllegalArgumentException | IOException e) {
+                    LOGGER.info(String.format("Выбранная директория недоступна [%s]", base.getConnect()));
+                    alert("Директория недоступна или не существует");
+                }
+            } else if (choiceElement.size() > 1) {
+                LOGGER.info("Выбрано более одной конфигурации");
+                alert("Необходимо выбрать одну конфигурацию");
+            } else {
+                LOGGER.info(String.format("Выбранная конфигурация имеет недопустимый путь [%s]", base.getConnect()));
+                alert("Не выбрана файловая база");
             }
-        } else if (choiceElement.size() > 1) {
-            LOGGER.info("Выбрано более одной конфигурации");
-            alert("Необходимо выбрать одну конфигурацию");
-        } else {
-            LOGGER.info(String.format("Выбранная конфигурация имеет недопустимый путь [%s]", base.getConnect()));
-            alert("Необходимо выбрать файловую базу");
         }
     }
 
@@ -333,7 +347,12 @@ public class MainWindowController implements Initializable {
     //загрузка пользователей из системы
     public void loadUsersFromSystem() {
         systemUserList = user_list.getUserListFromSystem();
-        displaySystemUserList();
+        if (systemUserList.size() > 0) {
+            userLoadingInfo.setDisable(true);
+            userLoadingInfo.setVisible(false);
+            usersList_System_ConfigTab.setDisable(false);
+            displaySystemUserList();
+        }
     }
 
     //на вкладке настроек отображает список системных пользователей

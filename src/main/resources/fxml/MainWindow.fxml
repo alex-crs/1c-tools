@@ -105,7 +105,7 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab text="Редактирование пользователей">
+          <Tab text="Редактирование списка пользователей:">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -120,7 +120,7 @@
                                           <Button mnemonicParsing="false" onAction="#deleteFromLocalUserList" text="Удалить" />
                                       </items>
                                     </ToolBar>
-                                    <ListView fx:id="userList_Local_ConfigTab" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
+                                    <ListView fx:id="userList_Local_ConfigTab" layoutY="40.0" onKeyPressed="#userListConfigKeyListen" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
                                     <Label layoutX="8.0" layoutY="44.0" text="Пользователи в базе данных:" />
                                  </children>
                               </AnchorPane>
@@ -132,8 +132,9 @@
                                           <Button mnemonicParsing="false" onAction="#loadUsersFromSystem" text="Загрузить список" />
                                       </items>
                                     </ToolBar>
-                                    <ListView fx:id="usersList_System_ConfigTab" layoutX="75.0" layoutY="186.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
+                                    <ListView fx:id="usersList_System_ConfigTab" disable="true" layoutX="75.0" layoutY="186.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0" />
                                     <Label layoutX="10.0" layoutY="44.0" text="Пользователи из системы:" />
+                                    <Label fx:id="userLoadingInfo" layoutX="38.0" layoutY="207.0" text="Для загрузки пользователей нажмите &quot;Загрузить список&quot;" />
                                  </children>
                               </AnchorPane>
                            </items>

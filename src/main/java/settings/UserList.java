@@ -62,10 +62,6 @@ public class UserList {
                 this.userList = getUserListFromSystem();
                 this.panelMode = "system";
                 break;
-            case "local":
-//                this.userList = getUserListFromFile();
-                this.panelMode = "local";
-                break;
             case "BD":
                 loadUserListByGroup(DEFAULT_GROUP.getTitle());
                 this.panelMode = "bd";
@@ -123,28 +119,6 @@ public class UserList {
     public List<User> getUserList() {
         return userList;
     }
-
-    //возвращает список пользователей. Если список не был сформирован возвращает единственное значение
-    //"Список не найден"
-//    public List<String> getUserList() {
-//        if (userList == null) {
-//            userList = new ArrayList<>(Collections.singletonList("Пользователи не найдены"));
-//        }
-//        return userList;
-//    }
-
-//    public void saveUserList() {
-//        userList = userList.stream().sorted(Comparator.comparing(String::format)).collect(Collectors.toList());
-//        if (!panelMode.equals("system")) {
-//            try (BufferedWriter writer = Files.newBufferedWriter(file.toPath())) {
-//                for (String u : userList) {
-//                    writer.append(u + "\n");
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
 
     public void addUserToDataBase(List<User> users, String group) {
         users.forEach(s -> {

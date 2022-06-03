@@ -169,6 +169,8 @@ public class MainWindowController implements Initializable {
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
         disableSaveButton();
+
+        //инициализация базы данных
         new Thread(() -> {
             userList_MainTab.setDisable(true);
             //проверка базы данных (если она пустая, то происходит заполнение)

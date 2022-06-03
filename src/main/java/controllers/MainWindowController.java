@@ -1,6 +1,7 @@
 package controllers;
 
 
+import com.sun.org.apache.xml.internal.security.Init;
 import entities.*;
 import entities.configStructure.Base;
 import entities.configStructure.VirtualTree;
@@ -100,6 +101,9 @@ public class MainWindowController implements Initializable {
     @FXML
     Label loadingLabel;
 
+    @FXML
+    ProgressIndicator progressIndicator;
+
     //----------------------------------
 
     //вкладка №3: редактирование конфигураций в хранилище
@@ -156,7 +160,8 @@ public class MainWindowController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        version.append("0.94 beta");
+        group_choice_box.setVisible(false);
+        version.append("0.95 beta");
         tableElement = new TableViewElement(this, configCollection);
         configList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         addUser_ConfigTab.setFocusTraversable(false);
@@ -165,17 +170,22 @@ public class MainWindowController implements Initializable {
             userList_MainTab.setDisable(true);
             //проверка базы данных (если она пустая, то происходит заполнение)
             BDGenerator.connect();
+            progressIndicator.setProgress(0.1);
             int versionBD = BDGenerator.checkBD();
+            progressIndicator.setProgress(0.2);
             if (versionBD < 0) {
                 BDGenerator.createBD();
                 versionBD = BDGenerator.checkBD();
+                progressIndicator.setProgress(0.4);
             }
+            progressIndicator.setProgress(0.4);
             LOGGER.info(String.format("Версия базы данных: %s", versionBD));
             BDGenerator.disconnect();
 
             //инициализируем базу данных и начинаем с ней работать
             if (versionBD > 0) {
                 data_base = new DataBaseService();
+                progressIndicator.setProgress(0.6);
             } else {
                 LOGGER.info("Проблема с базой данных");
                 System.exit(0);
@@ -183,6 +193,7 @@ public class MainWindowController implements Initializable {
 
             //загружаем список пользователей из локального файла
             user_list = new UserList(data_base, BD_LIST, group_choice_box);
+            progressIndicator.setProgress(0.8);
 
             //инициализируем слушатели
             initListeners();
@@ -190,6 +201,7 @@ public class MainWindowController implements Initializable {
             userList_MainTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             userList_Local_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             usersList_System_ConfigTab.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            progressIndicator.setProgress(0.9);
             operatingSystem = new Windows();
 
             currentUser = new User();
@@ -198,6 +210,10 @@ public class MainWindowController implements Initializable {
             userList_MainTab.setDisable(false);
             loadingLabel.setVisible(false);
             loadingLabel.setDisable(true);
+            progressIndicator.setProgress(1);
+            progressIndicator.setDisable(true);
+            progressIndicator.setVisible(false);
+            group_choice_box.setVisible(true);
         }).start();
         group_choice_box.setValue(DEFAULT_GROUP.getTitle());
 
@@ -411,7 +427,7 @@ public class MainWindowController implements Initializable {
      и для добавления пользователя вручную*/
     private void showGroupEditWindow(Const action) {
         GroupEditStage groupEditStage = new GroupEditStage(action, this);
-        groupEditStage.showAndWait();
+        groupEditStage.show();
     }
 
     public void moveConfig() {
@@ -631,7 +647,7 @@ public class MainWindowController implements Initializable {
     public void saveConfigToDataBase() {
         Platform.runLater(() -> {
             List<TreeItem<VirtualTree>> choiceElement = configList_MainTab.getSelectionModel().getSelectedItems();
-            if (choiceElement != null && !choiceElement.get(0).getValue().isFolder() && choiceElement.size() == 1) {
+            if (choiceElement != null && choiceElement.size() > 0 && !choiceElement.get(0).getValue().isFolder() && choiceElement.size() == 1) { //поправить выскакивает ошибка NullPointer когда пустое окно
                 if (data_base.addConfigToBase((Base) choiceElement.get(0).getValue(), group_choice_box.getValue()) > 0) {
                     alert("Конфигурация добавлена в хранилище.");
                 } else {

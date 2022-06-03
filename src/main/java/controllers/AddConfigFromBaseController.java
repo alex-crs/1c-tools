@@ -96,6 +96,7 @@ public class AddConfigFromBaseController extends WindowControllers implements In
             int answer = MainWindowController.editConfigControllerManager(CREATE_TREE_ELEMENT, choiceElement, l);
             if (answer > 0) {
                 mainWindowController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
+                mainWindowController.enableSaveButton();
                 stage.close();
             } else {
                 mainWindowController.alert(String.format("[%s] уже присутствует в древе", l.getElementName()));

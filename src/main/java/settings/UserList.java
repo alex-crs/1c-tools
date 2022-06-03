@@ -7,6 +7,7 @@ import com.jacob.com.Variant;
 import controllers.MainWindowController;
 import entities.User;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
 import org.apache.log4j.Logger;
 import service.DataBaseService;
 import stages.AlertWindowStage;
@@ -91,8 +92,7 @@ public class UserList {
         }
     }
 
-    public void returnToCurrentGroup(){
-        this.userList = data_base.getUsersListByGroup(currentGroup).getUsers();
+    public void returnToCurrentGroup() {
         group_choice_box.setValue(currentGroup);
     }
 
@@ -120,7 +120,7 @@ public class UserList {
         return list;
     }
 
-    public List<User> getUserList(){
+    public List<User> getUserList() {
         return userList;
     }
 
@@ -177,7 +177,7 @@ public class UserList {
                 user.setName(Dispatch.call(item, "Name").toString());
                 list.add(user);
             }
-        } catch (UnsatisfiedLinkError e){
+        } catch (UnsatisfiedLinkError e) {
             AlertWindowStage alert = new AlertWindowStage("Не обнаружена библиотека jacob-1.20-x64/32.dll");
             alert.showAndWait();
         }

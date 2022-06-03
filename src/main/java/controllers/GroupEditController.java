@@ -89,7 +89,7 @@ public class GroupEditController implements Initializable {
         }
     }
 
-    public void keyListen(KeyEvent event){
+    public void keyListen(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             event.consume();
             action();

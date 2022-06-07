@@ -19,10 +19,14 @@ public class AddConfigFromBaseStage extends Stage {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AddConfigFromBase.fxml"));
             loader.setController(configEditController);
             root = loader.load();
-            setResizable(false);
+//            setResizable(false);
             initModality(Modality.APPLICATION_MODAL);
             setTitle("Добавление конфигурации из хранилища");
-            Scene scene = new Scene(root, 500, 290);
+            Scene scene = new Scene(root, 670, 320);
+            setMinHeight(320);
+            setMinWidth(500);
+            setMaxHeight(800);
+            setMaxWidth(1000);
             setScene(scene);
         } catch (IOException e) {
             e.printStackTrace();

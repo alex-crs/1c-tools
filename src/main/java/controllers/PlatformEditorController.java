@@ -102,7 +102,7 @@ public class PlatformEditorController implements Initializable {
             readLocationConfigParams(cv8FilePathLocation);
         }
         if (cv8DirectoryLocation.length() == 0) {
-            cv8DirectoryLocation.append("1cv83");
+            cv8DirectoryLocation.append("1cv8");
         }
         cv8Start = new File(mainController.getCV8ConfigPath() + File.separator
                 + cv8DirectoryLocation + File.separator + "1cv8strt.pfl");
@@ -307,10 +307,10 @@ public class PlatformEditorController implements Initializable {
             if (!cv8StartDir.exists()) {
                 Files.createDirectories(Paths.get(String.valueOf(cv8StartDir)));
             }
-            if (!configLocation.exists()) {
-                Files.createDirectories(Paths.get(String.valueOf(configLocation)));
-                saveLocationConfigParams(cv8FilePathLocation);
-            }
+//            if (!configLocation.exists()) {
+//                Files.createDirectories(Paths.get(String.valueOf(configLocation)));
+//                saveLocationConfigParams(cv8FilePathLocation);
+//            }
         } catch (IOException e) {
             LOGGER.error(String.format("Отсутствует доступ: %s, %s", cEStartDir.getPath(), cv8StartDir.getPath()));
         }

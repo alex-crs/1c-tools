@@ -7,7 +7,7 @@
 <AnchorPane fx:id="actionWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyReleased="#keyListen" prefHeight="70.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="message" layoutX="15.0" layoutY="11.0" text="Label" AnchorPane.leftAnchor="15.0" />
-      <Button fx:id="accept" layoutX="131.0" layoutY="35.0" mnemonicParsing="false" onAction="#action" onKeyReleased="#keyListen" text="Принять" AnchorPane.bottomAnchor="10.0" />
+      <Button fx:id="accept" layoutX="131.0" layoutY="35.0" mnemonicParsing="false" onAction="#action" onKeyPressed="#keyListen" text="Принять" AnchorPane.bottomAnchor="10.0" />
       <Button fx:id="cancel" layoutX="214.0" layoutY="35.0" mnemonicParsing="false" onAction="#cancel" onKeyReleased="#keyListen" text="Отмена" AnchorPane.bottomAnchor="10.0" />
    </children>
 </AnchorPane>

@@ -96,7 +96,7 @@ public class GroupEditController implements Initializable {
         }
         if (event.getCode() == KeyCode.ESCAPE) {
             event.consume();
-            stage.close();
+            cancel();
         }
     }
 

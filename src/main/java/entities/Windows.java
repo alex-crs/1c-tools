@@ -11,6 +11,7 @@ public class Windows implements OS {
     StringBuilder cEStart = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart\\1CEStart.cfg");
     StringBuilder cEStartDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C\\1CEStart");
 //    StringBuilder platformConfigDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C\\1cv83");
+    StringBuilder cv8path = new StringBuilder().append("\\AppData\\Local\\1C\\1cv8\\");
     StringBuilder cv82path = new StringBuilder().append("\\AppData\\Local\\1C\\1Cv82\\");
     StringBuilder cv83path = new StringBuilder().append("\\AppData\\Local\\1C\\1Cv83\\");
     StringBuilder platformConfigDirectory = new StringBuilder().append("\\AppData\\Roaming\\1C");
@@ -60,6 +61,11 @@ public class Windows implements OS {
     }
 
     //собирает готовый путь до папки с 1С (собирает системные пути с именем пользователя)
+    @Override
+    public String cv8cachePathConstructor(String userName) {
+        return homeDirectory + userName + cv8path;
+    }
+
     @Override
     public String cv82cachePathConstructor(String userName) {
         return homeDirectory + userName + cv82path;

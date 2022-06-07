@@ -5,6 +5,9 @@ public interface OS {
 
     String getHomeDirectory();
 
+    //собирает готовый путь до папки с 1С (собирает системные пути с именем пользователя)
+    String cv8cachePathConstructor(String userName);
+
     String cv82cachePathConstructor(String userName);
 
     String cv83cachePathConstructor(String userName);

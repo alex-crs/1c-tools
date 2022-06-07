@@ -158,11 +158,16 @@ public class MainWindowController implements Initializable {
         return version;
     }
 
+    /*
+    1. Не видит 1cv8strt на новых платформах (где то в другом месте путь записан)
+    2. Моргает сообщение в настройках 1С пользователя при нажатии Enter
+    */
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         //ВЕРСИЯ ПРОГРАММЫ
-        version.append("0.96 beta");
+        version.append("0.97 beta");
 
         group_choice_box.setVisible(false);
         tableElement = new TableViewElement(this, configCollection);
@@ -211,7 +216,6 @@ public class MainWindowController implements Initializable {
 
             currentUser = new User();
             currentUser.setName("");
-            displayUserList(); //показываем список пользователей
             userList_MainTab.setDisable(false);
             loadingLabel.setVisible(false);
             loadingLabel.setDisable(true);
@@ -219,8 +223,9 @@ public class MainWindowController implements Initializable {
             progressIndicator.setDisable(true);
             progressIndicator.setVisible(false);
             group_choice_box.setVisible(true);
+            displayUserList(); //показываем список пользователей
+            group_choice_box.setValue(DEFAULT_GROUP.getTitle());
         }).start();
-        group_choice_box.setValue(DEFAULT_GROUP.getTitle());
 
         contextMenuConfigListMainTabInit();
         contextMenuConfigListSQLInit();
@@ -618,23 +623,18 @@ public class MainWindowController implements Initializable {
         StringBuilder user = new StringBuilder().append(userList_MainTab
                 .getSelectionModel()
                 .getSelectedItem().getName());
+        File cv8 = new File(operatingSystem.cv8cachePathConstructor(user.toString()));
         File cv82 = new File(operatingSystem.cv82cachePathConstructor(user.toString()));
         File cv83 = new File(operatingSystem.cv83cachePathConstructor(user.toString()));
-        float cv82size = 0;
-        if (cv82.exists()) {
-            cv82size = FileLengthCalculator.calcFileLength(cv82.getPath() + File.separator);
-        }
-        float cv83size = 0;
-        if (cv83.exists()) {
-            cv83size = FileLengthCalculator.calcFileLength(cv83.getPath() + File.separator);
-        }
-        float sum = cv82size + cv83size;
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                clearCacheButton.setText("Очистить кэш: " + FileLengthCalculator.spaceToString(sum));
-            }
-        });
+        float sum = calcIfExist(cv8)
+                + calcIfExist(cv82)
+                + calcIfExist(cv83);
+        Platform.runLater(() -> clearCacheButton.setText("Очистить кэш: " + FileLengthCalculator.spaceToString(sum)));
+    }
+
+    private float calcIfExist(File file) {
+        return file.exists() ? FileLengthCalculator
+                .calcFileLength(file.getPath() + File.separator) : 0;
     }
 
     public void updateList() {

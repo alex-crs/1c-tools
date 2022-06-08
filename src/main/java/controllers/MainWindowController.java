@@ -171,6 +171,12 @@ public class MainWindowController implements Initializable {
         disableSaveButton();
 
         //инициализация базы данных
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
         new Thread(() -> {
             userList_MainTab.setDisable(true);
             //проверка базы данных (если она пустая, то происходит заполнение)

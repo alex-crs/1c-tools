@@ -72,7 +72,7 @@ public class BaseConfig {
         saveToFile(file, list);
     }
 
-    public static void saveConfToChoiceFile(File file){
+    public static void saveConfToChoiceFile(File file) {
         ArrayList<String> saveList = configTree.virtualTreeAsListCollector();
         saveToFile(file, saveList);
     }
@@ -163,5 +163,9 @@ public class BaseConfig {
             }
         }
         return list;
+    }
+
+    public static boolean findDouble(String name) {
+        return configTree.findFromTree(name) != null;
     }
 }

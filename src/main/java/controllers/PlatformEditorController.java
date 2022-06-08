@@ -99,7 +99,7 @@ public class PlatformEditorController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         cv8FilePathLocation = new File(mainController.getLocationConfigPath());
         if (cv8FilePathLocation.exists()) {
-            readLocationConfigParams(cv8FilePathLocation);
+            cv8DirectoryLocation.append(readLocationConfigParams(cv8FilePathLocation));
         }
         if (cv8DirectoryLocation.length() == 0) {
             cv8DirectoryLocation.append("1cv8");
@@ -221,8 +221,13 @@ public class PlatformEditorController implements Initializable {
         }
     }
 
-    private void readLocationConfigParams(File file) {
+    /*
+    В разных версиях 1С файл location.cfg в разных кодировках, в текущем методе мы пробуем читать файл
+    в разных кодировках, если не данные и там и там отрицательные возвращаем строку нулевой длины.
+    */
+    private StringBuilder readLocationConfigParams(File file) {
         StringBuilder string = new StringBuilder();
+        StringBuilder cv8ParamLocation = new StringBuilder();
         String[] param;
         if (file.exists() && file.length() > 0) {
             try (FileInputStream fis = new FileInputStream(file);
@@ -230,24 +235,48 @@ public class PlatformEditorController implements Initializable {
                          StandardCharsets.UTF_16LE))) {
                 string.append(reader.readLine());
                 param = string.toString().split("/");
-                cv8DirectoryLocation.append(param[param.length - 1]);
+                cv8ParamLocation.append(param[param.length - 1]);
                 LOGGER.info(String.format("Прочитан файл %s", file.getPath()));
+                LOGGER.info(String.format("Содержимое файла %s", cv8ParamLocation));
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error(String.format("Ошибка при чтении файла %s", cv8ParamLocation));
             }
+
+            if (codePageChecker(cv8ParamLocation.toString())) {
+                LOGGER.info("Файл прочитан успешно");
+                return cv8ParamLocation;
+            } else {
+                string.delete(0, string.length());
+                cv8ParamLocation.delete(0, cv8ParamLocation.length());
+                LOGGER.info(String.format("Иная кодировка файла, повторное чтение %s", file.getPath()));
+                try (FileInputStream fis = new FileInputStream(file);
+                     BufferedReader reader = new BufferedReader(new InputStreamReader(fis,
+                             StandardCharsets.UTF_8))) {
+                    string.append(reader.readLine());
+                    param = string.toString().split("/");
+                    cv8ParamLocation.append(param[param.length - 1]);
+                    LOGGER.info(String.format("Прочитан файл %s", file.getPath()));
+                    LOGGER.info(String.format("Содержимое файла %s", cv8ParamLocation));
+                } catch (Exception e) {
+                    LOGGER.error(String.format("Ошибка при чтении файла %s", cv8ParamLocation));
+                }
+            }
+            if (codePageChecker(cv8ParamLocation.toString())) {
+                LOGGER.info("Файл прочитан успешно");
+                return cv8ParamLocation;
+            } else {
+                LOGGER.info(String.format("Не удалось корректно прочесть файл [%s]," +
+                        " в файле не содержится ключевых строк. Файла содержит: [%s]", file.getPath(), cv8ParamLocation));
+            }
+
         }
+        //возвращаем строку нулевой длины
+        return cv8ParamLocation.delete(0, cv8ParamLocation.length());
     }
 
-    private void saveLocationConfigParams(File file) {
-        try (FileOutputStream fis = new FileOutputStream(file);
-             BufferedWriter writer = new BufferedWriter((new OutputStreamWriter(fis,
-                     StandardCharsets.UTF_16LE)))) {
-            writer.write(65279);
-            writer.write("location=C:\\Users\\Администратор\\AppData\\Roaming/1C/1Cv83");
-            writer.newLine();
-        } catch (IOException e) {
-            LOGGER.error(String.format("Файл не обнаружен: %s", file.getPath()));
-        }
+    //проверяем строку на наличие ключевых элементов
+    private boolean codePageChecker(String param) {
+        return param.toLowerCase().contains("1c");
     }
 
     private void readFileParams(File file, int config) {

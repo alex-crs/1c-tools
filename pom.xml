@@ -6,7 +6,7 @@
 
     <groupId>org.1cTools</groupId>
     <artifactId>1c-tools</artifactId>
-    <version>0.97</version>
+    <version>0.98</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

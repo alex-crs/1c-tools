@@ -71,6 +71,21 @@ public class VirtualTree {
         return foundElement;
     }
 
+    //рекурсивно ищет элемент по всему древу
+    public VirtualTree findFromTree(String element) {
+        VirtualTree foundElement = null;
+        for (VirtualTree e : elements) {
+            if (e.getElementName().equals(element)) {
+                foundElement = e;
+                break;
+            }
+            if (foundElement == null && e.folder) {
+                foundElement = e.findFromTree(element);
+            }
+        }
+        return foundElement;
+    }
+
     public void sortAllElements() {
         sortCurrentElements();
         for (VirtualTree e : elements) {

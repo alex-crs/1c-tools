@@ -162,7 +162,7 @@ public class MainWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //ВЕРСИЯ ПРОГРАММЫ
-        version.append("0.97 beta");
+        version.append("0.98 beta");
 
         group_choice_box.setVisible(false);
         tableElement = new TableViewElement(this, configCollection);

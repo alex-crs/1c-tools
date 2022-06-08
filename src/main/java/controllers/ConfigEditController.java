@@ -511,8 +511,15 @@ public class ConfigEditController implements Initializable {
     }
 
     public void accept() {
-        if (element.isFolder() || fieldFillInspector() == 2) {
+        boolean doubleInsideTree = BaseConfig.findDouble(configName.getText());
+        if (!element.isFolder() && fieldFillInspector() == 2 && !doubleInsideTree) {
             action();
+        }
+        if (element.isFolder() && !doubleInsideTree) {
+            action();
+        }
+        if (doubleInsideTree) {
+            mainController.alert("База или папка с таким именем уже существует");
         }
     }
 
@@ -543,7 +550,7 @@ public class ConfigEditController implements Initializable {
                     targetElement.getValue().setElementName(configName.getText());
                     choiceElement.getChildren().forEach(virtualTreeTreeItem -> {
                         if (!virtualTreeTreeItem.getValue().getElementName().equals(choiceElement.getValue().getElementName())) {
-                            BaseConfig.moveElement(virtualTreeTreeItem.getValue(),targetElement);
+                            BaseConfig.moveElement(virtualTreeTreeItem.getValue(), targetElement);
                         }
                     });
                     MainWindowController.editConfigControllerManager(Const.CREATE_TREE_ELEMENT, choiceElement.getParent(), targetElement.getValue());
@@ -597,8 +604,6 @@ public class ConfigEditController implements Initializable {
             mainController.configList_MainTab.setRoot(BaseConfig.returnConfigStructure());
             mainController.enableSaveButton();
             stage.close();
-        } else {
-            mainController.alert("База или папка с таким именем уже существует.");
         }
     }
 }

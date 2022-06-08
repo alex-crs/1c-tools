@@ -158,11 +158,6 @@ public class MainWindowController implements Initializable {
         return version;
     }
 
-    /*
-    1. Не видит 1cv8strt на новых платформах (где то в другом месте путь записан)
-    2. Моргает сообщение в настройках 1С пользователя при нажатии Enter
-    */
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

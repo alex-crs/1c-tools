@@ -167,7 +167,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <ComboBox fx:id="group_choice_box" focusTraversable="false" prefHeight="25.0" prefWidth="603.0" promptText="Выбрать организацию">
+            <ComboBox fx:id="group_choice_box" focusTraversable="false" prefHeight="25.0" prefWidth="603.0" promptText="Группа по умолчанию">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>

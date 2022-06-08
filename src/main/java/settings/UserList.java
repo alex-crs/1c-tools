@@ -48,7 +48,6 @@ public class UserList {
         group_choice_box.getItems().add(DELETE_GROUP.getTitle());
         group_choice_box.getItems().add(GROUPS_DELIMITER.getTitle());
         group_choice_box.getItems().addAll(data_base.getGroups());
-//        group_choice_box.setValue(DEFAULT_GROUP.getTitle());
     }
 
     public void updateUserList(String groupName) {

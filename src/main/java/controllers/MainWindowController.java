@@ -171,12 +171,6 @@ public class MainWindowController implements Initializable {
         disableSaveButton();
 
         //инициализация базы данных
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
         new Thread(() -> {
             userList_MainTab.setDisable(true);
             //проверка базы данных (если она пустая, то происходит заполнение)
@@ -225,7 +219,6 @@ public class MainWindowController implements Initializable {
             progressIndicator.setVisible(false);
             group_choice_box.setVisible(true);
             displayUserList(); //показываем список пользователей
-            group_choice_box.setValue(DEFAULT_GROUP.getTitle());
         }).start();
 
         contextMenuConfigListMainTabInit();
